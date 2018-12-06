@@ -1,0 +1,171 @@
+{
+    "name": "tools-for-vscode",
+    "displayName": "tools-for-vscode",
+    "description": "yuanliwei (de) tool box!",
+    "version": "0.0.1",
+    "engines": {
+        "vscode": "^1.29.0"
+    },
+    "categories": [
+        "Other"
+    ],
+    "activationEvents": [
+        "*"
+    ],
+    "main": "./extension",
+    "contributes": {
+        "commands": [
+            {
+                "command": "extension.sayHello",
+                "title": "Hello World"
+            },
+            {
+                "command": "tools:JS format",
+                "title": "JS format"
+            },
+            {
+                "command": "tools:CSS format",
+                "title": "CSS format"
+            },
+            {
+                "command": "tools:SQL format",
+                "title": "SQL format"
+            },
+            {
+                "command": "tools:XML format",
+                "title": "XML format"
+            },
+            {
+                "command": "tools:JSON format",
+                "title": "JSON format"
+            },
+            {
+                "command": "tools:SQL min",
+                "title": "SQL min"
+            },
+            {
+                "command": "tools:XML min",
+                "title": "XML min"
+            },
+            {
+                "command": "tools:CSS min",
+                "title": "CSS min"
+            },
+            {
+                "command": "tools:JSON min",
+                "title": "JSON min"
+            },
+            {
+                "command": "tools:Crypto md5",
+                "title": "Crypto md5"
+            },
+            {
+                "command": "tools:Crypto sha1",
+                "title": "Crypto sha1"
+            },
+            {
+                "command": "tools:Crypto sha256",
+                "title": "Crypto sha256"
+            },
+            {
+                "command": "tools:Crypto sha512",
+                "title": "Crypto sha512"
+            },
+            {
+                "command": "tools:Encode encodeUri",
+                "title": "Encode encodeUri"
+            },
+            {
+                "command": "tools:Encode decodeUri",
+                "title": "Encode decodeUri"
+            },
+            {
+                "command": "tools:Encode encodeBase64",
+                "title": "Encode encodeBase64"
+            },
+            {
+                "command": "tools:Encode encodeHex",
+                "title": "Encode encodeHex"
+            },
+            {
+                "command": "tools:Encode encodeHtml",
+                "title": "Encode encodeHtml"
+            },
+            {
+                "command": "tools:Encode encodeNative",
+                "title": "Encode encodeNative"
+            },
+            {
+                "command": "tools:Encode encodeUnicode",
+                "title": "Encode encodeUnicode"
+            },
+            {
+                "command": "tools:Encode encodeEscape",
+                "title": "Encode encodeEscape"
+            },
+            {
+                "command": "tools:Encode decodeBase64",
+                "title": "Encode decodeBase64"
+            },
+            {
+                "command": "tools:Encode decodeHex",
+                "title": "Encode decodeHex"
+            },
+            {
+                "command": "tools:Encode decodeHtml",
+                "title": "Encode decodeHtml"
+            },
+            {
+                "command": "tools:Encode decodeNative",
+                "title": "Encode decodeNative"
+            },
+            {
+                "command": "tools:Encode decodeUnicode",
+                "title": "Encode decodeUnicode"
+            },
+            {
+                "command": "tools:Encode decodeUnescape",
+                "title": "Encode decodeUnescape"
+            },
+            {
+                "command": "tools:Encode decodeDate",
+                "title": "Encode decodeDate"
+            },
+            {
+                "command": "tools:Encode decodeCoffee",
+                "title": "Encode decodeCoffee"
+            },
+            {
+                "command": "tools:Encode decodeLess",
+                "title": "Encode decodeLess"
+            },
+            {
+                "command": "tools:Encode translate_zh",
+                "title": "Encode translate_zh"
+            },
+            {
+                "command": "tools:Encode translate_en}",
+                "title": "Encode translate_en"
+            }
+        ]
+    },
+    "scripts": {
+        "postinstall": "node ./node_modules/vscode/bin/install",
+        "test": "node ./node_modules/vscode/bin/test"
+    },
+    "devDependencies": {
+        "@types/mocha": "^2.2.42",
+        "@types/node": "^8.10.25",
+        "eslint": "^4.11.0",
+        "typescript": "^3.1.4",
+        "vscode": "^1.1.25"
+    },
+    "dependencies": {
+        "coffee-script": "^1.12.7",
+        "he": "^1.2.0",
+        "js-beautify": "^1.8.8",
+        "less": "^3.9.0",
+        "moment": "^2.22.2",
+        "vkbeautify": "^0.99.3"
+    }
+}
