@@ -25,7 +25,7 @@ module.exports = class EncodeUtil {
   static async decodeUri(text) {
     return decodeURIComponent(text)
   }
-  static async  decodeBase64(text) {
+  static async decodeBase64(text) {
     return Buffer.from(text, 'base64').toString('utf-8')
   }
   static async decodeHex(text) {
