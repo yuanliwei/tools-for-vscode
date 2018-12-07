@@ -68,9 +68,13 @@ function activate(context) {
             lastSelection.start = selection.start
             lastSelection.end = selection.end
             let text = editor.document.getText(selection)
-            let result = await EncodeUtil.translate(getIks(), 'zh', text)
-            lastSelection.lastResult = result
-            return new vscode.Hover(result)
+            try {
+                let result = await EncodeUtil.translate(getIks(), 'zh', text)
+                lastSelection.lastResult = result
+                return new vscode.Hover(result)
+            } catch (e) {
+                return new vscode.Hover(e.message + '\n\n' + e.stack)
+            }
         }
     }));
 }
