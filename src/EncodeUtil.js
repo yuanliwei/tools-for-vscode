@@ -68,9 +68,9 @@ module.exports = class EncodeUtil {
     })
   }
 
-  static async translate(lang, text) {
+  static async translate(iks, lang, text) {
     return new Promise((resolve, reject) => {
-      translate(lang, text, (err, output) => {
+      translate(iks, lang, text, (err, output) => {
         if (err) {
           console.error(err);
           reject(err)
@@ -155,10 +155,9 @@ var formatDate = function (dataValue) {
 /*
   百度翻译
 */
-var translate = (lang, textString, callback) => {
+var translate = (iks, lang, textString, callback) => {
   const querystring = require('querystring');
   const http = require('http');
-  const url = require('url');
 
   var MD5 = (text) => {
     const crypto = require('crypto');
@@ -166,8 +165,6 @@ var translate = (lang, textString, callback) => {
     hash.update(text)
     return hash.digest('hex')
   }
-
-  var iks = ''
 
   var appid = iks[0];
   var key = iks[1];
@@ -197,13 +194,15 @@ var translate = (lang, textString, callback) => {
     sign: sign
   })
 
-  const options = {}
-  url.parse('http://api.fanyi.baidu.com/api/trans/vip/translate')
-  options.port = 80
-  options.method = 'POST'
-  options.headers = {
-    'Content-Type': 'application/x-www-form-urlencoded',
-    'Content-Length': Buffer.byteLength(postData)
+  const options = {
+    hostname: 'api.fanyi.baidu.com',
+    port: 80,
+    path: '/api/trans/vip/translate',
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded',
+      'Content-Length': Buffer.byteLength(postData)
+    }
   }
 
   const req = http.request(options, (res) => {
