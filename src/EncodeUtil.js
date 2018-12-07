@@ -106,11 +106,10 @@ var ascii2native = function (ascii) {
  * native2ascii
  */
 var native2ascii = function (native_) {
-  var ascii, char, charAscii, chars, code, i, j, len;
+  var ascii, charAscii, chars, code, i, j, len;
   chars = native_.split('');
   ascii = '';
   for (i = j = 0, len = chars.length; j < len; i = ++j) {
-    char = chars[i];
     code = Number(chars[i].charCodeAt(0));
     if (code > 127) {
       charAscii = code.toString(16);

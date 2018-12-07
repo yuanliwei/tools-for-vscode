@@ -46,7 +46,7 @@ function activate(context) {
     addCommand(context, "tools:Encode translate_en", async (text) => {
         return await EncodeUtil.translate(getIks(), 'en', text)
     })
-    addCommand(context, "tools:Encode toggle_translate", async (text) => {
+    addCommand(context, "tools:Encode toggle_translate", async () => {
         enableTranslate = !enableTranslate;
         vscode.window.setStatusBarMessage(`Baidu Translate is ${enableTranslate ? 'enable' : 'disabled'}`);
         return false
@@ -56,7 +56,7 @@ function activate(context) {
     let enableTranslate = false
 
     context.subscriptions.push(vscode.languages.registerHoverProvider({ scheme: '*', language: '*' }, {
-        async provideHover(document, position, token) {
+        async provideHover(/*document, position, token*/) {
             if (!enableTranslate) { return }
             let editor = vscode.window.activeTextEditor
             if (!editor) { return }
