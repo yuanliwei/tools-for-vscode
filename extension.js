@@ -46,6 +46,33 @@ function activate(context) {
     addCommand(context, "tools:Encode translate_en", async (text) => {
         return await EncodeUtil.translate(getIks(), 'en', text)
     })
+    addCommand(context, "tools:Encode toggle_translate", async (text) => {
+        enableTranslate = !enableTranslate;
+        vscode.window.setStatusBarMessage(`Baidu Translate is ${enableTranslate ? 'enable' : 'disabled'}`);
+        return false
+    })
+
+    const lastSelection = {}
+    let enableTranslate = false
+
+    context.subscriptions.push(vscode.languages.registerHoverProvider({ scheme: '*', language: '*' }, {
+        async provideHover(document, position, token) {
+            if (!enableTranslate) { return }
+            let editor = vscode.window.activeTextEditor
+            if (!editor) { return }
+            let selection = editor.selection
+            if (selection.isEmpty) { return }
+            if (selection.start == lastSelection.start && selection.end == lastSelection.end) {
+                return new vscode.Hover(lastSelection.lastResult)
+            }
+            lastSelection.start = selection.start
+            lastSelection.end = selection.end
+            let text = editor.document.getText(selection)
+            let result = await EncodeUtil.translate(getIks(), 'zh', text)
+            lastSelection.lastResult = result
+            return new vscode.Hover(result)
+        }
+    }));
 }
 exports.activate = activate;
 
@@ -75,6 +102,7 @@ async function loadAndPutText(func) {
     let result = 'ERR!'
     try {
         result = await func(text)
+        if (!result) { return }
     } catch (error) {
         console.error(error);
         vscode.window.showErrorMessage(error.message, error)
@@ -99,7 +127,6 @@ function getIks() {
     if (!config) { return false }
     let appId = config.get('tools.translate_app_id')
     let appKey = config.get('tools.translate_key')
-    console.log('appId-appKey:', appId, appKey);
     if (!appId || !appKey) {
         vscode.window.showWarningMessage('需要配置百度翻译 appId、appKey。')
         return false

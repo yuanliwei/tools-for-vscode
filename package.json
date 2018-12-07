@@ -146,25 +146,25 @@
             {
                 "command": "tools:Encode translate_en",
                 "title": "Encode translate_en"
+            },
+            {
+                "command": "tools:Encode toggle_translate",
+                "title": "Encode Toggle Translate"
             }
         ],
         "configuration": {
             "type": "object",
-            "title": "C/C++",
+            "title": "Tools",
             "properties": {
                 "tools.translate_app_id": {
-                    "type": [
-                        "string"
-                    ],
+                    "type": "string",
                     "default": "",
-                    "description": "百度翻译 APP_ID",
-                    "scope": "resource"
+                    "description": "百度翻译 APP_ID"
                 },
                 "tools.translate_key": {
                     "type": "string",
                     "default": "",
-                    "description": "百度翻译密钥",
-                    "scope": "resource"
+                    "description": "百度翻译密钥"
                 }
             }
         }
