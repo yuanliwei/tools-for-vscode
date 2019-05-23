@@ -10,6 +10,7 @@ function activate(context) {
     let CryptoUtil = require('./src/CryptoUtil')
     let EncodeUtil = require('./src/EncodeUtil')
 
+    addCommand(context, "tools:Comment Align", CodeUtil.commentAlign)
     addCommand(context, "tools:JS format", CodeUtil.formatJS)
     addCommand(context, "tools:CSS format", CodeUtil.formatCSS)
     addCommand(context, "tools:SQL format", CodeUtil.formatSQL)

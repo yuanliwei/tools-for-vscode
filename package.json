@@ -20,6 +20,10 @@
                 "title": "Hello World"
             },
             {
+                "command": "tools:Comment Align",
+                "title": "Comment Align"
+            },
+            {
                 "command": "tools:JS format",
                 "title": "JS format"
             },
