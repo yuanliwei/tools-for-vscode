@@ -29,6 +29,10 @@ module.exports = class CodeUtil {
   static async minSQL(text) {
     return vkbeautify.sqlmin(text)
   }
+  static async currentTime() {
+    let d = new Date()
+    return d.toLocaleDateString() + ' ' + d.toLocaleTimeString()
+  }
   static async commentAlign(text) {
     var maxLength = 0;
     var lines = text.split('\n');

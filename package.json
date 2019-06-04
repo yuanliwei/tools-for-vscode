@@ -20,6 +20,10 @@
                 "title": "Hello World"
             },
             {
+                "command": "tools:Current Time",
+                "title": "Current Time"
+            },
+            {
                 "command": "tools:Comment Align",
                 "title": "Comment Align"
             },

@@ -10,6 +10,7 @@ function activate(context) {
     let CryptoUtil = require('./src/CryptoUtil')
     let EncodeUtil = require('./src/EncodeUtil')
 
+    addInsertCommand(context, "tools:Current Time", CodeUtil.currentTime)
     addCommand(context, "tools:Comment Align", CodeUtil.commentAlign)
     addCommand(context, "tools:JS format", CodeUtil.formatJS)
     addCommand(context, "tools:CSS format", CodeUtil.formatCSS)
@@ -93,7 +94,13 @@ function addCommand(context, name, func) {
     )
 }
 
-async function loadAndPutText(func) {
+function addInsertCommand(context, name, func) {
+    context.subscriptions.push(
+        vscode.commands.registerCommand(name, () => { loadAndPutText(func, true) })
+    )
+}
+
+async function loadAndPutText(func, insert) {
     let editor = vscode.window.activeTextEditor
     if (!editor) {
         vscode.window.showInformationMessage('No open text editor!')
@@ -120,7 +127,11 @@ async function loadAndPutText(func) {
                 editor.document.lineCount - 1,
                 editor.document.lineAt(editor.document.lineCount - 1).range.end.character
             )
-            editorBuilder.replace(range, result)
+            if (insert) {
+                editorBuilder.replace(selection, result)
+            } else {
+                editorBuilder.replace(range, result)
+            }
         } else {
             editorBuilder.replace(selection, result)
         }
