@@ -11,6 +11,8 @@ function activate(context) {
     let EncodeUtil = require('./src/EncodeUtil')
 
     addInsertCommand(context, "tools:Current Time", CodeUtil.currentTime)
+    addCommand(context, "tools:Format Time", CodeUtil.formatTime)
+    addCommand(context, "tools:Run Code", CodeUtil.runCode)
     addCommand(context, "tools:Comment Align", CodeUtil.commentAlign)
     addCommand(context, "tools:JS format", CodeUtil.formatJS)
     addCommand(context, "tools:CSS format", CodeUtil.formatCSS)

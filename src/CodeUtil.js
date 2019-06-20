@@ -33,6 +33,37 @@ module.exports = class CodeUtil {
     let d = new Date()
     return d.toLocaleDateString() + ' ' + d.toLocaleTimeString()
   }
+  static async formatTime(text) {
+    return text.replace(/(\d{13})|(\d{10})/g, function (val) {
+      var date = parseInt(val)
+      // java中的Integer.MAX_VALUE
+      if (date == 2147483647) { return val }
+      if (val.length == 10) { date *= 1000 }
+      let d = new Date(date)
+      return d.toLocaleDateString() + ' ' + d.toLocaleTimeString()
+    })
+  }
+  static async runCode(code) {
+    const fs = require('fs')
+    const path = require('path')
+    const os = require('os')
+    const vscode = require('vscode');
+
+    let runFilePath = path.join(os.tmpdir(), `tmp-${Date.now()}.js`)
+    let editor = vscode.window.activeTextEditor
+    if (editor && !editor.document.isDirty && code == editor.document.getText()) {
+      runFilePath = editor.document.fileName
+    } else {
+      fs.writeFileSync(runFilePath, code)
+    }
+    let terminal = vscode.window.activeTerminal
+    if (!terminal) {
+      terminal = vscode.window.createTerminal('Run Code')
+    }
+    terminal.show()
+    terminal.sendText(`node ${runFilePath}`)
+    return code
+  }
   static async commentAlign(text) {
     var maxLength = 0;
     var lines = text.split('\n');
