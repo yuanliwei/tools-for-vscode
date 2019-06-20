@@ -61,7 +61,7 @@ module.exports = class CodeUtil {
       terminal = vscode.window.createTerminal('Run Code')
     }
     terminal.show()
-    terminal.sendText(`node ${runFilePath}`)
+    terminal.sendText(`node "${runFilePath}"`)
     return code
   }
   static async commentAlign(text) {
