@@ -20,6 +20,30 @@
                 "title": "Hello World"
             },
             {
+                "command": "tools:Line Remove Include Select",
+                "title": "Line Remove Include Select"
+            },
+            {
+                "command": "tools:Line Remove Exclude Select",
+                "title": "Line Remove Exclude Select"
+            },
+            {
+                "command": "tools:Line Remove Empty",
+                "title": "Line Remove Empty"
+            },
+            {
+                "command": "tools:Line Order Asc",
+                "title": "Line Order Asc"
+            },
+            {
+                "command": "tools:Line Order Desc",
+                "title": "Line Order Desc"
+            },
+            {
+                "command": "tools:Line Trim",
+                "title": "Line Trim"
+            },
+            {
                 "command": "tools:Current Time",
                 "title": "Current Time"
             },

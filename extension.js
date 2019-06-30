@@ -9,8 +9,15 @@ function activate(context) {
     let CodeUtil = require('./src/CodeUtil')
     let CryptoUtil = require('./src/CryptoUtil')
     let EncodeUtil = require('./src/EncodeUtil')
+    let LineUtil = require('./src/LineUtil')
 
-    addInsertCommand(context, "tools:Current Time", CodeUtil.currentTime)
+    addCommand(context, "tools:Line Remove Include Select", LineUtil.lineRemoveIncludeSelect, { replaceAll: true })
+    addCommand(context, "tools:Line Remove Exclude Select", LineUtil.lineRemoveExcludeSelect, { replaceAll: true })
+    addCommand(context, "tools:Line Remove Empty", LineUtil.lineRemoveEmpty)
+    addCommand(context, "tools:Line Order Asc", LineUtil.lineOrderAsc)
+    addCommand(context, "tools:Line Order Desc", LineUtil.lineOrderDesc)
+    addCommand(context, "tools:Line Trim", LineUtil.lineTrim)
+    addCommand(context, "tools:Current Time", CodeUtil.currentTime, { insert: true })
     addCommand(context, "tools:Format Time", CodeUtil.formatTime)
     addCommand(context, "tools:Run Code", CodeUtil.runCode)
     addCommand(context, "tools:Comment Align", CodeUtil.commentAlign)
@@ -90,19 +97,14 @@ function deactivate() {
 
 exports.deactivate = deactivate;
 
-function addCommand(context, name, func) {
+function addCommand(context, name, func, options) {
+    options = options || {}
     context.subscriptions.push(
-        vscode.commands.registerCommand(name, () => { loadAndPutText(func) })
+        vscode.commands.registerCommand(name, () => { loadAndPutText(func, options) })
     )
 }
 
-function addInsertCommand(context, name, func) {
-    context.subscriptions.push(
-        vscode.commands.registerCommand(name, () => { loadAndPutText(func, true) })
-    )
-}
-
-async function loadAndPutText(func, insert) {
+async function loadAndPutText(func, options) {
     let editor = vscode.window.activeTextEditor
     if (!editor) {
         vscode.window.showInformationMessage('No open text editor!')
@@ -115,7 +117,12 @@ async function loadAndPutText(func, insert) {
     }
     let result = 'ERR!'
     try {
-        result = await func(text)
+        /**
+         * @function func(selText,docText)
+         * @param string selText : selection string or full document text
+         * @param string docText : full document text
+         */
+        result = await func(text, editor.document.getText())
         if (!result) { return }
     } catch (error) {
         console.error(error);
@@ -123,16 +130,18 @@ async function loadAndPutText(func, insert) {
         return
     }
     editor.edit((editorBuilder) => {
-        if (selection.isEmpty) {
-            let range = new vscode.Range(
-                0, 0,
-                editor.document.lineCount - 1,
-                editor.document.lineAt(editor.document.lineCount - 1).range.end.character
-            )
-            if (insert) {
+        let selAllRange = new vscode.Range(
+            0, 0,
+            editor.document.lineCount - 1,
+            editor.document.lineAt(editor.document.lineCount - 1).range.end.character
+        )
+        if (options.replaceAll) {
+            editorBuilder.replace(selAllRange, result)
+        } else if (selection.isEmpty) {
+            if (options.insert) {
                 editorBuilder.replace(selection, result)
             } else {
-                editorBuilder.replace(range, result)
+                editorBuilder.replace(selAllRange, result)
             }
         } else {
             editorBuilder.replace(selection, result)
