@@ -38,9 +38,12 @@ module.exports = class CodeUtil {
       var date = parseInt(val)
       // java中的Integer.MAX_VALUE
       if (date == 2147483647) { return val }
-      if (val.length == 10) { date *= 1000 }
-      let d = new Date(date)
-      return d.toLocaleDateString() + ' ' + d.toLocaleTimeString()
+      if (val.length == 10) {
+        if (val.startsWith('19')) { return val }
+        if (val.startsWith('20')) { return val }
+        date *= 1000
+      }
+      return new Date(date).toLocaleString()
     })
   }
   static async runCode(code) {
