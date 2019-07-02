@@ -30,8 +30,7 @@ module.exports = class CodeUtil {
     return vkbeautify.sqlmin(text)
   }
   static async currentTime() {
-    let d = new Date()
-    return d.toLocaleDateString() + ' ' + d.toLocaleTimeString()
+    return new Date().toLocaleString()
   }
   static async formatTime(text) {
     return text.replace(/(\d{13})|(\d{10})/g, function (val) {
@@ -83,14 +82,14 @@ module.exports = class CodeUtil {
       if (!m.test(item)) {
         item = item.replace('//', '#sp#//');
       }
-      var items = item.split('#sp#');
+      var items = item.split('#sp#//');
       var newLine = items[0];
       if (items.length == 2) {
         if (items[0].trim().length == 0) {
-          newLine += items[1];
+          newLine += '// ' + items[1].trim();
         } else {
           var space = maxLength - items[0].length;
-          newLine += ' '.repeat(space) + items[1];
+          newLine += ' '.repeat(space) + '// ' + items[1].trim();
         }
       }
       newLines.push(newLine);
