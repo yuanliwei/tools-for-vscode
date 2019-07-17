@@ -50,7 +50,6 @@ function activate(context) {
     addCommand(context, "tools:Encode decodeNative", EncodeUtil.decodeNative)
     addCommand(context, "tools:Encode decodeUnicode", EncodeUtil.decodeUnicode)
     addCommand(context, "tools:Encode decodeUnescape", EncodeUtil.decodeUnescape)
-    addCommand(context, "tools:Encode decodeDate", EncodeUtil.decodeDate)
     addCommand(context, "tools:Encode decodeCoffee", EncodeUtil.decodeCoffee)
     addCommand(context, "tools:Encode decodeLess", EncodeUtil.decodeLess)
     addCommand(context, "tools:Encode translate_zh", async (text) => {

@@ -33,6 +33,7 @@ module.exports = class CodeUtil {
     return new Date().toLocaleString()
   }
   static async formatTime(text) {
+    const moment = require('moment');
     return text.replace(/(\d{13})|(\d{10})/g, function (val) {
       var date = parseInt(val)
       // java中的Integer.MAX_VALUE
@@ -42,7 +43,7 @@ module.exports = class CodeUtil {
         if (val.startsWith('20')) { return val }
         date *= 1000
       }
-      return new Date(date).toLocaleString()
+      return moment(date).format('YYYY-MM-DD HH:mm:ss.SSS')
     })
   }
   static async runCode(code) {

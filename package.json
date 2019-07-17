@@ -16,10 +16,6 @@
     "contributes": {
         "commands": [
             {
-                "command": "extension.sayHello",
-                "title": "Hello World"
-            },
-            {
                 "command": "tools:Line Remove Include Select",
                 "title": "Line Remove Include Select"
             },
@@ -174,10 +170,6 @@
             {
                 "command": "tools:Encode decodeUnescape",
                 "title": "Encode decodeUnescape"
-            },
-            {
-                "command": "tools:Encode decodeDate",
-                "title": "Encode decodeDate"
             },
             {
                 "command": "tools:Encode decodeCoffee",

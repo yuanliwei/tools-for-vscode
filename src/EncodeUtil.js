@@ -45,10 +45,6 @@ module.exports = class EncodeUtil {
     return unescape(text)
   }
 
-  static async decodeDate(text) {
-    return formatDate(text)
-  }
-
   static async decodeCoffee(text) {
     const coffee = require('coffee-script')
     return coffee.compile(text, { bare: true })
@@ -133,23 +129,6 @@ var toUnicode = function (str) {
 var fromUnicode = function (str) {
   return unescape(str.replace(/\\/g, "%"));
 }
-
-var formatDate = function (dataValue) {
-  const moment = require('moment');
-  return dataValue.replace(/(^|[^\d])((\d{13})|(\d{10}))([^\d]|$)/g, function (a, b, c) {
-    console.log(c);
-    var date = parseInt(c)
-    if (date == 2147483647) {
-      // java中的Integer.MAX_VALUE
-      return a.replace(c, 'Integer.MAX_VALUE')
-    }
-    if (c.length == 10) {
-      date *= 1000
-    }
-    return a.replace(c, moment(date).format('YYYY-MM-DD HH:mm:ss.SSS'));
-  })
-}
-
 
 /*
   百度翻译

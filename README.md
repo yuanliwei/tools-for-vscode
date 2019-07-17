@@ -1,65 +1,63 @@
 # tools-for-vscode README
 
-This is the README for your extension "tools-for-vscode". After writing up a brief description, we recommend including the following sections.
+- 小工具箱
 
-## Features
+## 使用方式
+- 选中要操作的文本(无选中文本时命令操作对象为整个文档)
+- 使用 `Ctrl+Shift+P` 调出命令面板
+- 输入要进行操作的命令
+- `ENTER`
 
-Describe specific features of your extension including screenshots of your extension in action. Image paths are relative to this README file.
+## 功能&命令列表
 
-For example if there is an image subfolder under your extension project workspace:
+### 文本操作
+- 删除文档中包含选中文本的行 `Line Remove Include Select`
+- 删除文档中不包含选中文本的行 `Line Remove Exclude Select`
+- 删除文档中的空行 `Line Remove Empty`
+- 把文档每一行按正序排序 `Line Sort Asc`
+- 把文档每一行按倒序排序 `Line Sort Desc`
+- 删除文档每一行两边的空格 `Line Trim`
+- 删除文档每一行左边的空格 `Line Trim Left`
+- 删除文档每一行右边的空格 `Line Trim Right`
+- 在文档当前位置插入当前时间 `Current Time`
+- 格式化文档选中部分或整个文档中的UTC日期 `Format Time`
+### 代码
+- 把当前文档或选中部分当作 JavaScript 代码使用 node 运行 `Run Code`
+- 对齐文档或选中部分的注释(//) `Comment Align`
+- 把当前文档当作 JavaScript 代码进行格式化 `JS format`
+- 把当前文档当作 CSS 代码进行格式化 `CSS format`
+- 把当前文档当作 SQL 代码进行格式化 `SQL format`
+- 把当前文档当作 XML 代码进行格式化 `XML format`
+- 把当前文档当作 JSON 代码进行格式化 `JSON format`
+- 把当前文档当作 CSS 代码进行压缩 `CSS min`
+- 把当前文档当作 SQL 代码进行压缩 `SQL min`
+- 把当前文档当作 XML 代码进行压缩 `XML min`
+- 把当前文档当作 JSON 代码进行压缩 `JSON min`
+### SHA&MD5
+- 计算文档选中部分的 MD5 `Crypto md5`
+- 计算文档选中部分的 SHA1 `Crypto sha1`
+- 计算文档选中部分的 SHA256 `Crypto sha256`
+- 计算文档选中部分的 SHA512 `Crypto sha512`
+### 编码&解码
+- 生成文档选中部分的 URi 编码 `Encode encodeUri`
+- 生成文档选中部分的 BASE64 编码 `Encode encodeBase64`
+- 生成文档选中部分的 HEX 编码 `Encode encodeHex`
+- 生成文档选中部分的 HTML 编码 `Encode encodeHtml`
+- 生成文档选中部分的 Native 编码 `Encode encodeNative`
+- 生成文档选中部分的 Unicode 编码 `Encode encodeUnicode`
+- 生成文档选中部分的 escape 编码 `Encode encodeEscape`
 
-\!\[feature X\]\(images/feature-x.png\)
-
-> Tip: Many popular extensions utilize animations. This is an excellent way to show off your extension! We recommend short, focused animations that are easy to follow.
-
-## Requirements
-
-If you have any requirements or dependencies, add a section describing those and how to install and configure them.
-
-## Extension Settings
-
-Include if your extension adds any VS Code settings through the `contributes.configuration` extension point.
-
-For example:
-
-This extension contributes the following settings:
-
-* `myExtension.enable`: enable/disable this extension
-* `myExtension.thing`: set to `blah` to do something
-
-## Known Issues
-
-Calling out known issues can help limit users opening duplicate issues against your extension.
-
-## Release Notes
-
-Users appreciate release notes as you update your extension.
-
-### 1.0.0
-
-Initial release of ...
-
-### 1.0.1
-
-Fixed issue #.
-
-### 1.1.0
-
-Added features X, Y, and Z.
-
------------------------------------------------------------------------------------------------------------
-
-## Working with Markdown
-
-**Note:** You can author your README using Visual Studio Code.  Here are some useful editor keyboard shortcuts:
-
-* Split the editor (`Cmd+\` on macOS or `Ctrl+\` on Windows and Linux)
-* Toggle preview (`Shift+CMD+V` on macOS or `Shift+Ctrl+V` on Windows and Linux)
-* Press `Ctrl+Space` (Windows, Linux) or `Cmd+Space` (macOS) to see a list of Markdown snippets
-
-### For more information
-
-* [Visual Studio Code's Markdown Support](http://code.visualstudio.com/docs/languages/markdown)
-* [Markdown Syntax Reference](https://help.github.com/articles/markdown-basics/)
-
-**Enjoy!**
+- 对文档选中部分使用 URi 编码进行解码 `Encode decodeUri`
+- 对文档选中部分使用 BASE64 编码进行解码 `Encode decodeBase64`
+- 对文档选中部分使用 HEX 编码进行解码 `Encode decodeHex`
+- 对文档选中部分使用 HTML 编码进行解码 `Encode decodeHtml`
+- 对文档选中部分使用 Native 编码进行解码 `Encode decodeNative`
+- 对文档选中部分使用 Unicode 编码进行解码 `Encode decodeUnicode`
+- 对文档选中部分使用 escape 编码进行解码 `Encode decodeEscape`
+## 转码
+- 把当前文档当作 `CoffeeScript` 转换为 `JavaScript` 代码 `Encode decodeCoffee`
+- 把当前文档当作 `Less` 转换为 `CSS` 代码 `Encode decodeLess`
+## 翻译
+- 把文档中选中的文本翻译为中文 `Encode translate_zh`
+- 把文档中选中的文本翻译为英文 `Encode translate_en`
+- 切换实时翻译开关，开关打开后会把当前选中文本的中文翻译使用 tooltip 的方式提示出来 `Encode Toggle Translate`
