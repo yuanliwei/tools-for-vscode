@@ -32,16 +32,24 @@
                 "title": "Line Remove Empty"
             },
             {
-                "command": "tools:Line Order Asc",
-                "title": "Line Order Asc"
+                "command": "tools:Line Sort Asc",
+                "title": "Line Sort Asc"
             },
             {
-                "command": "tools:Line Order Desc",
-                "title": "Line Order Desc"
+                "command": "tools:Line Sort Desc",
+                "title": "Line Sort Desc"
             },
             {
                 "command": "tools:Line Trim",
                 "title": "Line Trim"
+            },
+            {
+                "command": "tools:Line Trim Left",
+                "title": "Line Trim Left"
+            },
+            {
+                "command": "tools:Line Trim Right",
+                "title": "Line Trim Right"
             },
             {
                 "command": "tools:Current Time",
