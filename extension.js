@@ -10,7 +10,11 @@ function activate(context) {
     let CryptoUtil = require('./src/CryptoUtil')
     let EncodeUtil = require('./src/EncodeUtil')
     let LineUtil = require('./src/LineUtil')
+    let SnippetsUtil = require('./src/SnippetsUtil')
 
+    addCommand(context, "tools:Snippets update", SnippetsUtil.update, { replaceAll: true })
+    addCommand(context, "tools:Snippets upload", SnippetsUtil.upload, { replaceAll: true })
+    addCommand(context, "tools:Line Remove Duplicate", LineUtil.lineRemoveDuplicate)
     addCommand(context, "tools:Line Remove Include Select", LineUtil.lineRemoveIncludeSelect, { replaceAll: true })
     addCommand(context, "tools:Line Remove Exclude Select", LineUtil.lineRemoveExcludeSelect, { replaceAll: true })
     addCommand(context, "tools:Line Remove Empty", LineUtil.lineRemoveEmpty)
@@ -36,6 +40,7 @@ function activate(context) {
     addCommand(context, "tools:Crypto sha1", CryptoUtil.sha1)
     addCommand(context, "tools:Crypto sha256", CryptoUtil.sha256)
     addCommand(context, "tools:Crypto sha512", CryptoUtil.sha512)
+    addCommand(context, "tools:Encode stringify", EncodeUtil.stringify)
     addCommand(context, "tools:Encode encodeUri", EncodeUtil.encodeUri)
     addCommand(context, "tools:Encode decodeUri", EncodeUtil.decodeUri)
     addCommand(context, "tools:Encode encodeBase64", EncodeUtil.encodeBase64)
@@ -98,6 +103,21 @@ function deactivate() {
 
 exports.deactivate = deactivate;
 
+/**
+ * @typedef {Object} addCommandOptions 命令选项
+ * @property {boolean} [replaceAll] 使用最终结果替换整个文档的内容
+ * @property {boolean} [insert] 把结果插入当前光标所在位置
+ * @property {number} [insertLines] 把结果插入当前光标所在位置之后指定行数之后的新行
+ */
+
+/**
+ * 添加注册命令
+ * 
+ * @param {*} context context
+ * @param {string} name command
+ * @param {(selText: string, docText: string) => Promise<?>} func 执行器 参数为1:选中的文本或整个文档,2:整个文档
+ * @param {addCommandOptions} [options] options - 默认替换选中的文本，如果没有选中的文本则替换整个文档的文本
+ */
 function addCommand(context, name, func, options) {
     options = options || {}
     context.subscriptions.push(
@@ -120,8 +140,8 @@ async function loadAndPutText(func, options) {
     try {
         /**
          * @function func(selText,docText)
-         * @param string selText : selection string or full document text
-         * @param string docText : full document text
+         * @param {string} selText : selection string or full document text
+         * @param {string} docText : full document text
          */
         result = await func(text, editor.document.getText())
         if (!result) { return }

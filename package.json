@@ -16,6 +16,18 @@
     "contributes": {
         "commands": [
             {
+                "command": "tools:Snippets update",
+                "title": "Snippets update"
+            },
+            {
+                "command": "tools:Snippets upload",
+                "title": "Snippets upload"
+            },
+            {
+                "command": "tools:Line Remove Duplicate",
+                "title": "Line Remove Duplicate"
+            },
+            {
                 "command": "tools:Line Remove Include Select",
                 "title": "Line Remove Include Select"
             },
@@ -114,6 +126,10 @@
             {
                 "command": "tools:Crypto sha512",
                 "title": "Crypto sha512"
+            },
+            {
+                "command": "tools:Encode stringify",
+                "title": "Encode stringify"
             },
             {
                 "command": "tools:Encode encodeUri",

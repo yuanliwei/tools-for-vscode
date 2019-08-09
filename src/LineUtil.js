@@ -1,4 +1,7 @@
 module.exports = class LineUtil {
+    static async lineRemoveDuplicate(text) {
+        return [...new Set(text.split('\n'))].join('\n')
+    }
     static async lineRemoveIncludeSelect(selText, text) {
         return text.split('\n').filter(o => !o.includes(selText)).join('\n')
     }
