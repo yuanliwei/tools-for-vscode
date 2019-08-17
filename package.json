@@ -124,6 +124,10 @@
                 "title": "Crypto sha512"
             },
             {
+                "command": "tools:Encode parse",
+                "title": "Encode parse"
+            },
+            {
                 "command": "tools:Encode stringify",
                 "title": "Encode stringify"
             },

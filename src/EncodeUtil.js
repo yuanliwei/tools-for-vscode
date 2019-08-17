@@ -1,4 +1,7 @@
 module.exports = class EncodeUtil {
+  static async parse(text) {
+    return JSON.parse(text)
+  }
   static async stringify(text) {
     return JSON.stringify(text)
   }

@@ -43,6 +43,7 @@ function activate(context) {
     addCommand(context, "tools:Crypto sha1", CryptoUtil.sha1)
     addCommand(context, "tools:Crypto sha256", CryptoUtil.sha256)
     addCommand(context, "tools:Crypto sha512", CryptoUtil.sha512)
+    addCommand(context, "tools:Encode parse", EncodeUtil.parse)
     addCommand(context, "tools:Encode stringify", EncodeUtil.stringify)
     addCommand(context, "tools:Encode encodeUri", EncodeUtil.encodeUri)
     addCommand(context, "tools:Encode decodeUri", EncodeUtil.decodeUri)
