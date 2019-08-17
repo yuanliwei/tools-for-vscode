@@ -14,9 +14,7 @@ function activate(context) {
     let EncodeUtil = require('./src/EncodeUtil')
     let LineUtil = require('./src/LineUtil')
     let Translate = require('./src/Translate')
-    let SnippetsUtil = require('./src/SnippetsUtil')
 
-    addCommand(context, "tools:Snippets update", () => SnippetsUtil.update(context.extensionPath))
     addCommand(context, "tools:Line Remove Duplicate", LineUtil.lineRemoveDuplicate)
     addCommand(context, "tools:Line Remove Include Select", LineUtil.lineRemoveIncludeSelect, { replaceAll: true })
     addCommand(context, "tools:Line Remove Exclude Select", LineUtil.lineRemoveExcludeSelect, { replaceAll: true })

@@ -16,10 +16,6 @@
     "contributes": {
         "commands": [
             {
-                "command": "tools:Snippets update",
-                "title": "Snippets update"
-            },
-            {
                 "command": "tools:Line Remove Duplicate",
                 "title": "Line Remove Duplicate"
             },
