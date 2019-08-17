@@ -66,19 +66,6 @@ module.exports = class EncodeUtil {
       })
     })
   }
-
-  static async translate(iks, lang, text) {
-    return new Promise((resolve, reject) => {
-      translate(iks, lang, text, (err, output) => {
-        if (err) {
-          console.error(err);
-          reject(err)
-        } else {
-          resolve(output)
-        }
-      })
-    })
-  }
 }
 
 /*
@@ -131,92 +118,4 @@ var toUnicode = function (str) {
 
 var fromUnicode = function (str) {
   return unescape(str.replace(/\\/g, "%"));
-}
-
-/*
-  百度翻译
-*/
-var translate = (iks, lang, textString, callback) => {
-  const querystring = require('querystring');
-  const http = require('http');
-
-  var MD5 = (text) => {
-    const crypto = require('crypto');
-    const hash = crypto.createHash('md5');
-    hash.update(text)
-    return hash.digest('hex')
-  }
-
-  var appid = iks[0];
-  var key = iks[1];
-  var salt = Date.now();
-  var matches = textString.split('\n').map((item) => {
-    return item.trim()
-  }).filter((item) => {
-    return item.length > 0
-  })
-  if (!matches) {
-    callback(null, textString)
-    return
-  }
-  console.log('translate words:' + matches.length);
-  var query = matches.join('\n');
-  var from = 'auto';
-  var to = lang;
-  var str1 = appid + query + salt + key;
-  var sign = MD5(str1);
-
-  var postData = querystring.stringify({
-    q: query,
-    appid: appid,
-    salt: salt,
-    from: from,
-    to: to,
-    sign: sign
-  })
-
-  const options = {
-    hostname: 'api.fanyi.baidu.com',
-    port: 80,
-    path: '/api/trans/vip/translate',
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/x-www-form-urlencoded',
-      'Content-Length': Buffer.byteLength(postData)
-    }
-  }
-
-  const req = http.request(options, (res) => {
-    var buffer = []
-    res.on('data', (d) => {
-      buffer.push(d)
-    });
-    res.on('end', () => {
-      var result = JSON.parse(Buffer.concat(buffer).toString('utf-8'))
-      if (result.error_code) {
-        callback(new Error(`${result.error_msg}\n${JSON.stringify(result)}`))
-      } else {
-        let map = {}
-        result.trans_result.forEach((item) => {
-          map[item.src] = ascii2native(item.dst)
-        })
-        callback(null, textString.split('\n').map((item) => {
-          let k = item.trim()
-          let v = map[k]
-          if (v) {
-            return item.replace(k, v);
-          } else {
-            return item
-          }
-        }).join("\n"))
-      }
-    });
-  });
-  req.on('error', (e) => {
-    console.error(e);
-    callback(e)
-  });
-  req.write(postData);
-  req.end();
-
 }

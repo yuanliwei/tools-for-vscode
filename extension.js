@@ -4,16 +4,19 @@ const vscode = require('vscode');
 
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
+/**
+ * @param {vscode.ExtensionContext} context 
+ */
 function activate(context) {
 
     let CodeUtil = require('./src/CodeUtil')
     let CryptoUtil = require('./src/CryptoUtil')
     let EncodeUtil = require('./src/EncodeUtil')
     let LineUtil = require('./src/LineUtil')
+    let Translate = require('./src/Translate')
     let SnippetsUtil = require('./src/SnippetsUtil')
 
-    addCommand(context, "tools:Snippets update", SnippetsUtil.update, { replaceAll: true })
-    addCommand(context, "tools:Snippets upload", SnippetsUtil.upload, { replaceAll: true })
+    addCommand(context, "tools:Snippets update", () => SnippetsUtil.update(context.extensionPath))
     addCommand(context, "tools:Line Remove Duplicate", LineUtil.lineRemoveDuplicate)
     addCommand(context, "tools:Line Remove Include Select", LineUtil.lineRemoveIncludeSelect, { replaceAll: true })
     addCommand(context, "tools:Line Remove Exclude Select", LineUtil.lineRemoveExcludeSelect, { replaceAll: true })
@@ -57,24 +60,28 @@ function activate(context) {
     addCommand(context, "tools:Encode decodeUnescape", EncodeUtil.decodeUnescape)
     addCommand(context, "tools:Encode decodeCoffee", EncodeUtil.decodeCoffee)
     addCommand(context, "tools:Encode decodeLess", EncodeUtil.decodeLess)
-    addCommand(context, "tools:Encode translate_zh", async (text) => {
-        return await EncodeUtil.translate(getIks(), 'zh', text)
+    addCommand(context, "tools:Encode translate_zh", (text) => {
+        return Translate.translate(getIks(), 'zh', text)
     })
-    addCommand(context, "tools:Encode translate_en", async (text) => {
-        return await EncodeUtil.translate(getIks(), 'en', text)
+    addCommand(context, "tools:Encode translate_en", (text) => {
+        return Translate.translate(getIks(), 'en', text)
     })
     addCommand(context, "tools:Encode toggle_translate", async () => {
-        enableTranslate = !enableTranslate;
-        vscode.window.setStatusBarMessage(`Baidu Translate is ${enableTranslate ? 'enable' : 'disabled'}`);
+        if (translateDisposable) {
+            translateDisposable.dispose()
+            translateDisposable = null
+        } else {
+            translateDisposable = vscode.window.setStatusBarMessage(`Baidu Translate is enable!`);
+        }
         return false
     })
 
     const lastSelection = {}
-    let enableTranslate = false
+    let translateDisposable;
 
     context.subscriptions.push(vscode.languages.registerHoverProvider({ scheme: '*', language: '*' }, {
         async provideHover(/*document, position, token*/) {
-            if (!enableTranslate) { return }
+            if (!translateDisposable) { return }
             let editor = vscode.window.activeTextEditor
             if (!editor) { return }
             let selection = editor.selection
@@ -85,15 +92,11 @@ function activate(context) {
             lastSelection.start = selection.start
             lastSelection.end = selection.end
             let text = editor.document.getText(selection)
-            try {
-                let result = await EncodeUtil.translate(getIks(), 'zh', text)
-                lastSelection.lastResult = result
-                return new vscode.Hover(result)
-            } catch (e) {
-                return new vscode.Hover(e.message + '\n\n' + e.stack)
-            }
+            let result = await Translate.translate(getIks(), 'zh', text)
+            lastSelection.lastResult = result
+            return new vscode.Hover(result)
         }
-    }));
+    }))
 }
 exports.activate = activate;
 
@@ -113,7 +116,7 @@ exports.deactivate = deactivate;
 /**
  * 添加注册命令
  * 
- * @param {*} context context
+ * @param {vscode.ExtensionContext} context context
  * @param {string} name command
  * @param {(selText: string, docText: string) => Promise<?>} func 执行器 参数为1:选中的文本或整个文档,2:整个文档
  * @param {addCommandOptions} [options] options - 默认替换选中的文本，如果没有选中的文本则替换整个文档的文本

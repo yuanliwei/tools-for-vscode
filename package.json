@@ -20,10 +20,6 @@
                 "title": "Snippets update"
             },
             {
-                "command": "tools:Snippets upload",
-                "title": "Snippets upload"
-            },
-            {
                 "command": "tools:Line Remove Duplicate",
                 "title": "Line Remove Duplicate"
             },
@@ -223,7 +219,37 @@
                     "description": "百度翻译密钥"
                 }
             }
-        }
+        },
+        "snippets": [
+            {
+                "language": "javascript",
+                "path": "./snippets/javascript.json"
+            },
+            {
+                "language": "typescript",
+                "path": "./snippets/javascript.json"
+            },
+            {
+                "language": "javascriptreact",
+                "path": "./snippets/javascript.json"
+            },
+            {
+                "language": "typescriptreact",
+                "path": "./snippets/javascript.json"
+            },
+            {
+                "language": "html",
+                "path": "./snippets/javascript.json"
+            },
+            {
+                "language": "vue",
+                "path": "./snippets/javascript.json"
+            },
+            {
+                "language": "java",
+                "path": "./snippets/java.json"
+            }
+        ]
     },
     "scripts": {
         "postinstall": "node ./node_modules/vscode/bin/install",
