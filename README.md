@@ -61,3 +61,9 @@
 - 把文档中选中的文本翻译为中文 `Encode translate_zh`
 - 把文档中选中的文本翻译为英文 `Encode translate_en`
 - 切换实时翻译开关，开关打开后会把当前选中文本的中文翻译使用 tooltip 的方式提示出来 `Encode Toggle Translate`
+## 图片转文字
+- 把剪贴板中的图片转换为文字插入到当前文档中 `OCR Paste Image`
+
+# TODO
+## 文本转语音
+## 多个剪贴板&剪贴板同步

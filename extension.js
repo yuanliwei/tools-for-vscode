@@ -14,7 +14,9 @@ function activate(context) {
     let EncodeUtil = require('./src/EncodeUtil')
     let LineUtil = require('./src/LineUtil')
     let Translate = require('./src/Translate')
+    let OCR = require('./src/OCR')
 
+    addCommand(context, "tools:OCR Paste Image", async () => OCR.pasteImage(getOCRIks()), { insert: true })
     addCommand(context, "tools:Line Remove Duplicate", LineUtil.lineRemoveDuplicate)
     addCommand(context, "tools:Line Remove Include Select", LineUtil.lineRemoveIncludeSelect, { replaceAll: true })
     addCommand(context, "tools:Line Remove Exclude Select", LineUtil.lineRemoveExcludeSelect, { replaceAll: true })
@@ -179,6 +181,18 @@ function getIks() {
     let appKey = config.get('tools.translate_key')
     if (!appId || !appKey) {
         vscode.window.showWarningMessage('需要配置百度翻译 appId、appKey。')
+        return false
+    }
+    return [appId, appKey]
+}
+
+function getOCRIks() {
+    let config = vscode.workspace.getConfiguration()
+    if (!config) { return false }
+    let appId = config.get('tools.qq_ocr_app_id')
+    let appKey = config.get('tools.qq_ocr_app_key')
+    if (!appId || !appKey) {
+        vscode.window.showWarningMessage('需要配置 QQ OCR appId、appKey。')
         return false
     }
     return [appId, appKey]
