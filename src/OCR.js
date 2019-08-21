@@ -47,9 +47,30 @@ async function fetchImgTextByOCR([appId, appKey], imagePath) {
         image: image,           // 是  string  原始图片的base64编码数据（原图大小上限1MB，支持JPG、PNG、BMP格式）
     }))
     let json = JSON.parse(result)
-    let arr = json.data.item_list.map(o => `${' '.repeat(Math.round(o.itemcoord[0].x / 10))}${o.itemstring}`)
-    console.log(arr.join('\n'))
-    return arr.join('\n')
+    let arr = json.data.item_list
+
+    let str = ''
+    let curX = 0
+    let curY = 0
+
+    for (const item of arr) {
+        let x = item.itemcoord[0].x
+        let y = item.itemcoord[0].y
+        let w = item.itemcoord[0].width
+        let h = item.itemcoord[0].height
+        let lfNum = Math.round((y - curY) / h / 2)
+        if (lfNum) {
+            curX = 0
+            str += '\n'.repeat(lfNum)
+        }
+        let spaceNum = Math.max(0, Math.round((x - curX) / h))
+        let space = ' '.repeat(spaceNum)
+        str += space + item.itemstring
+        if (curX == 0) { curX = x }
+        curX += w
+        curY = y
+    }
+    return str
 }
 
 /**
