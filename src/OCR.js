@@ -2,7 +2,7 @@ module.exports = class OCR {
     static async pasteImage(iks) {
         if (!iks) return
         const vscode = require('vscode')
-        return vscode.window.withProgress({ location: vscode.ProgressLocation.Window, title: 'pasteImage...' }, async (progress) => {
+        return vscode.window.withProgress({ location: vscode.ProgressLocation.Window, title: 'pasteImage...' }, async () => {
             const os = require('os')
             const path = require('path')
             const fs = require('fs')

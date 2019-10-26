@@ -15,7 +15,11 @@ function activate(context) {
     let LineUtil = require('./src/LineUtil')
     let Translate = require('./src/Translate')
     let OCR = require('./src/OCR')
+    let MultiClip = require('./src/MultiClip')
 
+    addCommand(context, "tools:MultiClip copy", MultiClip.copy)
+    addCommand(context, "tools:MultiClip cut", MultiClip.cut)
+    addCommand(context, "tools:MultiClip list", MultiClip.list)
     addCommand(context, "tools:OCR Paste Image", async () => OCR.pasteImage(getOCRIks()), { insert: true })
     addCommand(context, "tools:Line Remove Duplicate", LineUtil.lineRemoveDuplicate)
     addCommand(context, "tools:Line Remove Include Select", LineUtil.lineRemoveIncludeSelect, { replaceAll: true })

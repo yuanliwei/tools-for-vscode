@@ -206,6 +206,35 @@
             {
                 "command": "tools:Encode toggle_translate",
                 "title": "Encode Toggle Translate"
+            },
+            {
+                "command": "tools:MultiClip copy",
+                "title": "copy to multiclip"
+            },
+            {
+                "command": "tools:MultiClip cut",
+                "title": "cut to multiclip"
+            },
+            {
+                "command": "tools:MultiClip list",
+                "title": "list multiclip buffers"
+            }
+        ],
+        "keybindings": [
+            {
+                "key": "ctrl+c",
+                "command": "tools:MultiClip copy",
+                "when": "editorTextFocus"
+            },
+            {
+                "key": "ctrl+x",
+                "command": "tools:MultiClip cut",
+                "when": "editorTextFocus"
+            },
+            {
+                "key": "ctrl+shift+v",
+                "command": "tools:MultiClip list",
+                "when": "editorTextFocus && editorLangId != 'markdown'"
             }
         ],
         "configuration": {
@@ -231,6 +260,21 @@
                     "type": "string",
                     "default": "",
                     "description": "QQ OCR APP_KEY"
+                },
+                "tools.multiclip_repo_dir": {
+                    "type": "string",
+                    "default": "",
+                    "description": "MultiClip Git Repo Dir"
+                },
+                "tools.multiclip_repo": {
+                    "type": "string",
+                    "default": "",
+                    "description": "MultiClip Git Repo"
+                },
+                "tools.multiclip_max_buffer": {
+                    "type": "number",
+                    "default": 100,
+                    "description": "MultiClip Buffer Count"
                 }
             }
         }
