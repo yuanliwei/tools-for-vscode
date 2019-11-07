@@ -65,6 +65,7 @@ function activate(context) {
     addCommand(context, "tools:Encode decodeUnescape", EncodeUtil.decodeUnescape)
     addCommand(context, "tools:Encode decodeCoffee", EncodeUtil.decodeCoffee)
     addCommand(context, "tools:Encode decodeLess", EncodeUtil.decodeLess)
+    addCommand(context, "tools:Encode markdownToHtml", EncodeUtil.markdownToHtml)
     addCommand(context, "tools:Encode translate_zh", (text) => {
         return Translate.translate(getIks(), 'zh', text)
     })

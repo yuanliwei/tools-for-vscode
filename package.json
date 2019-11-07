@@ -3,6 +3,7 @@
     "displayName": "tools-for-vscode",
     "description": "yuanliwei (de) tool box!",
     "version": "0.0.1",
+    "license": "BSD",
     "engines": {
         "vscode": "^1.29.0"
     },
@@ -196,6 +197,10 @@
                 "title": "Encode decodeLess"
             },
             {
+                "command": "tools:Encode markdownToHtml",
+                "title": "Encode markdownToHtml"
+            },
+            {
                 "command": "tools:Encode translate_zh",
                 "title": "Encode translate_zh"
             },
@@ -296,6 +301,7 @@
         "he": "^1.2.0",
         "js-beautify": "^1.8.8",
         "less": "^3.9.0",
+        "markdown-it": "^10.0.0",
         "moment": "^2.22.2",
         "vkbeautify": "^0.99.3"
     }

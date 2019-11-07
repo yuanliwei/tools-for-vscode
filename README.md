@@ -57,6 +57,7 @@
 ## 转码
 - 把当前文档当作 `CoffeeScript` 转换为 `JavaScript` 代码 `Encode decodeCoffee`
 - 把当前文档当作 `Less` 转换为 `CSS` 代码 `Encode decodeLess`
+- 把当前文档当作 `Markdown` 转换为 `HTML` 代码 `Encode markdownToHtml`
 ## 翻译
 - 把文档中选中的文本翻译为中文 `Encode translate_zh`
 - 把文档中选中的文本翻译为英文 `Encode translate_en`
@@ -64,6 +65,11 @@
 ## 图片转文字
 - 把剪贴板中的图片转换为文字插入到当前文档中 `OCR Paste Image`
 
+## 多个剪贴板&剪贴板同步
+- `Ctrl+Shift+V` 调出剪贴板列表
+- 剪贴板内容通过git仓库在多台设备上保持同步
+- `"tools.multiclip_repo": "git@git.com:yuanliwei/vscode-multiclip.git"`
+- `"tools.multiclip_repo_dir": "./vscode-multiclip"`
+
 # TODO
 ## 文本转语音
-## 多个剪贴板&剪贴板同步

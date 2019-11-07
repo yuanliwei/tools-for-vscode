@@ -69,6 +69,14 @@ module.exports = class EncodeUtil {
       })
     })
   }
+
+  static async markdownToHtml(text) {
+    return require('markdown-it')({
+      html: true,
+      linkify: true,
+      typographer: true
+    }).render(text)
+  }
 }
 
 /*
