@@ -42,7 +42,7 @@ let copyToClipBuffer = () => {
     }
 
     let key = md5(texts.join())
-    if (texts.length > 0) {
+    if (texts.length > 0 && texts.length < 30 * 1024) {
         /** @type{ClipItem} */
         let item = clipBuffer.find((o => o.key == key)) || { key: key, texts: texts, hitCount: 0, time: 0 }
         item.time = Date.now()
