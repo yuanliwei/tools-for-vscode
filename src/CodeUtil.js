@@ -1,4 +1,5 @@
 const vkbeautify = require('vkbeautify');
+const js_beautify = require('js-beautify');
 
 module.exports = class CodeUtil {
   static async formatJSON(text) {
@@ -8,13 +9,14 @@ module.exports = class CodeUtil {
     return vkbeautify.xml(text)
   }
   static async formatCSS(text) {
-    return vkbeautify.css(text)
+    return js_beautify.css(text, {
+      selector_separator_newline: false
+    })
   }
   static async formatSQL(text) {
     return vkbeautify.sql(text)
   }
   static async formatJS(text) {
-    const js_beautify = require('js-beautify');
     return js_beautify(text)
   }
   static async minJSON(text) {
