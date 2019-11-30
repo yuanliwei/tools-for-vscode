@@ -66,12 +66,8 @@ function activate(context) {
     addCommand(context, "tools:Encode decodeCoffee", EncodeUtil.decodeCoffee)
     addCommand(context, "tools:Encode decodeLess", EncodeUtil.decodeLess)
     addCommand(context, "tools:Encode markdownToHtml", EncodeUtil.markdownToHtml)
-    addCommand(context, "tools:Encode translate_zh", (text) => {
-        return Translate.translate(getIks(), 'zh', text)
-    })
-    addCommand(context, "tools:Encode translate_en", (text) => {
-        return Translate.translate(getIks(), 'en', text)
-    })
+    addCommand(context, "tools:Encode translate_zh", (text) => Translate.translate(getIks(), 'zh', text))
+    addCommand(context, "tools:Encode translate_en", (text) => Translate.translate(getIks(), 'en', text))
     addCommand(context, "tools:Encode toggle_translate", async () => {
         if (translateDisposable) {
             translateDisposable.dispose()
@@ -103,6 +99,9 @@ function activate(context) {
             return new vscode.Hover(result)
         }
     }))
+
+    // register css doc type formater
+    registerDocType(context, 'css')
 }
 exports.activate = activate;
 
@@ -201,4 +200,29 @@ function getOCRIks() {
         return false
     }
     return [appId, appKey]
+}
+
+function registerDocType(context, type) {
+    const CodeUtil = require('./src/CodeUtil')
+    context.subscriptions.push(vscode.languages.registerDocumentFormattingEditProvider(type, {
+        provideDocumentFormattingEdits: async (document) => {
+            let result = []
+            let start = new vscode.Position(0, 0)
+            let end = new vscode.Position(document.lineCount - 1, document.lineAt(document.lineCount - 1).text.length)
+            let range = new vscode.Range(start, end)
+            let content = document.getText(range)
+            let formatted = await CodeUtil.formatCSS(content)
+            result.push(new vscode.TextEdit(range, formatted))
+            return result
+        }
+    }))
+    context.subscriptions.push(vscode.languages.registerDocumentRangeFormattingEditProvider(type, {
+        provideDocumentRangeFormattingEdits: async (document, range) => {
+            let result = []
+            let content = document.getText(range)
+            let formatted = await CodeUtil.formatCSS(content)
+            result.push(new vscode.TextEdit(range, formatted))
+            return result
+        }
+    }))
 }
