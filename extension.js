@@ -204,25 +204,20 @@ function getOCRIks() {
 
 function registerDocType(context, type) {
     const CodeUtil = require('./src/CodeUtil')
+    const formatCSS = async (document, range) => {
+        let content = document.getText(range)
+        let formatted = await CodeUtil.formatCSS(content)
+        return [new vscode.TextEdit(range, formatted)]
+    }
     context.subscriptions.push(vscode.languages.registerDocumentFormattingEditProvider(type, {
         provideDocumentFormattingEdits: async (document) => {
-            let result = []
             let start = new vscode.Position(0, 0)
             let end = new vscode.Position(document.lineCount - 1, document.lineAt(document.lineCount - 1).text.length)
             let range = new vscode.Range(start, end)
-            let content = document.getText(range)
-            let formatted = await CodeUtil.formatCSS(content)
-            result.push(new vscode.TextEdit(range, formatted))
-            return result
+            return formatCSS(document, range)
         }
     }))
     context.subscriptions.push(vscode.languages.registerDocumentRangeFormattingEditProvider(type, {
-        provideDocumentRangeFormattingEdits: async (document, range) => {
-            let result = []
-            let content = document.getText(range)
-            let formatted = await CodeUtil.formatCSS(content)
-            result.push(new vscode.TextEdit(range, formatted))
-            return result
-        }
+        provideDocumentRangeFormattingEdits: formatCSS
     }))
 }
