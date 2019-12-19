@@ -1,5 +1,5 @@
 const vscode = require('vscode')
-const { exec, execSync } = require('child_process')
+const { execSync } = require('child_process')
 const fs = require('fs')
 const path = require('path')
 
@@ -15,8 +15,6 @@ const path = require('path')
 let clipBuffer = []
 
 const md5 = (s) => require('crypto').createHash("md5").update(s).digest('hex')
-
-let updatingRepo = false
 
 let copyToClipBuffer = () => {
     let editor = vscode.window.activeTextEditor
@@ -49,16 +47,21 @@ let copyToClipBuffer = () => {
         item.hitCount++
         clipBuffer = clipBuffer.filter(o => o.key != key)
         clipBuffer.unshift(item)
-        syncBufferWithRepo()
+        saveBufferToRepo()
     }
+}
+
+const getFilePath = () => {
+    const config = vscode.workspace.getConfiguration()
+    const repoDir = config.get('tools.multiclip_repo_dir')
+    return path.join(repoDir, 'vscode_multiclip_v2.json')
 }
 
 const syncBufferWithRepo = async () => {
     const config = vscode.workspace.getConfiguration()
-    if (!config) { return false }
+
     const repoDir = config.get('tools.multiclip_repo_dir')
     const repo = config.get('tools.multiclip_repo')
-    const maxBuffer = config.get('tools.multiclip_max_buffer')
 
     if (!fs.existsSync(repoDir)) {
         let select = await vscode.window.showInformationMessage("not set multiclip repo dir!", "open setting", 'cancle')
@@ -77,57 +80,92 @@ const syncBufferWithRepo = async () => {
     if (!fs.existsSync(path.join(repoDir, '.git'))) {
         execSync(`git clone ${repo} .`, { cwd: repoDir })
     }
-    const filepath = path.join(repoDir, 'vscode_multiclip_v2.json')
+    const filepath = getFilePath()
     if (clipBuffer.length == 0 && fs.existsSync(filepath)) {
         let content = fs.readFileSync(filepath, 'utf-8')
         clipBuffer = content && JSON.parse(content) || []
     }
-    if (updatingRepo) return
-    updatingRepo = true
-    vscode.window.withProgress({ location: vscode.ProgressLocation.Window, title: 'Updating MulitClip Repo...' }, async () => {
-        return new Promise((resolve, reject) => {
-            exec(`git pull`, { cwd: repoDir }, (err) => {
-                if (err) {
-                    console.error(err)
-                    reject(err)
-                    updatingRepo = false
-                    vscode.window.showErrorMessage(err.message + '\n\n' + err.stack, "OK")
-                } else {
-                    if (fs.existsSync(filepath)) {
-                        let content = fs.readFileSync(filepath, 'utf-8')
-                        let buf = content && JSON.parse(content) || []
-                        clipBuffer = clipBuffer.concat(buf).sort((l, h) => h.time - l.time)
-                        let unique = new Set()
-                        clipBuffer = clipBuffer.filter(o => (!unique.has(o.key)) && unique.add(o.key))
-                    }
-                    if (clipBuffer.length > maxBuffer) {
-                        clipBuffer = clipBuffer.slice(0, maxBuffer)
-                    }
-                    fs.writeFileSync(filepath, JSON.stringify(clipBuffer, null, 4))
-                    let status = execSync(`git status`, { cwd: repoDir }).toString()
-                    if (status.includes('nothing to commit, working tree clean')) {
-                        updatingRepo = false
-                        resolve()
-                        return
-                    }
-                    execSync(`git add .`, { cwd: repoDir })
-                    execSync(`git commit -m "update by MultiClip(copy)"`, { cwd: repoDir })
-                    exec(`git push`, { cwd: repoDir }, (err) => {
-                        if (err) {
-                            reject(err)
-                            console.error(err)
-                            vscode.window.showErrorMessage(err.message + '\n\n' + err.stack, "OK")
-                        } else { resolve() }
-                        updatingRepo = false
-                    })
-                }
-            })
-        })
-    })
+}
 
+const saveBufferToRepo = async () => {
+    const config = vscode.workspace.getConfiguration()
+    const repoDir = config.get('tools.multiclip_repo_dir')
+    const maxBuffer = config.get('tools.multiclip_max_buffer')
+    await syncBufferWithRepo()
+    const filepath = getFilePath()
+    if (fs.existsSync(filepath)) {
+        let content = fs.readFileSync(filepath, 'utf-8')
+        let buf = content && JSON.parse(content) || []
+        clipBuffer = clipBuffer.concat(buf).sort((l, h) => h.time - l.time)
+        let unique = new Set()
+        clipBuffer = clipBuffer.filter(o => (!unique.has(o.key)) && unique.add(o.key))
+    }
+    if (clipBuffer.length > maxBuffer) {
+        clipBuffer = clipBuffer.slice(0, maxBuffer)
+    }
+    fs.writeFileSync(filepath, JSON.stringify(clipBuffer, null, 4))
+    let status = execSync(`git status`, { cwd: repoDir }).toString()
+    if (!status.includes('nothing to commit, working tree clean')) {
+        execSync(`git add .`, { cwd: repoDir })
+        execSync(`git commit -m "update by MultiClip(copy)"`, { cwd: repoDir })
+    }
+}
+
+const syncWithOriginRepo = async () => {
+    const config = vscode.workspace.getConfiguration()
+    const repoDir = config.get('tools.multiclip_repo_dir')
+    const maxBuffer = config.get('tools.multiclip_max_buffer')
+    return vscode.window.withProgress({
+        location: vscode.ProgressLocation.Window,
+        title: 'Updating MulitClip Repo...'
+    }, (progress) => new Promise(async (resolve, reject) => {
+        progress.report({ message: 'syncBufferWithRepo', increment: 1 })
+        await syncBufferWithRepo()
+        execSync(`git branch local_${Date.now()}`, { cwd: repoDir })
+        const filepath = getFilePath()
+        try {
+            // sync with origin repo
+            progress.report({ message: 'sync with origin repo', increment: 10 })
+            execSync(`git fetch --all`, { cwd: repoDir })
+            execSync(`git add .`, { cwd: repoDir })
+            execSync(`git reset --hard origin/master`, { cwd: repoDir })
+            // union buffer
+            progress.report({ message: 'union buffer with origin repo', increment: 40 })
+            if (fs.existsSync(filepath)) {
+                let content = fs.readFileSync(filepath, 'utf-8')
+                let buf = content && JSON.parse(content) || []
+                clipBuffer = clipBuffer.concat(buf).sort((l, h) => h.time - l.time)
+                let unique = new Set()
+                clipBuffer = clipBuffer.filter(o => (!unique.has(o.key)) && unique.add(o.key))
+            }
+            if (clipBuffer.length > maxBuffer) {
+                clipBuffer = clipBuffer.slice(0, maxBuffer)
+            }
+            fs.writeFileSync(filepath, JSON.stringify(clipBuffer, null, 4))
+            // commit
+            progress.report({ message: 'commit to repo', increment: 60 })
+            let status = execSync(`git status`, { cwd: repoDir }).toString()
+            if (!status.includes('nothing to commit, working tree clean')) {
+                execSync(`git add .`, { cwd: repoDir })
+                execSync(`git commit -m "update by MultiClip(sync)"`, { cwd: repoDir })
+            }
+            progress.report({ message: 'push to repo', increment: 80 })
+            execSync(`git push --all`, { cwd: repoDir })
+            progress.report({ message: 'sync repo success', increment: 100 })
+            resolve()
+            vscode.window.showInformationMessage('sync success', 'OK')
+        } catch (err) {
+            vscode.window.showErrorMessage(err.message + '\n\n' + err.stack, "OK")
+            reject(err)
+        }
+    }))
 }
 
 class MultiClip {
+
+    static async syncRepo() {
+        syncWithOriginRepo()
+    }
 
     static async copy() {
         await copyToClipBuffer()

@@ -20,6 +20,7 @@ function activate(context) {
     addCommand(context, "tools:MultiClip copy", MultiClip.copy)
     addCommand(context, "tools:MultiClip cut", MultiClip.cut)
     addCommand(context, "tools:MultiClip list", MultiClip.list)
+    addCommand(context, "tools:MultiClip sync repo", MultiClip.syncRepo)
     addCommand(context, "tools:OCR Paste Image", async () => OCR.pasteImage(getOCRIks()), { insert: true })
     addCommand(context, "tools:Line Remove Duplicate", LineUtil.lineRemoveDuplicate)
     addCommand(context, "tools:Line Remove Include Select", LineUtil.lineRemoveIncludeSelect, { replaceAll: true })

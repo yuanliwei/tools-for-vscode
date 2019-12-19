@@ -223,6 +223,10 @@
             {
                 "command": "tools:MultiClip list",
                 "title": "list multiclip buffers"
+            },
+            {
+                "command": "tools:MultiClip sync repo",
+                "title": "sync multiclip repo"
             }
         ],
         "keybindings": [
