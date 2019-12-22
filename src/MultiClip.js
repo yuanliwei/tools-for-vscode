@@ -168,8 +168,8 @@ class MultiClip {
     }
 
     static async copy() {
-        await copyToClipBuffer()
         await vscode.commands.executeCommand("editor.action.clipboardCopyAction")
+        await copyToClipBuffer()
     }
 
     static async cut() {
