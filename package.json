@@ -229,23 +229,6 @@
                 "title": "sync multiclip repo"
             }
         ],
-        "keybindings": [
-            {
-                "key": "ctrl+c",
-                "command": "tools:MultiClip copy",
-                "when": "editorTextFocus"
-            },
-            {
-                "key": "ctrl+x",
-                "command": "tools:MultiClip cut",
-                "when": "editorTextFocus"
-            },
-            {
-                "key": "ctrl+shift+v",
-                "command": "tools:MultiClip list",
-                "when": "editorTextFocus && editorLangId != 'markdown'"
-            }
-        ],
         "configuration": {
             "type": "object",
             "title": "Tools",
