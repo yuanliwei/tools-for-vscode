@@ -5,12 +5,12 @@
         "es6": true,
         "node": true
     },
-    "parser": "babel-eslint",
     "parserOptions": {
-        "ecmaFeatures": {
-            "jsx": true
-        },
+        "ecmaVersion": 2019,
         "sourceType": "module"
+    },
+    "extends": "eslint:recommended",
+    "globals": {
     },
     "rules": {
         "no-const-assign": "warn",
