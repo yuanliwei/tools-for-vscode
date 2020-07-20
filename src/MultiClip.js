@@ -42,7 +42,7 @@ let copyToClipBuffer = () => {
         }
     }
 
-    let key = md5(texts.join().replace(/\s+/g,' ').trim())
+    let key = md5(texts.join().replace(/\s+/g, ' ').trim())
     if (texts.length > 0 && texts.length < 30 * 1024) {
         /** @type{ClipItem} */
         let item = clipBuffer.find((o => o.key == key)) || { key: key, texts: texts, hitCount: 0, time: 0 }
@@ -124,7 +124,7 @@ const syncWithOriginRepo = async () => {
     return vscode.window.withProgress({
         location: vscode.ProgressLocation.Window,
         title: 'Updating MulitClip Repo...'
-    }, (progress) => new Promise(async (resolve, reject) => {
+    }, async (progress) => {
         progress.report({ message: 'syncBufferWithRepo', increment: 1 })
         await syncBufferWithRepo()
         execSync(`git branch local_${Date.now()}`, { cwd: repoDir })
@@ -158,13 +158,12 @@ const syncWithOriginRepo = async () => {
             progress.report({ message: 'push to repo', increment: 80 })
             execSync(`git push --all`, { cwd: repoDir })
             progress.report({ message: 'sync repo success', increment: 100 })
-            resolve()
             vscode.window.showInformationMessage('sync success', 'OK')
         } catch (err) {
             vscode.window.showErrorMessage(err.message + '\n\n' + err.stack, "OK")
-            reject(err)
+            throw err
         }
-    }))
+    })
 }
 
 class MultiClip {
