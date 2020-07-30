@@ -1,5 +1,5 @@
-module.exports = class EncodeUtil {
-  static async parse(text) {
+module.exports = class CodecUtil {
+  static async parseJSON(text) {
     return JSON.parse(text)
   }
   static async stringify(text) {
@@ -17,6 +17,14 @@ module.exports = class EncodeUtil {
   static async encodeHtml(text) {
     const he = require('he');
     return he.encode(text)
+  }
+  static async escapeSimple(text) {
+    const he = require('he');
+    return he.escape(text)
+  }
+  static async escapeWithcrlf(text) {
+    const he = require('he');
+    return he.escape(text).replace(/\r/g, '&#13;').replace(/\n/g, '&#10;')
   }
   static async encodeNative(text) {
     return native2ascii(text)

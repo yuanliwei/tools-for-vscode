@@ -1,4 +1,4 @@
-const EncodeUtil = require('./EncodeUtil');
+const CodecUtil = require('./CodecUtil');
 
 module.exports = class Translate {
     static async translate(iks, lang, text) {
@@ -71,7 +71,7 @@ function translateBaidu(iks, lang, textString) {
                 } else {
                     let map = {}
                     for (const item of result.trans_result) {
-                        map[item.src] = await EncodeUtil.decodeNative(item.dst)
+                        map[item.src] = await CodecUtil.decodeNative(item.dst)
                     }
                     resolve(textString.split('\n').map((item) => {
                         let k = item.trim()

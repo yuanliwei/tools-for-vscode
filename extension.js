@@ -11,17 +11,20 @@ function activate(context) {
 
     let CodeUtil = require('./src/CodeUtil')
     let CryptoUtil = require('./src/CryptoUtil')
-    let EncodeUtil = require('./src/EncodeUtil')
+    let CodecUtil = require('./src/CodecUtil')
     let LineUtil = require('./src/LineUtil')
     let Translate = require('./src/Translate')
     let OCR = require('./src/OCR')
     let MultiClip = require('./src/MultiClip')
 
+    // MultiClip
     addCommand(context, "tools:MultiClip copy", MultiClip.copy)
     addCommand(context, "tools:MultiClip cut", MultiClip.cut)
     addCommand(context, "tools:MultiClip list", MultiClip.list)
     addCommand(context, "tools:MultiClip sync repo", MultiClip.syncRepo)
+    // ocr
     addCommand(context, "tools:OCR Paste Image", async () => OCR.pasteImage(getOCRIks()), { insert: true })
+    // line
     addCommand(context, "tools:Line Remove Duplicate", LineUtil.lineRemoveDuplicate)
     addCommand(context, "tools:Line Remove Include Select", LineUtil.lineRemoveIncludeSelect, { replaceAll: true })
     addCommand(context, "tools:Line Remove Exclude Select", LineUtil.lineRemoveExcludeSelect, { replaceAll: true })
@@ -31,6 +34,7 @@ function activate(context) {
     addCommand(context, "tools:Line Trim", LineUtil.lineTrim)
     addCommand(context, "tools:Line Trim Left", LineUtil.lineTrimLeft)
     addCommand(context, "tools:Line Trim Right", LineUtil.lineTrimRight)
+    // Format
     addCommand(context, "tools:Current Time", CodeUtil.currentTime, { insert: true })
     addCommand(context, "tools:Format Time", CodeUtil.formatTime)
     addCommand(context, "tools:Run Code", CodeUtil.runCode)
@@ -44,32 +48,44 @@ function activate(context) {
     addCommand(context, "tools:XML min", CodeUtil.minXML)
     addCommand(context, "tools:CSS min", CodeUtil.minCSS)
     addCommand(context, "tools:JSON min", CodeUtil.minJSON)
+    // Crypto
     addCommand(context, "tools:Crypto md5", CryptoUtil.md5)
     addCommand(context, "tools:Crypto sha1", CryptoUtil.sha1)
     addCommand(context, "tools:Crypto sha256", CryptoUtil.sha256)
     addCommand(context, "tools:Crypto sha512", CryptoUtil.sha512)
-    addCommand(context, "tools:Encode parse", EncodeUtil.parse)
-    addCommand(context, "tools:Encode stringify", EncodeUtil.stringify)
-    addCommand(context, "tools:Encode encodeUri", EncodeUtil.encodeUri)
-    addCommand(context, "tools:Encode decodeUri", EncodeUtil.decodeUri)
-    addCommand(context, "tools:Encode encodeBase64", EncodeUtil.encodeBase64)
-    addCommand(context, "tools:Encode encodeHex", EncodeUtil.encodeHex)
-    addCommand(context, "tools:Encode encodeHtml", EncodeUtil.encodeHtml)
-    addCommand(context, "tools:Encode encodeNative", EncodeUtil.encodeNative)
-    addCommand(context, "tools:Encode encodeUnicode", EncodeUtil.encodeUnicode)
-    addCommand(context, "tools:Encode encodeEscape", EncodeUtil.encodeEscape)
-    addCommand(context, "tools:Encode decodeBase64", EncodeUtil.decodeBase64)
-    addCommand(context, "tools:Encode decodeHex", EncodeUtil.decodeHex)
-    addCommand(context, "tools:Encode decodeHtml", EncodeUtil.decodeHtml)
-    addCommand(context, "tools:Encode decodeNative", EncodeUtil.decodeNative)
-    addCommand(context, "tools:Encode decodeUnicode", EncodeUtil.decodeUnicode)
-    addCommand(context, "tools:Encode decodeUnescape", EncodeUtil.decodeUnescape)
-    addCommand(context, "tools:Encode decodeCoffee", EncodeUtil.decodeCoffee)
-    addCommand(context, "tools:Encode decodeLess", EncodeUtil.decodeLess)
-    addCommand(context, "tools:Encode markdownToHtml", EncodeUtil.markdownToHtml)
-    addCommand(context, "tools:Encode translate_zh", (text) => Translate.translate(getIks(), 'zh', text))
-    addCommand(context, "tools:Encode translate_en", (text) => Translate.translate(getIks(), 'en', text))
-    addCommand(context, "tools:Encode toggle_translate", async () => {
+    // json
+    addCommand(context, "tools:Decode json parse", CodecUtil.parseJSON)
+    addCommand(context, "tools:Encode json stringify", CodecUtil.stringify)
+    // uri
+    addCommand(context, "tools:Encode uri", CodecUtil.encodeUri)
+    addCommand(context, "tools:Decode uri", CodecUtil.decodeUri)
+    // base64
+    addCommand(context, "tools:Encode base64", CodecUtil.encodeBase64)
+    addCommand(context, "tools:Decode base64", CodecUtil.decodeBase64)
+    // hex
+    addCommand(context, "tools:Encode hex", CodecUtil.encodeHex)
+    addCommand(context, "tools:Decode hex", CodecUtil.decodeHex)
+    // html
+    addCommand(context, "tools:Encode html", CodecUtil.encodeHtml)
+    addCommand(context, "tools:Decode html", CodecUtil.decodeHtml)
+    // native
+    addCommand(context, "tools:Encode native", CodecUtil.encodeNative)
+    addCommand(context, "tools:Decode native", CodecUtil.decodeNative)
+    // unicode
+    addCommand(context, "tools:Encode unicode", CodecUtil.encodeUnicode)
+    addCommand(context, "tools:Decode unicode", CodecUtil.decodeUnicode)
+    // escape
+    addCommand(context, "tools:Encode escape", CodecUtil.encodeEscape)
+    addCommand(context, "tools:Encode escapeSimple", CodecUtil.escapeSimple)
+    addCommand(context, "tools:Encode escapeWithcrlf", CodecUtil.escapeWithcrlf)
+    addCommand(context, "tools:Decode unescape", CodecUtil.decodeUnescape)
+    // translate
+    addCommand(context, "tools:Translate coffeescript to javascript", CodecUtil.decodeCoffee)
+    addCommand(context, "tools:Translate less to css", CodecUtil.decodeLess)
+    addCommand(context, "tools:Translate markdown to html", CodecUtil.markdownToHtml)
+    addCommand(context, "tools:Translate translate to zh", (text) => Translate.translate(getIks(), 'zh', text))
+    addCommand(context, "tools:Translate translate to en", (text) => Translate.translate(getIks(), 'en', text))
+    addCommand(context, "tools:Translate toggle translate", async () => {
         if (translateDisposable) {
             translateDisposable.dispose()
             translateDisposable = null

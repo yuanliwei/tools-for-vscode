@@ -17,6 +17,22 @@
     "contributes": {
         "commands": [
             {
+                "command": "tools:MultiClip copy",
+                "title": "MultiClip copy"
+            },
+            {
+                "command": "tools:MultiClip cut",
+                "title": "MultiClip cut"
+            },
+            {
+                "command": "tools:MultiClip list",
+                "title": "MultiClip list"
+            },
+            {
+                "command": "tools:MultiClip sync repo",
+                "title": "MultiClip sync repo"
+            },
+            {
                 "command": "tools:OCR Paste Image",
                 "title": "OCR Paste Image"
             },
@@ -125,108 +141,100 @@
                 "title": "Crypto sha512"
             },
             {
-                "command": "tools:Encode parse",
-                "title": "Encode parse"
+                "command": "tools:Decode json parse",
+                "title": "Decode json parse"
             },
             {
-                "command": "tools:Encode stringify",
-                "title": "Encode stringify"
+                "command": "tools:Encode json stringify",
+                "title": "Encode json stringify"
             },
             {
-                "command": "tools:Encode encodeUri",
-                "title": "Encode encodeUri"
+                "command": "tools:Encode uri",
+                "title": "Encode uri"
             },
             {
-                "command": "tools:Encode decodeUri",
-                "title": "Encode decodeUri"
+                "command": "tools:Decode uri",
+                "title": "Decode uri"
             },
             {
-                "command": "tools:Encode encodeBase64",
-                "title": "Encode encodeBase64"
+                "command": "tools:Encode base64",
+                "title": "Encode base64"
             },
             {
-                "command": "tools:Encode encodeHex",
-                "title": "Encode encodeHex"
+                "command": "tools:Decode base64",
+                "title": "Decode base64"
             },
             {
-                "command": "tools:Encode encodeHtml",
-                "title": "Encode encodeHtml"
+                "command": "tools:Encode hex",
+                "title": "Encode hex"
             },
             {
-                "command": "tools:Encode encodeNative",
-                "title": "Encode encodeNative"
+                "command": "tools:Decode hex",
+                "title": "Decode hex"
             },
             {
-                "command": "tools:Encode encodeUnicode",
-                "title": "Encode encodeUnicode"
+                "command": "tools:Encode html",
+                "title": "Encode html"
             },
             {
-                "command": "tools:Encode encodeEscape",
-                "title": "Encode encodeEscape"
+                "command": "tools:Decode html",
+                "title": "Decode html"
             },
             {
-                "command": "tools:Encode decodeBase64",
-                "title": "Encode decodeBase64"
+                "command": "tools:Encode native",
+                "title": "Encode native"
             },
             {
-                "command": "tools:Encode decodeHex",
-                "title": "Encode decodeHex"
+                "command": "tools:Decode native",
+                "title": "Decode native"
             },
             {
-                "command": "tools:Encode decodeHtml",
-                "title": "Encode decodeHtml"
+                "command": "tools:Encode unicode",
+                "title": "Encode unicode"
             },
             {
-                "command": "tools:Encode decodeNative",
-                "title": "Encode decodeNative"
+                "command": "tools:Decode unicode",
+                "title": "Decode unicode"
             },
             {
-                "command": "tools:Encode decodeUnicode",
-                "title": "Encode decodeUnicode"
+                "command": "tools:Encode escape",
+                "title": "Encode escape"
             },
             {
-                "command": "tools:Encode decodeUnescape",
-                "title": "Encode decodeUnescape"
+                "command": "tools:Encode escapeSimple",
+                "title": "Encode escapeSimple"
             },
             {
-                "command": "tools:Encode decodeCoffee",
-                "title": "Encode decodeCoffee"
+                "command": "tools:Encode escapeWithcrlf",
+                "title": "Encode escapeWithcrlf"
             },
             {
-                "command": "tools:Encode decodeLess",
-                "title": "Encode decodeLess"
+                "command": "tools:Decode unescape",
+                "title": "Decode unescape"
             },
             {
-                "command": "tools:Encode markdownToHtml",
-                "title": "Encode markdownToHtml"
+                "command": "tools:Translate coffeescript to javascript",
+                "title": "Translate coffeescript to javascript"
             },
             {
-                "command": "tools:Encode translate_zh",
-                "title": "Encode translate_zh"
+                "command": "tools:Translate less to css",
+                "title": "Translate less to css"
             },
             {
-                "command": "tools:Encode translate_en",
-                "title": "Encode translate_en"
+                "command": "tools:Translate markdown to html",
+                "title": "Translate markdown to html"
             },
             {
-                "command": "tools:Encode toggle_translate",
-                "title": "Encode Toggle Translate"
+                "command": "tools:Translate translate to zh",
+                "title": "Translate translate to zh"
             },
             {
-                "command": "tools:MultiClip copy",
-                "title": "copy to multiclip"
+                "command": "tools:Translate translate to en",
+                "title": "Translate translate to en"
             },
             {
-                "command": "tools:MultiClip cut",
-                "title": "cut to multiclip"
-            },
-            {
-                "command": "tools:MultiClip list",
-                "title": "list multiclip buffers"
-            },
-            {
-                "command": "tools:MultiClip sync repo",
-                "title": "sync multiclip repo"
+                "command": "tools:Translate toggle translate",
+                "title": "Translate toggle translate"
             }
         ],
         "configuration": {
