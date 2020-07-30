@@ -14,6 +14,8 @@
 - 删除文档中包含选中文本的行 `Line Remove Include Select`
 - 删除文档中不包含选中文本的行 `Line Remove Exclude Select`
 - 删除文档中的空行 `Line Remove Empty`
+- 删除文档中匹配正则表达式的行 `Line Remove match regexp`
+- 删除文档中不匹配正则表达式的行 `Line Remove not match regexp`
 - 把文档每一行按正序排序 `Line Sort Asc`
 - 把文档每一行按倒序排序 `Line Sort Desc`
 - 删除文档每一行两边的空格 `Line Trim`
@@ -21,6 +23,12 @@
 - 删除文档每一行右边的空格 `Line Trim Right`
 - 在文档当前位置插入当前时间 `Current Time`
 - 格式化文档选中部分或整个文档中的UTC日期 `Format Time`
+- 给当前文档添加行号 `Line add line number`
+- 给当前文档添加自定义行号 `Line add line number with separator`
+- 文本下划线转驼峰 `Line separator underline to hump`
+- 文本驼峰转下划线 `Line separator hump to underline`
+- 文本首字母小写 `Line first letter lowercase`
+- 文本首字母大写 `Line first letter uppercase`
 ### 代码
 - 把当前文档或选中部分当作 JavaScript 代码使用 node 运行 `Run Code`
 - 对齐文档或选中部分的注释(//) `Comment Align`

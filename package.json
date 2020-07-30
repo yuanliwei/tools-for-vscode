@@ -53,6 +53,14 @@
                 "title": "Line Remove Empty"
             },
             {
+                "command": "tools:Line Remove match regexp",
+                "title": "Line Remove match regexp"
+            },
+            {
+                "command": "tools:Line Remove not match regexp",
+                "title": "Line Remove not match regexp"
+            },
+            {
                 "command": "tools:Line Sort Asc",
                 "title": "Line Sort Asc"
             },
@@ -71,6 +79,30 @@
             {
                 "command": "tools:Line Trim Right",
                 "title": "Line Trim Right"
+            },
+            {
+                "command": "tools:Line add line number",
+                "title": "Line add line number"
+            },
+            {
+                "command": "tools:Line add line number with separator",
+                "title": "Line add line number with separator"
+            },
+            {
+                "command": "tools:Line separator underline to hump",
+                "title": "Line separator underline to hump"
+            },
+            {
+                "command": "tools:Line separator hump to underline",
+                "title": "Line separator hump to underline"
+            },
+            {
+                "command": "tools:Line first letter lowercase",
+                "title": "Line first letter lowercase"
+            },
+            {
+                "command": "tools:Line first letter uppercase",
+                "title": "Line first letter uppercase"
             },
             {
                 "command": "tools:Current Time",

@@ -29,11 +29,19 @@ function activate(context) {
     addCommand(context, "tools:Line Remove Include Select", LineUtil.lineRemoveIncludeSelect, { replaceAll: true })
     addCommand(context, "tools:Line Remove Exclude Select", LineUtil.lineRemoveExcludeSelect, { replaceAll: true })
     addCommand(context, "tools:Line Remove Empty", LineUtil.lineRemoveEmpty)
+    addCommand(context, "tools:Line Remove match regexp", LineUtil.lineRemoveMatchRegexp)
+    addCommand(context, "tools:Line Remove not match regexp", LineUtil.lineRemoveNotMatchRegexp)
     addCommand(context, "tools:Line Sort Asc", LineUtil.lineSortAsc)
     addCommand(context, "tools:Line Sort Desc", LineUtil.lineSortDesc)
     addCommand(context, "tools:Line Trim", LineUtil.lineTrim)
     addCommand(context, "tools:Line Trim Left", LineUtil.lineTrimLeft)
     addCommand(context, "tools:Line Trim Right", LineUtil.lineTrimRight)
+    addCommand(context, "tools:Line add line number", LineUtil.addLineNumber)
+    addCommand(context, "tools:Line add line number with separator", LineUtil.addLineNumberWithSeparator)
+    addCommand(context, "tools:Line separator underline to hump", LineUtil.separatorUnderlineToHump)
+    addCommand(context, "tools:Line separator hump to underline", LineUtil.separatorHumpToUnderline)
+    addCommand(context, "tools:Line first letter lowercase", LineUtil.firstLetterLowercase)
+    addCommand(context, "tools:Line first letter uppercase", LineUtil.firstLetterUppercase)
     // Format
     addCommand(context, "tools:Current Time", CodeUtil.currentTime, { insert: true })
     addCommand(context, "tools:Format Time", CodeUtil.formatTime)
@@ -133,6 +141,7 @@ exports.deactivate = deactivate;
  * @property {boolean} [replaceAll] 使用最终结果替换整个文档的内容
  * @property {boolean} [insert] 把结果插入当前光标所在位置
  * @property {number} [insertLines] 把结果插入当前光标所在位置之后指定行数之后的新行
+ * @property {boolean} [noUpdateDoc] 不需要更新文档内容
  */
 
 /**
@@ -156,41 +165,52 @@ async function loadAndPutText(func, options) {
         vscode.window.showInformationMessage('No open text editor!')
         return
     }
-    let selection = editor.selection
-    let text = editor.document.getText(selection)
-    if (selection.isEmpty) {
-        text = editor.document.getText()
+    let selections = editor.selections
+    let texts = []
+    let results = []
+    let selectionIsEmpty = selections[0].isEmpty
+
+    if (selectionIsEmpty) {
+        texts.push(editor.document.getText())
+    } else {
+        for (const selection of selections) {
+            texts.push(editor.document.getText(selection))
+        }
     }
-    let result = 'ERR!'
     try {
         /**
          * @function func(selText,docText)
          * @param {string} selText : selection string or full document text
          * @param {string} docText : full document text
          */
-        result = await func(text, editor.document.getText())
-        if (!result) { return }
+        for (let index = 0; index < texts.length; index++) {
+            results[index] = await func(texts[index], editor.document.getText())
+        }
+        if (!results.join('')) { return }
+        if (options.noUpdateDoc) { return }
     } catch (error) {
         console.error(error);
         vscode.window.showErrorMessage(error.message, error)
         return
     }
     editor.edit((editorBuilder) => {
-        let selAllRange = new vscode.Range(
-            0, 0,
-            editor.document.lineCount - 1,
-            editor.document.lineAt(editor.document.lineCount - 1).range.end.character
-        )
+        let lastLine = editor.document.lineCount - 1
+        let lastCharacter = editor.document.lineAt(lastLine).range.end.character
+        let selAllRange = new vscode.Range(0, 0, lastLine, lastCharacter)
         if (options.replaceAll) {
-            editorBuilder.replace(selAllRange, result)
-        } else if (selection.isEmpty) {
+            editorBuilder.replace(selAllRange, results[0])
+        } else if (selectionIsEmpty) {
             if (options.insert) {
-                editorBuilder.replace(selection, result)
+                editorBuilder.replace(selections[0], results[0])
             } else {
-                editorBuilder.replace(selAllRange, result)
+                editorBuilder.replace(selAllRange, results[0])
             }
         } else {
-            editorBuilder.replace(selection, result)
+            for (let index = selections.length; index > 0; index--) {
+                const selection = selections[index - 1];
+                const result = results[index - 1];
+                editorBuilder.replace(selection, result)
+            }
         }
     })
 }
