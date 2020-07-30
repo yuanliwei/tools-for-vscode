@@ -76,8 +76,8 @@ function activate(context) {
     addCommand(context, "tools:Decode unicode", CodecUtil.decodeUnicode)
     // escape
     addCommand(context, "tools:Encode escape", CodecUtil.encodeEscape)
-    addCommand(context, "tools:Encode escapeSimple", CodecUtil.escapeSimple)
-    addCommand(context, "tools:Encode escapeWithcrlf", CodecUtil.escapeWithcrlf)
+    addCommand(context, "tools:Encode escape simple", CodecUtil.escapeSimple)
+    addCommand(context, "tools:Encode escape with crlf", CodecUtil.escapeWithcrlf)
     addCommand(context, "tools:Decode unescape", CodecUtil.decodeUnescape)
     // translate
     addCommand(context, "tools:Translate coffeescript to javascript", CodecUtil.decodeCoffee)

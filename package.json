@@ -201,12 +201,12 @@
                 "title": "Encode escape"
             },
             {
-                "command": "tools:Encode escapeSimple",
-                "title": "Encode escapeSimple"
+                "command": "tools:Encode escape simple",
+                "title": "Encode escape simple"
             },
             {
-                "command": "tools:Encode escapeWithcrlf",
-                "title": "Encode escapeWithcrlf"
+                "command": "tools:Encode escape with crlf",
+                "title": "Encode escape with crlf"
             },
             {
                 "command": "tools:Decode unescape",
