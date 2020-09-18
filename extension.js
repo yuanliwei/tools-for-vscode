@@ -101,7 +101,7 @@ function activate(context) {
             translateDisposable = vscode.window.setStatusBarMessage(`Baidu Translate is enable!`);
         }
         return false
-    })
+    }, { noUpdateDoc: true })
 
     const lastSelection = {}
     let translateDisposable;
