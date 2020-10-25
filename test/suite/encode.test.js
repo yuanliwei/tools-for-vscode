@@ -1,5 +1,3 @@
-/* global suite, test */
-
 //
 // Note: This example test is leveraging the Mocha test framework.
 // Please refer to their documentation on https://mochajs.org/ for help.
@@ -19,7 +17,7 @@ suite("Encode Tests", function () {
     // Defines a Mocha unit test
     test("CodecUtil.escapeWithcrlf test", async function () {
 
-        const CodecUtil = require('../src/CodecUtil')
+        const CodecUtil = require('../../src/CodecUtil')
         let result = await CodecUtil.escapeWithcrlf(`b.tabIndicator.setOnCheckedChangeListener((group, checkedId) -> {
         testController.setEnable(b.reportTest.isChecked());
         bookController.setEnable(b.reportBook.isChecked());
