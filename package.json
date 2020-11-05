@@ -85,6 +85,10 @@
                 "title": "Line add line number"
             },
             {
+                "command": "tools:Line add line number from input",
+                "title": "Line add line number from input"
+            },
+            {
                 "command": "tools:Line add line number with separator",
                 "title": "Line add line number with separator"
             },
@@ -115,6 +119,10 @@
             {
                 "command": "tools:Run Code",
                 "title": "Run Code"
+            },
+            {
+                "command": "tools:Eval Print",
+                "title": "Eval Print"
             },
             {
                 "command": "tools:Comment Align",

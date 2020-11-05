@@ -24,6 +24,7 @@
 - 在文档当前位置插入当前时间 `Current Time`
 - 格式化文档选中部分或整个文档中的UTC日期 `Format Time`
 - 给当前文档添加行号 `Line add line number`
+- 给当前文档添加从输入数字开始的行号 `Line add line number from input`
 - 给当前文档添加自定义行号 `Line add line number with separator`
 - 文本下划线转驼峰 `Line separator underline to hump`
 - 文本驼峰转下划线 `Line separator hump to underline`
@@ -31,6 +32,7 @@
 - 文本首字母大写 `Line first letter uppercase`
 ### 代码
 - 把当前文档或选中部分当作 JavaScript 代码使用 node 运行 `Run Code`
+- 把当前文档或选中部分当作 JavaScript 表达式使用 node 运行并把返回值追加到选中项后面 `Eval Print`
 - 对齐文档或选中部分的注释(//) `Comment Align`
 - 把当前文档当作 JavaScript 代码进行格式化 `JS format`
 - 把当前文档当作 CSS 代码进行格式化 `CSS format`

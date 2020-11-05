@@ -65,6 +65,15 @@ module.exports = class LineUtil {
         let num = 1
         return text.split('\n').map(o => `${(num++).toString().padStart(4, ' ')}${separator}${o}`).join('\n')
     }
+    static async addLineNumberFromInput(text) {
+        const View = require('./View')
+        let startNum = await View.getString({
+            placeHolder: 'start num',
+            prompt: '输入开始数字'
+        })
+        let num = parseInt(startNum) || 1
+        return text.split('\n').map(o => `${(num++).toString().padStart(4, ' ')} ${o}`).join('\n')
+    }
     /**
      * 下划线转驼峰
      * 
