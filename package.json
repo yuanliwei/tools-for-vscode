@@ -109,6 +109,22 @@
                 "title": "Line first letter uppercase"
             },
             {
+                "command": "tools:Line Group Duplicate",
+                "title": "Line Group Duplicate"
+            },
+            {
+                "command": "tools:Line Sort Number",
+                "title": "Line Sort Number"
+            },
+            {
+                "command": "tools:Line Reverse",
+                "title": "Line Reverse"
+            },
+            {
+                "command": "tools:Line Group Duplicate Sort Number Reverse",
+                "title": "Line Group Duplicate Sort Number Reverse"
+            },
+            {
                 "command": "tools:Current Time",
                 "title": "Current Time"
             },

@@ -43,6 +43,10 @@ function activate(context) {
     addCommand(context, "tools:Line separator hump to underline", LineUtil.separatorHumpToUnderline)
     addCommand(context, "tools:Line first letter lowercase", LineUtil.firstLetterLowercase)
     addCommand(context, "tools:Line first letter uppercase", LineUtil.firstLetterUppercase)
+    addCommand(context, "tools:Line Group Duplicate", LineUtil.lineGroupDuplicate)
+    addCommand(context, "tools:Line Sort Number", LineUtil.lineSortNumber)
+    addCommand(context, "tools:Line Reverse", LineUtil.lineReverse)
+    addCommand(context, "tools:Line Group Duplicate Sort Number Reverse", async (text) => await LineUtil.lineReverse(await LineUtil.lineSortNumber(await LineUtil.lineGroupDuplicate(text))))
     // Format
     addCommand(context, "tools:Current Time", CodeUtil.currentTime, { insert: true })
     addCommand(context, "tools:Format Time", CodeUtil.formatTime)

@@ -30,6 +30,10 @@
 - 文本驼峰转下划线 `Line separator hump to underline`
 - 文本首字母小写 `Line first letter lowercase`
 - 文本首字母大写 `Line first letter uppercase`
+- 统计重复行数 `Line Group Duplicate`
+- 按数字大小排序文本行 `Line Sort Number`
+- 反向排序文本行 `Line Reverse`
+- 组合命令：统计重复行数并按数量倒序排序 `Line Group Duplicate Sort Number Reverse`
 ### 代码
 - 把当前文档或选中部分当作 JavaScript 代码使用 node 运行 `Run Code`
 - 把当前文档或选中部分当作 JavaScript 表达式使用 node 运行并把返回值追加到选中项后面 `Eval Print`

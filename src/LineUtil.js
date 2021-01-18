@@ -107,4 +107,47 @@ module.exports = class LineUtil {
     static async firstLetterUppercase(text) {
         return text.replace(/^\w/, (a) => a.toUpperCase()).replace(/(\W)(\w)/g, (_, b, c) => `${b}${c.toUpperCase()}`)
     }
+    /**
+     * 统计重复行数
+     * 
+     * @param {string} text 
+     */
+    static async lineGroupDuplicate(text) {
+        let map = {}
+        let lines = text.split('\n')
+        let arr = []
+        for (const line of lines) {
+            if (map[line]) {
+                map[line].count++
+            } else {
+                map[line] = { count: 1, line: line }
+                arr.push(map[line])
+            }
+        }
+        return arr.map(o => `${o.count.toString().padStart(5)}  ${o.line}`).join('\n')
+    }
+    /**
+     * 按数字大小排序文本行
+     * 
+     * @param {string} text 
+     */
+    static async lineSortNumber(text) {
+        function toNum(value) {
+            let match = value.match(/(\d+\.?\d*e-\d+)|(\d+\.?\d*e\d+)|(\d*\.\d+)|(\d+)/g) || [];
+            let nums = match.map((o) => parseFloat(o))
+            return nums[0] || Infinity
+        }
+        let lines = text.split('\n')
+        lines.sort((l, h) => toNum(l) - toNum(h))
+        return lines.join('\n')
+    }
+    /**
+     * 反向排序文本行
+     * 
+     * @param {string} text 
+     */
+    static async lineReverse(text) {
+        let lines = text.split('\n')
+        return lines.reverse().join('\n')
+    }
 }
