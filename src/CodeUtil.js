@@ -35,6 +35,10 @@ module.exports = class CodeUtil {
     static async currentTime() {
         return new Date().toLocaleString()
     }
+    static async guid(text) {
+        let sb = text + Date.now() + Math.random() + Math.random() + Math.random()
+        return require('crypto').createHash("md5").update(sb).digest('hex')
+    }
     static async formatTime(text) {
         const moment = require('moment');
         return text.replace(/(\d{13})|(\d{10})/g, function (val) {

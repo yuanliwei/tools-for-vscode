@@ -48,6 +48,7 @@ function activate(context) {
     addCommand(context, "tools:Line Reverse", LineUtil.lineReverse)
     addCommand(context, "tools:Line Group Duplicate Sort Number Reverse", async (text) => await LineUtil.lineReverse(await LineUtil.lineSortNumber(await LineUtil.lineGroupDuplicate(text))))
     // Format
+    addCommand(context, "tools:guid", CodeUtil.guid, { insert: true })
     addCommand(context, "tools:Current Time", CodeUtil.currentTime, { insert: true })
     addCommand(context, "tools:Format Time", CodeUtil.formatTime)
     addCommand(context, "tools:Run Code", CodeUtil.runCode)

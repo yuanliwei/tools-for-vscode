@@ -129,6 +129,10 @@
                 "title": "Current Time"
             },
             {
+                "command": "tools:guid",
+                "title": "guid"
+            },
+            {
                 "command": "tools:Format Time",
                 "title": "Format Time"
             },
