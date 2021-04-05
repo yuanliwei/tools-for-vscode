@@ -40,8 +40,8 @@ module.exports = class CodeUtil {
         return require('crypto').createHash("md5").update(sb).digest('hex')
     }
     static async formatTime(text) {
-        const moment = require('moment');
-        return text.replace(/(\d{13})|(\d{10})/g, function (val) {
+        const dayjs = require('dayjs');
+        return text.replace(/(\d{11,13})|(\d{10})/g, function (val) {
             var date = parseInt(val)
             // java中的Integer.MAX_VALUE
             if (date == 2147483647) { return val }
@@ -50,7 +50,7 @@ module.exports = class CodeUtil {
                 if (val.startsWith('20')) { return val }
                 date *= 1000
             }
-            return moment(date).format('YYYY-MM-DD HH:mm:ss.SSS')
+            return dayjs(date).format('YYYY-MM-DD HH:mm:ss.SSS')
         })
     }
     static async runCode(code) {
