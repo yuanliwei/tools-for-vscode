@@ -54,6 +54,7 @@ function activate(context) {
     addCommand(context, "tools:Run Code", CodeUtil.runCode)
     addCommand(context, "tools:Eval Print", CodeUtil.evalPrint, { insert: true })
     addCommand(context, "tools:Comment Align", CodeUtil.commentAlign)
+    addCommand(context, "tools:Clean ANSI Escape Codes", CodeUtil.cleanAnsiEscapeCodes)
     addCommand(context, "tools:JS format", CodeUtil.formatJS)
     addCommand(context, "tools:CSS format", CodeUtil.formatCSS)
     addCommand(context, "tools:SQL format", CodeUtil.formatSQL)

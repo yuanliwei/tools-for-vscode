@@ -12,7 +12,7 @@ module.exports = class CodecUtil {
     return Buffer.from(text).toString('base64')
   }
   static async encodeHex(text) {
-    return new Buffer(text, 'utf-8').toString('hex');
+    return Buffer.from(text, 'utf-8').toString('hex');
   }
   static async encodeHtml(text) {
     const he = require('he');
@@ -43,7 +43,7 @@ module.exports = class CodecUtil {
     return Buffer.from(text, 'base64').toString('utf-8')
   }
   static async decodeHex(text) {
-    return new Buffer(text, 'hex').toString('utf8');
+    return Buffer.from(text, 'hex').toString('utf8');
   }
   static async decodeHtml(text) {
     const he = require('he');

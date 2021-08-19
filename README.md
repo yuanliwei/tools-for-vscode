@@ -38,6 +38,7 @@
 - 把当前文档或选中部分当作 JavaScript 代码使用 node 运行 `Run Code`
 - 把当前文档或选中部分当作 JavaScript 表达式使用 node 运行并把返回值追加到选中项后面 `Eval Print`
 - 对齐文档或选中部分的注释(//) `Comment Align`
+- 清理ANSI控制字符 Clean ANSI Escape Codes
 - 把当前文档当作 JavaScript 代码进行格式化 `JS format`
 - 把当前文档当作 CSS 代码进行格式化 `CSS format`
 - 把当前文档当作 SQL 代码进行格式化 `SQL format`
@@ -78,12 +79,6 @@
 - 切换实时翻译开关，开关打开后会把当前选中文本的中文翻译使用 tooltip 的方式提示出来 `Encode Toggle Translate`
 ## 图片转文字
 - 把剪贴板中的图片转换为文字插入到当前文档中 `OCR Paste Image`
-
-## 多个剪贴板&剪贴板同步
-- `Ctrl+Shift+V` 调出剪贴板列表
-- 剪贴板内容通过git仓库在多台设备上保持同步
-- `"tools.multiclip_repo": "git@git.com:yuanliwei/vscode-multiclip.git"`
-- `"tools.multiclip_repo_dir": "./vscode-multiclip"`
 
 # TODO
 ## 文本转语音

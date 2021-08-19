@@ -108,4 +108,11 @@ module.exports = class CodeUtil {
         });
         return newLines.join('\n');
     }
+    /**
+     * @param {String} text 
+     */
+    static async cleanAnsiEscapeCodes(text) {
+        // eslint-disable-next-line no-control-regex
+        return text.replace(/\x1b\[[\d;]+?m/g, '')
+    }
 }
