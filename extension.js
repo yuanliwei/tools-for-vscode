@@ -1,21 +1,20 @@
 // The module 'vscode' contains the VS Code extensibility API
 // Import the module and reference it with the alias vscode in your code below
-const vscode = require('vscode');
+import vscode from 'vscode'
+import CodeUtil from './src/CodeUtil.js'
+import CryptoUtil from './src/CryptoUtil.js'
+import CodecUtil from './src/CodecUtil.js'
+import LineUtil from './src/LineUtil.js'
+import Translate from './src/Translate.js'
+import OCR from './src/OCR.js'
+import MultiClip from './src/MultiClip.js'
 
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
 /**
  * @param {vscode.ExtensionContext} context 
  */
-function activate(context) {
-
-    let CodeUtil = require('./src/CodeUtil')
-    let CryptoUtil = require('./src/CryptoUtil')
-    let CodecUtil = require('./src/CodecUtil')
-    let LineUtil = require('./src/LineUtil')
-    let Translate = require('./src/Translate')
-    let OCR = require('./src/OCR')
-    let MultiClip = require('./src/MultiClip')
+async function activate(context) {
 
     // MultiClip
     addCommand(context, "tools:MultiClip copy", MultiClip.copy)
@@ -96,7 +95,6 @@ function activate(context) {
     addCommand(context, "tools:Encode escape with crlf", CodecUtil.escapeWithcrlf)
     addCommand(context, "tools:Decode unescape", CodecUtil.decodeUnescape)
     // translate
-    addCommand(context, "tools:Translate coffeescript to javascript", CodecUtil.decodeCoffee)
     addCommand(context, "tools:Translate less to css", CodecUtil.decodeLess)
     addCommand(context, "tools:Translate markdown to html", CodecUtil.markdownToHtml)
     addCommand(context, "tools:Translate translate to zh", (text) => Translate.translate(getIks(), 'zh', text))
@@ -106,13 +104,13 @@ function activate(context) {
             translateDisposable.dispose()
             translateDisposable = null
         } else {
-            translateDisposable = vscode.window.setStatusBarMessage(`Baidu Translate is enable!`);
+            translateDisposable = vscode.window.setStatusBarMessage(`Baidu Translate is enable!`)
         }
         return false
     }, { noUpdateDoc: true })
 
     const lastSelection = {}
-    let translateDisposable;
+    let translateDisposable
 
     context.subscriptions.push(vscode.languages.registerHoverProvider({ scheme: '*', language: '*' }, {
         async provideHover(/*document, position, token*/) {
@@ -136,13 +134,13 @@ function activate(context) {
     // register css doc type formater
     registerDocType(context, 'css')
 }
-exports.activate = activate;
+exports.activate = activate
 
 // this method is called when your extension is deactivated
 function deactivate() {
 }
 
-exports.deactivate = deactivate;
+exports.deactivate = deactivate
 
 /**
  * @typedef {Object} addCommandOptions 命令选项
@@ -197,7 +195,7 @@ async function loadAndPutText(func, options) {
         if (!results.join('')) { return }
         if (options.noUpdateDoc) { return }
     } catch (error) {
-        console.error(error);
+        console.error(error)
         vscode.window.showErrorMessage(error.message, error)
         return
     }
@@ -215,8 +213,8 @@ async function loadAndPutText(func, options) {
             }
         } else {
             for (let index = selections.length; index > 0; index--) {
-                const selection = selections[index - 1];
-                const result = results[index - 1];
+                const selection = selections[index - 1]
+                const result = results[index - 1]
                 editorBuilder.replace(selection, result)
             }
         }
@@ -247,8 +245,7 @@ function getOCRIks() {
     return [appId, appKey]
 }
 
-function registerDocType(context, type) {
-    const CodeUtil = require('./src/CodeUtil')
+async function registerDocType(context, type) {
     const formatCSS = async (document, range) => {
         let content = document.getText(range)
         let formatted = await CodeUtil.formatCSS(content)

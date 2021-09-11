@@ -1,6 +1,6 @@
-const vscode = require('vscode');
+import vscode from 'vscode'
 
-module.exports = class View {
+export default class View {
 
     /**
      * @param {vscode.InputBoxOptions} [option] 

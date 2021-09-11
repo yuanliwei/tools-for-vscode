@@ -4,12 +4,11 @@
 //
 
 // The module 'assert' provides assertion methods from node
-const assert = require('assert');
+import assert from 'assert';
+import CodecUtil from '../../src/CodecUtil.js'
 
 // You can import and use all API from the 'vscode' module
 // as well as import your extension to test it
-// const vscode = require('vscode');
-// const myExtension = require('../extension');
 
 // Defines a Mocha test suite to group tests of similar kind together
 suite("Encode Tests", function () {
@@ -17,7 +16,6 @@ suite("Encode Tests", function () {
     // Defines a Mocha unit test
     test("CodecUtil.escapeWithcrlf test", async function () {
 
-        const CodecUtil = require('../../src/CodecUtil')
         let result = await CodecUtil.escapeWithcrlf(`b.tabIndicator.setOnCheckedChangeListener((group, checkedId) -> {
         testController.setEnable(b.reportTest.isChecked());
         bookController.setEnable(b.reportBook.isChecked());

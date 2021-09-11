@@ -1,6 +1,8 @@
+import View from './View.js'
+
 let regexpInput = ''
 
-module.exports = class LineUtil {
+export default class LineUtil {
     static async lineRemoveDuplicate(text) {
         return [...new Set(text.split('\n'))].join('\n')
     }
@@ -14,7 +16,6 @@ module.exports = class LineUtil {
         return text.split('\n').filter(o => o.trim()).join('\n')
     }
     static async lineRemoveMatchRegexp(text) {
-        const View = require('./View')
         let regexp = await View.getString({
             value: regexpInput,
             placeHolder: 'https?://.*com/',
@@ -26,7 +27,6 @@ module.exports = class LineUtil {
         return text.split('\n').filter(o => !o.match(reg)).join('\n')
     }
     static async lineRemoveNotMatchRegexp(text) {
-        const View = require('./View')
         let regexp = await View.getString({
             value: regexpInput,
             placeHolder: 'https?://.*com/',
@@ -57,7 +57,6 @@ module.exports = class LineUtil {
         return text.split('\n').map(o => `${(num++).toString().padStart(4, ' ')} ${o}`).join('\n')
     }
     static async addLineNumberWithSeparator(text) {
-        const View = require('./View')
         let separator = await View.getString({
             placeHolder: '.: ,></?][{}-=_+',
             prompt: '自定义分隔符'
@@ -66,7 +65,6 @@ module.exports = class LineUtil {
         return text.split('\n').map(o => `${(num++).toString().padStart(4, ' ')}${separator}${o}`).join('\n')
     }
     static async addLineNumberFromInput(text) {
-        const View = require('./View')
         let startNum = await View.getString({
             placeHolder: 'start num',
             prompt: '输入开始数字'
@@ -96,7 +94,7 @@ module.exports = class LineUtil {
      * @param {string} text 
      */
     static async firstLetterLowercase(text) {
-        console.log(text);
+        console.log(text)
         return text.replace(/^\w/, (a) => a.toLowerCase()).replace(/(\W)(\w)/g, (_, b, c) => `${b}${c.toLowerCase()}`)
     }
     /**
@@ -133,7 +131,7 @@ module.exports = class LineUtil {
      */
     static async lineSortNumber(text) {
         function toNum(value) {
-            let match = value.match(/(\d+\.?\d*e-\d+)|(\d+\.?\d*e\d+)|(\d*\.\d+)|(\d+)/g) || [];
+            let match = value.match(/(\d+\.?\d*e-\d+)|(\d+\.?\d*e\d+)|(\d*\.\d+)|(\d+)/g) || []
             let nums = match.map((o) => parseFloat(o))
             return nums[0] || Infinity
         }

@@ -1,8 +1,13 @@
-const vkbeautify = require('vkbeautify');
-const js_beautify = require('js-beautify');
-const { runInNewContext } = require('vm');
-
-module.exports = class CodeUtil {
+import vkbeautify from 'vkbeautify'
+import js_beautify from 'js-beautify'
+import { runInNewContext } from 'vm'
+import crypto from 'crypto'
+import dayjs from 'dayjs'
+import fs from 'fs'
+import path from 'path'
+import os from 'os'
+import vscode from 'vscode'
+class CodeUtil {
     static async formatJSON(text) {
         return vkbeautify.json(text)
     }
@@ -37,10 +42,9 @@ module.exports = class CodeUtil {
     }
     static async guid(text) {
         let sb = text + Date.now() + Math.random() + Math.random() + Math.random()
-        return require('crypto').createHash("md5").update(sb).digest('hex')
+        return crypto.createHash("md5").update(sb).digest('hex')
     }
     static async formatTime(text) {
-        const dayjs = require('dayjs');
         return text.replace(/(\d{11,13})|(\d{10})/g, function (val) {
             var date = parseInt(val)
             // java中的Integer.MAX_VALUE
@@ -54,11 +58,6 @@ module.exports = class CodeUtil {
         })
     }
     static async runCode(code) {
-        const fs = require('fs')
-        const path = require('path')
-        const os = require('os')
-        const vscode = require('vscode');
-
         let runFilePath = path.join(os.tmpdir(), `tmp-${Date.now()}.js`)
         let editor = vscode.window.activeTextEditor
         if (editor && !editor.document.isDirty && code == editor.document.getText()) {
@@ -79,34 +78,34 @@ module.exports = class CodeUtil {
         return code + ' ' + result
     }
     static async commentAlign(text) {
-        var maxLength = 0;
-        var lines = text.split('\n');
+        var maxLength = 0
+        var lines = text.split('\n')
         lines.forEach(function (item) {
-            item = item.replace('//', '#sp#//');
-            var items = item.split('#sp#');
+            item = item.replace('//', '#sp#//')
+            var items = item.split('#sp#')
             if (items.length == 2) {
-                maxLength = Math.max(maxLength, items[0].length);
+                maxLength = Math.max(maxLength, items[0].length)
             }
-        });
-        var newLines = [];
-        var m = /http.?:\/\//;
+        })
+        var newLines = []
+        var m = /http.?:\/\//
         lines.forEach(function (item) {
             if (!m.test(item)) {
-                item = item.replace('//', '#sp#//');
+                item = item.replace('//', '#sp#//')
             }
-            var items = item.split('#sp#//');
-            var newLine = items[0];
+            var items = item.split('#sp#//')
+            var newLine = items[0]
             if (items.length == 2) {
                 if (items[0].trim().length == 0) {
-                    newLine += '// ' + items[1].trim();
+                    newLine += '// ' + items[1].trim()
                 } else {
-                    var space = maxLength - items[0].length;
-                    newLine += ' '.repeat(space) + '// ' + items[1].trim();
+                    var space = maxLength - items[0].length
+                    newLine += ' '.repeat(space) + '// ' + items[1].trim()
                 }
             }
-            newLines.push(newLine);
-        });
-        return newLines.join('\n');
+            newLines.push(newLine)
+        })
+        return newLines.join('\n')
     }
     /**
      * @param {String} text 
@@ -116,3 +115,5 @@ module.exports = class CodeUtil {
         return text.replace(/\x1b\[[\d;]+?m/g, '')
     }
 }
+
+export default CodeUtil

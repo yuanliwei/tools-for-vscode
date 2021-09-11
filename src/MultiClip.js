@@ -1,7 +1,8 @@
-const vscode = require('vscode')
-const { execSync } = require('child_process')
-const fs = require('fs')
-const path = require('path')
+import vscode from 'vscode'
+import { execSync } from 'child_process'
+import fs from 'fs'
+import path from 'path'
+import crypto from 'crypto'
 
 /**
  * @typedef{object} ClipItem
@@ -17,7 +18,7 @@ let clipBuffer = []
 
 let syncTimer = null
 
-const md5 = (s) => require('crypto').createHash("md5").update(s).digest('hex')
+const md5 = (s) => crypto.createHash("md5").update(s).digest('hex')
 
 let copyToClipBuffer = () => {
     let editor = vscode.window.activeTextEditor
@@ -215,4 +216,4 @@ class MultiClip {
     }
 }
 
-module.exports = MultiClip
+export default MultiClip

@@ -14,6 +14,7 @@
         "*"
     ],
     "main": "./extension",
+    "type": "module",
     "contributes": {
         "commands": [
             {
@@ -277,10 +278,6 @@
                 "title": "Decode unescape"
             },
             {
-                "command": "tools:Translate coffeescript to javascript",
-                "title": "Translate coffeescript to javascript"
-            },
-            {
                 "command": "tools:Translate less to css",
                 "title": "Translate less to css"
             },
@@ -365,6 +362,7 @@
         "js-beautify": "^1.13.5",
         "less": "^3.13.1",
         "markdown-it": "^12.0.4",
+        "node-fetch": "^3.0.0",
         "vkbeautify": "^0.99.3"
     }
 }

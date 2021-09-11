@@ -70,7 +70,6 @@
 - 对文档选中部分使用 Unicode 编码进行解码 `Encode decodeUnicode`
 - 对文档选中部分使用 escape 编码进行解码 `Encode decodeEscape`
 ## 转码
-- 把当前文档当作 `CoffeeScript` 转换为 `JavaScript` 代码 `Encode decodeCoffee`
 - 把当前文档当作 `Less` 转换为 `CSS` 代码 `Encode decodeLess`
 - 把当前文档当作 `Markdown` 转换为 `HTML` 代码 `Encode markdownToHtml`
 ## 翻译
