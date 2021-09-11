@@ -1,63 +1,132 @@
+const vscode = require('vscode')
+const os = require('os')
+const path = require('path')
+const crypto = require('crypto')
+const fs = require('fs')
+/** @type{import('node-fetch').default} */
+const fetch = (...args) => import('node-fetch').then(({ default: fetch }) => fetch(...args))
+const { spawn } = require('child_process')
 module.exports = class OCR {
     static async pasteImage(iks) {
         if (!iks) return
-        const vscode = require('vscode')
         return vscode.window.withProgress({ location: vscode.ProgressLocation.Window, title: 'pasteImage...' }, async () => {
-            const os = require('os')
-            const path = require('path')
-            const fs = require('fs')
             let imagePath = path.join(os.tmpdir(), `pasteImg-${Date.now()}.png`)
             let resultImgPath = await saveClipboardImageToFileAndGetPath(imagePath)
             if (!fs.existsSync(resultImgPath)) { return }
-            let text = await fetchImgTextByOCR(iks, resultImgPath);
+            let text = await fetchImgTextByOCR(iks, resultImgPath)
             return text
         })
     }
 }
 
 async function fetchImgTextByOCR([appId, appKey], imagePath) {
-    const Request = require('./Request')
-    let r = new Request()
-    const querystring = require('querystring')
-    const fs = require('fs')
 
-    let md5 = (s) => require('crypto').createHash("md5").update(s).digest('hex')
+    let base64 = fs.readFileSync(imagePath).toString('base64')
 
-    let image = fs.readFileSync(imagePath).toString('base64')
+    function sha256(message, secret = '', encoding) {
+        const hmac = crypto.createHmac('sha256', secret)
+        return hmac.update(message).digest(encoding)
+    }
 
-    let nonce_str = md5(Math.random().toString())
-    let time_stamp = Math.round(Date.now() / 1000)
+    function getHash(message) {
+        const hash = crypto.createHash('sha256')
+        return hash.update(message).digest('hex')
+    }
 
-    let sign = md5(querystring.stringify({
-        app_id: appId,
-        image: image,
-        nonce_str: nonce_str,
-        time_stamp: time_stamp,
-        app_key: appKey,
-    })).toUpperCase()
+    function getDate(timestamp) {
+        const date = new Date(timestamp * 1000)
+        const year = date.getUTCFullYear()
+        const month = ('0' + (date.getUTCMonth() + 1)).slice(-2)
+        const day = ('0' + date.getUTCDate()).slice(-2)
+        return `${year}-${month}-${day}`
+    }
 
-    let url = `https://api.ai.qq.com/fcgi-bin/ocr/ocr_generalocr`
-    let result = await r.post(url, {
-        // 'Content-Type': 'application/json',
-    }, querystring.stringify({
-        app_id: appId,          // 是  int  正整数  1000001  应用标识（AppId）
-        time_stamp: time_stamp, // 是  int  正整数  1493468759  请求时间戳（秒级）
-        nonce_str: nonce_str,   // 是  string  非空且长度上限32字节  fa577ce340859f9fe  随机字符串
-        sign: sign,             // 是  string  非空且长度固定32字节    签名信息，详见接口鉴权
-        image: image,           // 是  string  原始图片的base64编码数据（原图大小上限1MB，支持JPG、PNG、BMP格式）
-    }))
-    let json = JSON.parse(result)
-    let arr = json.data.item_list
+    // 密钥参数
+    const SECRET_ID = appId
+    const SECRET_KEY = appKey
+
+    // https://cloud.tencent.com/document/api/866/33526
+    const endpoint = "ocr.tencentcloudapi.com"
+    const service = "ocr"
+    const region = "ap-guangzhou"
+    const action = "GeneralBasicOCR"
+    const version = "2018-11-19"
+
+    const timestamp = (Date.now() / 1000).toFixed(0)
+    //时间处理, 获取世界时间日期
+    const date = getDate(timestamp)
+
+    // ************* 步骤 1：拼接规范请求串 *************
+    const signedHeaders = "content-type;host"
+
+    const payload = JSON.stringify({
+        ImageBase64: base64
+    })
+
+    const hashedRequestPayload = getHash(payload)
+    const httpRequestMethod = "POST"
+    const canonicalUri = "/"
+    const canonicalQueryString = ""
+    const canonicalHeaders = "content-type:application/json; charset=utf-8\n" + "host:" + endpoint + "\n"
+
+    const canonicalRequest = httpRequestMethod + "\n"
+        + canonicalUri + "\n"
+        + canonicalQueryString + "\n"
+        + canonicalHeaders + "\n"
+        + signedHeaders + "\n"
+        + hashedRequestPayload
+    console.log(canonicalRequest)
+
+    // ************* 步骤 2：拼接待签名字符串 *************
+    const algorithm = "TC3-HMAC-SHA256"
+    const hashedCanonicalRequest = getHash(canonicalRequest)
+    const credentialScope = date + "/" + service + "/" + "tc3_request"
+    const stringToSign = algorithm + "\n" +
+        timestamp + "\n" +
+        credentialScope + "\n" +
+        hashedCanonicalRequest
+    console.log(stringToSign)
+
+    // ************* 步骤 3：计算签名 *************
+    const kDate = sha256(date, 'TC3' + SECRET_KEY)
+    const kService = sha256(service, kDate)
+    const kSigning = sha256('tc3_request', kService)
+    const signature = sha256(stringToSign, kSigning, 'hex')
+    console.log(signature)
+
+    // ************* 步骤 4：拼接 Authorization *************
+    const authorization = algorithm + " " +
+        "Credential=" + SECRET_ID + "/" + credentialScope + ", " +
+        "SignedHeaders=" + signedHeaders + ", " +
+        "Signature=" + signature
+    console.log(authorization)
+
+    /** @type{Object} */
+    let json = await (await fetch("https://" + endpoint, {
+        method: 'POST',
+        headers: {
+            "Authorization": authorization,
+            "Content-Type": "application/json; charset=utf-8",
+            "Host": endpoint,
+            "X-TC-Action": action,
+            "X-TC-Timestamp": timestamp,
+            "X-TC-Version": version,
+            "X-TC-Region": region,
+        },
+        body: payload
+    })).json()
+
+    let arr = json.Response.TextDetections
 
     let str = ''
     let curX = 0
     let curY = 0
 
     for (const item of arr) {
-        let x = item.itemcoord[0].x
-        let y = item.itemcoord[0].y
-        let w = item.itemcoord[0].width
-        let h = item.itemcoord[0].height
+        let x = item.ItemPolygon.X
+        let y = item.ItemPolygon.Y
+        let w = item.ItemPolygon.Width
+        let h = item.ItemPolygon.Height
         let lfNum = Math.round((y - curY) / h / 2)
         if (lfNum) {
             curX = 0
@@ -65,7 +134,7 @@ async function fetchImgTextByOCR([appId, appKey], imagePath) {
         }
         let spaceNum = Math.max(0, Math.round((x - curX) / h))
         let space = ' '.repeat(spaceNum)
-        str += space + item.itemstring
+        str += space + item.DetectedText
         if (curX == 0) { curX = x }
         curX += w
         curY = y
@@ -78,17 +147,14 @@ async function fetchImgTextByOCR([appId, appKey], imagePath) {
  * @param {string} imagePath 
  */
 async function saveClipboardImageToFileAndGetPath(imagePath) {
-    if (!imagePath) return;
-    const fs = require('fs')
-    const path = require('path')
-    const { spawn } = require('child_process')
+    if (!imagePath) return
     return new Promise((resolve, reject) => {
         let platform = process.platform
         if (platform === 'win32') {
             // Windows
-            const scriptPath = path.join(__dirname, '../res/pc.ps1');
+            const scriptPath = path.join(__dirname, '../res/pc.ps1')
 
-            let command = "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe";
+            let command = "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe"
             let powershellExisted = fs.existsSync(command)
             if (!powershellExisted) {
                 command = "powershell"
@@ -103,42 +169,42 @@ async function saveClipboardImageToFileAndGetPath(imagePath) {
                 '-windowstyle', 'hidden',
                 '-file', scriptPath,
                 imagePath
-            ]);
+            ])
             powershell.on('error', function (e) {
                 reject(e)
             })
             powershell.stdout.on('data', function (data) {
-                resolve(data.toString().trim());
+                resolve(data.toString().trim())
             })
         }
         else if (platform === 'darwin') {
             // Mac
-            let scriptPath = path.join(__dirname, '../res/mac.applescript');
+            let scriptPath = path.join(__dirname, '../res/mac.applescript')
 
-            let ascript = spawn('osascript', [scriptPath, imagePath]);
+            let ascript = spawn('osascript', [scriptPath, imagePath])
             ascript.on('error', function (e) {
                 reject(e)
             })
             ascript.stdout.on('data', function (data) {
-                resolve(data.toString().trim());
+                resolve(data.toString().trim())
             })
         } else {
             // Linux 
 
-            let scriptPath = path.join(__dirname, '../../res/linux.sh');
+            let scriptPath = path.join(__dirname, '../../res/linux.sh')
 
-            let ascript = spawn('sh', [scriptPath, imagePath]);
+            let ascript = spawn('sh', [scriptPath, imagePath])
             ascript.on('error', function (e) {
                 reject(e)
-            });
+            })
             ascript.stdout.on('data', function (data) {
-                let result = data.toString().trim();
+                let result = data.toString().trim()
                 if (result == "no xclip") {
-                    reject('You need to install xclip command first.');
+                    reject('You need to install xclip command first.')
                 } else {
-                    resolve(result);
+                    resolve(result)
                 }
-            });
+            })
 
         }
     })
