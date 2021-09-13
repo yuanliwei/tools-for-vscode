@@ -1,6 +1,6 @@
 const crypto = require('crypto')
-/** @type{import('node-fetch').default} */
-const fetch = (...args) => import('node-fetch').then(({default: fetch}) => fetch(...args));
+const fetch = require('node-fetch')
+const { URLSearchParams } = require('url')
 const CodecUtil = require('./CodecUtil')
 
 module.exports = class Translate {

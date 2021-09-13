@@ -3,8 +3,7 @@ const os = require('os')
 const path = require('path')
 const crypto = require('crypto')
 const fs = require('fs')
-/** @type{import('node-fetch').default} */
-const fetch = (...args) => import('node-fetch').then(({ default: fetch }) => fetch(...args))
+const fetch = require('node-fetch')
 const { spawn } = require('child_process')
 module.exports = class OCR {
     static async pasteImage(iks) {
