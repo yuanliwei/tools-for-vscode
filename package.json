@@ -362,7 +362,7 @@
         "coffee-script": "^1.12.7",
         "dayjs": "^1.10.4",
         "he": "^1.2.0",
-        "js-beautify": "^1.13.5",
+        "js-beautify": "^1.14.1",
         "less": "^3.13.1",
         "markdown-it": "^12.0.4",
         "node-fetch": "^2.6.2",
