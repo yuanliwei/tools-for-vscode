@@ -60,7 +60,7 @@ module.exports = class CodecUtil {
   }
 
   static async decodeCoffee(text) {
-    const coffee = require('coffee-script')
+    const coffee = require('coffeescript')
     return coffee.compile(text, { bare: true })
   }
 
