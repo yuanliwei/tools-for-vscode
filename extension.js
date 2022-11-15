@@ -1,6 +1,6 @@
 // The module 'vscode' contains the VS Code extensibility API
 // Import the module and reference it with the alias vscode in your code below
-const vscode = require('vscode');
+const vscode = require('vscode')
 
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
@@ -54,6 +54,7 @@ function activate(context) {
     addCommand(context, "tools:Run Code", CodeUtil.runCode)
     addCommand(context, "tools:Eval Print", CodeUtil.evalPrint, { insert: true })
     addCommand(context, "tools:Comment Align", CodeUtil.commentAlign)
+    addCommand(context, "tools:Cursor Align", CodeUtil.cursorAlign, { fullDocument: true })
     addCommand(context, "tools:Clean ANSI Escape Codes", CodeUtil.cleanAnsiEscapeCodes)
     addCommand(context, "tools:JS format", CodeUtil.formatJS)
     addCommand(context, "tools:CSS format", CodeUtil.formatCSS)
@@ -106,13 +107,13 @@ function activate(context) {
             translateDisposable.dispose()
             translateDisposable = null
         } else {
-            translateDisposable = vscode.window.setStatusBarMessage(`Baidu Translate is enable!`);
+            translateDisposable = vscode.window.setStatusBarMessage(`Baidu Translate is enable!`)
         }
         return false
     }, { noUpdateDoc: true })
 
     const lastSelection = {}
-    let translateDisposable;
+    let translateDisposable
 
     context.subscriptions.push(vscode.languages.registerHoverProvider({ scheme: '*', language: '*' }, {
         async provideHover(/*document, position, token*/) {
@@ -136,13 +137,13 @@ function activate(context) {
     // register css doc type formater
     registerDocType(context, 'css')
 }
-exports.activate = activate;
+exports.activate = activate
 
 // this method is called when your extension is deactivated
 function deactivate() {
 }
 
-exports.deactivate = deactivate;
+exports.deactivate = deactivate
 
 /**
  * @typedef {Object} addCommandOptions 命令选项
@@ -150,6 +151,7 @@ exports.deactivate = deactivate;
  * @property {boolean} [insert] 把结果插入当前光标所在位置
  * @property {number} [insertLines] 把结果插入当前光标所在位置之后指定行数之后的新行
  * @property {boolean} [noUpdateDoc] 不需要更新文档内容
+ * @property {boolean} [fullDocument] 需要整体文档信息
  */
 
 /**
@@ -157,7 +159,7 @@ exports.deactivate = deactivate;
  * 
  * @param {vscode.ExtensionContext} context context
  * @param {string} name command
- * @param {(selText: string, docText: string) => Promise<?>} func 执行器 参数为1:选中的文本或整个文档,2:整个文档
+ * @param {(selText: string, docText: string, editor: vscode.TextEditor) => Promise<?>} func 执行器 参数为1:选中的文本或整个文档,2:整个文档
  * @param {addCommandOptions} [options] options - 默认替换选中的文本，如果没有选中的文本则替换整个文档的文本
  */
 function addCommand(context, name, func, options) {
@@ -167,6 +169,11 @@ function addCommand(context, name, func, options) {
     )
 }
 
+/**
+ * @param {Function} func 
+ * @param {addCommandOptions} options 
+ * @returns 
+ */
 async function loadAndPutText(func, options) {
     let editor = vscode.window.activeTextEditor
     if (!editor) {
@@ -177,8 +184,7 @@ async function loadAndPutText(func, options) {
     let texts = []
     let results = []
     let selectionIsEmpty = selections[0].isEmpty
-
-    if (selectionIsEmpty) {
+    if (selectionIsEmpty && !options.fullDocument) {
         texts.push(editor.document.getText())
     } else {
         for (const selection of selections) {
@@ -186,6 +192,9 @@ async function loadAndPutText(func, options) {
         }
     }
     try {
+        if (options.fullDocument) {
+            func = await func(null, null, editor)
+        }
         /**
          * @function func(selText,docText)
          * @param {string} selText : selection string or full document text
@@ -197,7 +206,7 @@ async function loadAndPutText(func, options) {
         if (!results.join('')) { return }
         if (options.noUpdateDoc) { return }
     } catch (error) {
-        console.error(error);
+        console.error(error)
         vscode.window.showErrorMessage(error.message, error)
         return
     }
@@ -207,7 +216,7 @@ async function loadAndPutText(func, options) {
         let selAllRange = new vscode.Range(0, 0, lastLine, lastCharacter)
         if (options.replaceAll) {
             editorBuilder.replace(selAllRange, results[0])
-        } else if (selectionIsEmpty) {
+        } else if (selectionIsEmpty && !options.fullDocument) {
             if (options.insert) {
                 editorBuilder.replace(selections[0], results[0])
             } else {
@@ -215,8 +224,8 @@ async function loadAndPutText(func, options) {
             }
         } else {
             for (let index = selections.length; index > 0; index--) {
-                const selection = selections[index - 1];
-                const result = results[index - 1];
+                const selection = selections[index - 1]
+                const result = results[index - 1]
                 editorBuilder.replace(selection, result)
             }
         }

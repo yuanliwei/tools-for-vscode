@@ -38,6 +38,7 @@
 - 把当前文档或选中部分当作 JavaScript 代码使用 node 运行 `Run Code`
 - 把当前文档或选中部分当作 JavaScript 表达式使用 node 运行并把返回值追加到选中项后面 `Eval Print`
 - 对齐文档或选中部分的注释(//) `Comment Align`
+- 对齐光标所在位置 `Cursor Align`
 - 清理ANSI控制字符 Clean ANSI Escape Codes
 - 把当前文档当作 JavaScript 代码进行格式化 `JS format`
 - 把当前文档当作 CSS 代码进行格式化 `CSS format`

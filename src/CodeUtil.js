@@ -1,6 +1,6 @@
-const vkbeautify = require('vkbeautify');
-const js_beautify = require('js-beautify');
-const { runInNewContext } = require('vm');
+const vkbeautify = require('vkbeautify')
+const js_beautify = require('js-beautify')
+const { runInNewContext } = require('vm')
 
 module.exports = class CodeUtil {
     static async formatJSON(text) {
@@ -40,7 +40,7 @@ module.exports = class CodeUtil {
         return require('crypto').createHash("md5").update(sb).digest('hex')
     }
     static async formatTime(text) {
-        const dayjs = require('dayjs');
+        const dayjs = require('dayjs')
         return text.replace(/(\d{11,13})|(\d{10})/g, function (val) {
             var date = parseInt(val)
             // java中的Integer.MAX_VALUE
@@ -57,7 +57,7 @@ module.exports = class CodeUtil {
         const fs = require('fs')
         const path = require('path')
         const os = require('os')
-        const vscode = require('vscode');
+        const vscode = require('vscode')
 
         let runFilePath = path.join(os.tmpdir(), `tmp-${Date.now()}.js`)
         let editor = vscode.window.activeTextEditor
@@ -79,34 +79,63 @@ module.exports = class CodeUtil {
         return code + ' ' + result
     }
     static async commentAlign(text) {
-        var maxLength = 0;
-        var lines = text.split('\n');
+        var maxLength = 0
+        var lines = text.split('\n')
         lines.forEach(function (item) {
-            item = item.replace('//', '#sp#//');
-            var items = item.split('#sp#');
+            item = item.replace('//', '#sp#//')
+            var items = item.split('#sp#')
             if (items.length == 2) {
-                maxLength = Math.max(maxLength, items[0].length);
+                maxLength = Math.max(maxLength, items[0].length)
             }
-        });
-        var newLines = [];
-        var m = /http.?:\/\//;
+        })
+        var newLines = []
+        var m = /http.?:\/\//
         lines.forEach(function (item) {
             if (!m.test(item)) {
-                item = item.replace('//', '#sp#//');
+                item = item.replace('//', '#sp#//')
             }
-            var items = item.split('#sp#//');
-            var newLine = items[0];
+            var items = item.split('#sp#//')
+            var newLine = items[0]
             if (items.length == 2) {
                 if (items[0].trim().length == 0) {
-                    newLine += '// ' + items[1].trim();
+                    newLine += '// ' + items[1].trim()
                 } else {
-                    var space = maxLength - items[0].length;
-                    newLine += ' '.repeat(space) + '// ' + items[1].trim();
+                    var space = maxLength - items[0].length
+                    newLine += ' '.repeat(space) + '// ' + items[1].trim()
                 }
             }
-            newLines.push(newLine);
-        });
-        return newLines.join('\n');
+            newLines.push(newLine)
+        })
+        return newLines.join('\n')
+    }
+
+    /**
+     * @param {null} _text
+     * @param {null} _doc
+     * @param {import('vscode').TextEditor} editor
+     * @returns
+     */
+    static async cursorAlign(_text, _doc, editor) {
+
+        let selections = editor.selections
+
+        console.log(selections)
+        let maxColumn = 0
+        let insertSpaces = []
+        for (let i = 0; i < selections.length; i++) {
+            const selection = selections[i]
+            maxColumn = Math.max(maxColumn, selection.end.character)
+            insertSpaces[i] = selection.end.character
+        }
+        maxColumn++
+        for (let i = 0; i < insertSpaces.length; i++) {
+            const insertSpace = insertSpaces[i]
+            insertSpaces[i] = maxColumn - insertSpace
+        }
+        let index = 0
+        return () => {
+            return ' '.repeat(insertSpaces[index++])
+        }
     }
     /**
      * @param {String} text 

@@ -149,6 +149,10 @@
                 "title": "Comment Align"
             },
             {
+                "command": "tools:Cursor Align",
+                "title": "Cursor Align"
+            },
+            {
                 "command": "tools:Clean ANSI Escape Codes",
                 "title": "Clean ANSI Escape Codes"
             },
