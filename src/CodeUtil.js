@@ -3,6 +3,7 @@ const js_beautify = require('js-beautify')
 const fetch = require('node-fetch').default
 const { runInNewContext } = require('vm')
 const config = require('./Config.js')
+const View = require('./View.js')
 
 module.exports = class CodeUtil {
     static async formatJSON(text) {
@@ -164,23 +165,25 @@ async function sendMessage(message) {
         return ''
     }
     let messages = [{ "role": "user", "content": message }]
-    try {
-        /** @type{Object} */
-        let ret = await (await fetch(config.chatGPTProxyURL(), {
-            method: 'POST',
-            headers: {
-                'x-client-id': config.chatGPTProxyClientId(),
-            },
-            body: JSON.stringify({
-                model: "gpt-3.5-turbo",
-                messages: messages,
-                // max_tokens: 4096,
-            })
-        })).json()
-        console.log(ret.choices[0].message.content)
-        return ret.choices[0].message.content
-    } catch (error) {
-        console.error(error)
-        return '\n' + error.stack
-    }
+    return View.runWithLoading('chatgpt', async () => {
+        try {
+            /** @type{Object} */
+            let ret = await (await fetch(config.chatGPTProxyURL(), {
+                method: 'POST',
+                headers: {
+                    'x-client-id': config.chatGPTProxyClientId(),
+                },
+                body: JSON.stringify({
+                    model: "gpt-3.5-turbo",
+                    messages: messages,
+                    // max_tokens: 4096,
+                })
+            })).json()
+            console.log(ret.choices[0].message.content)
+            return ret.choices[0].message.content
+        } catch (error) {
+            console.error(error)
+            return '\n' + error.stack
+        }
+    })
 }

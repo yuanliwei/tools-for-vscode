@@ -21,4 +21,16 @@ module.exports = class View {
     static async toastInfo(message) {
         vscode.window.showInformationMessage(message)
     }
+
+    /**
+     * 
+     * @param {string} title 
+     * @param {Function} func 
+     * @returns 
+     */
+    static async runWithLoading(title, func) {
+        return vscode.window.withProgress({ location: vscode.ProgressLocation.Window, title }, async () => {
+            return await func()
+        })
+    }
 }
