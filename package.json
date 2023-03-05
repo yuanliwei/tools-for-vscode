@@ -303,6 +303,10 @@
             {
                 "command": "tools:Translate toggle translate",
                 "title": "Translate toggle translate"
+            },
+            {
+                "command": "tools:chatGPT",
+                "title": "chatGPT"
             }
         ],
         "configuration": {
@@ -343,6 +347,16 @@
                     "type": "number",
                     "default": 5000,
                     "description": "MultiClip Buffer Count"
+                },
+                "tools.chatgpt_proxy_url": {
+                    "type": "string",
+                    "default": "",
+                    "description": "chatGPT Proxy URL"
+                },
+                "tools.chatgpt_proxy_client_id": {
+                    "type": "string",
+                    "default": "()=>''",
+                    "description": "chatGPT Proxy ClientId"
                 }
             }
         }
@@ -355,10 +369,10 @@
     "devDependencies": {
         "@types/node": "^18.11.9",
         "@types/vscode": "^1.73.1",
+        "@vscode/test-electron": "^2.2.0",
         "eslint": "^8.27.0",
         "glob": "^8.0.3",
-        "mocha": "^10.1.0",
-        "@vscode/test-electron": "^2.2.0"
+        "mocha": "^10.1.0"
     },
     "dependencies": {
         "coffeescript": "^2.7.0",
@@ -367,7 +381,7 @@
         "js-beautify": "^1.14.7",
         "less": "^4.1.3",
         "markdown-it": "^13.0.1",
-        "node-fetch": "^3.3.0",
+        "node-fetch": "^2.6.9",
         "vkbeautify": "^0.99.3"
     }
 }

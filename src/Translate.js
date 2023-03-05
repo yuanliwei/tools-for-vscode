@@ -1,4 +1,5 @@
 const crypto = require('crypto')
+const fetch = require('node-fetch').default
 const { URLSearchParams } = require('url')
 const CodecUtil = require('./CodecUtil')
 
@@ -43,7 +44,6 @@ async function translateBaidu(iks, lang, textString) {
     params.append('from', from)
     params.append('to', to)
     params.append('sign', sign)
-    const fetch = (await import('node-fetch')).default
     /** @type{Object} */
     let result = await (await fetch(`https://api.fanyi.baidu.com/api/trans/vip/translate`, {
         method: 'POST',

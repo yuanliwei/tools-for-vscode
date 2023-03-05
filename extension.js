@@ -1,6 +1,8 @@
 // The module 'vscode' contains the VS Code extensibility API
 // Import the module and reference it with the alias vscode in your code below
 const vscode = require('vscode')
+const config = require('./src/Config.js')
+const View = require('./src/View.js')
 
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
@@ -111,6 +113,7 @@ function activate(context) {
         }
         return false
     }, { noUpdateDoc: true })
+    addCommand(context, "tools:chatGPT", CodeUtil.chatGPT, { insertAfter: true })
 
     const lastSelection = {}
     let translateDisposable
@@ -150,6 +153,7 @@ exports.deactivate = deactivate
  * @property {boolean} [replaceAll] 使用最终结果替换整个文档的内容
  * @property {boolean} [insert] 把结果插入当前光标所在位置
  * @property {number} [insertLines] 把结果插入当前光标所在位置之后指定行数之后的新行
+ * @property {boolean} [insertAfter] 在当前选中内容之后新起一行插入结果
  * @property {boolean} [noUpdateDoc] 不需要更新文档内容
  * @property {boolean} [fullDocument] 需要整体文档信息
  */
@@ -214,7 +218,13 @@ async function loadAndPutText(func, options) {
         let lastLine = editor.document.lineCount - 1
         let lastCharacter = editor.document.lineAt(lastLine).range.end.character
         let selAllRange = new vscode.Range(0, 0, lastLine, lastCharacter)
-        if (options.replaceAll) {
+        if (options.insertAfter) {
+            for (let index = selections.length; index > 0; index--) {
+                const selection = selections[index - 1]
+                const result = results[index - 1]
+                editorBuilder.replace(selection.end, result)
+            }
+        } else if (options.replaceAll) {
             editorBuilder.replace(selAllRange, results[0])
         } else if (selectionIsEmpty && !options.fullDocument) {
             if (options.insert) {
@@ -233,24 +243,20 @@ async function loadAndPutText(func, options) {
 }
 
 function getIks() {
-    let config = vscode.workspace.getConfiguration()
-    if (!config) { return false }
-    let appId = config.get('tools.translate_app_id')
-    let appKey = config.get('tools.translate_key')
+    let appId = config.translateAppId()
+    let appKey = config.translateAppKey()
     if (!appId || !appKey) {
-        vscode.window.showWarningMessage('需要配置百度翻译 appId、appKey。')
+        View.toastWarn('需要配置百度翻译 appId、appKey。')
         return false
     }
     return [appId, appKey]
 }
 
 function getOCRIks() {
-    let config = vscode.workspace.getConfiguration()
-    if (!config) { return false }
-    let appId = config.get('tools.qq_ocr_app_id')
-    let appKey = config.get('tools.qq_ocr_app_key')
+    let appId = config.qqOCRAppId()
+    let appKey = config.qqOCRAppKey()
     if (!appId || !appKey) {
-        vscode.window.showWarningMessage('需要配置 QQ OCR appId、appKey。')
+        View.toastWarn('需要配置 QQ OCR appId、appKey。')
         return false
     }
     return [appId, appKey]

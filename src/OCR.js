@@ -1,6 +1,7 @@
 const vscode = require('vscode')
 const os = require('os')
 const path = require('path')
+const fetch = require('node-fetch').default
 const crypto = require('crypto')
 const fs = require('fs')
 const { spawn } = require('child_process')
@@ -99,7 +100,6 @@ async function fetchImgTextByOCR([appId, appKey], imagePath) {
         "Signature=" + signature
     console.log(authorization)
 
-    const fetch = (await import('node-fetch')).default
     /** @type{Object} */
     let json = await (await fetch("https://" + endpoint, {
         method: 'POST',

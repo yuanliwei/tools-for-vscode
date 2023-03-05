@@ -1,6 +1,8 @@
 const vkbeautify = require('vkbeautify')
 const js_beautify = require('js-beautify')
+const fetch = require('node-fetch').default
 const { runInNewContext } = require('vm')
+const config = require('./Config.js')
 
 module.exports = class CodeUtil {
     static async formatJSON(text) {
@@ -143,5 +145,42 @@ module.exports = class CodeUtil {
     static async cleanAnsiEscapeCodes(text) {
         // eslint-disable-next-line no-control-regex
         return text.replace(/\x1b\[[\d;]+?m/g, '')
+    }
+
+    /**
+     * @param {string} text 
+     */
+    static async chatGPT(text) {
+        return await sendMessage(text)
+    }
+}
+
+/**
+ * @param {string} message 
+ * @returns {Promise<string>} 
+ */
+async function sendMessage(message) {
+    if (!message) {
+        return ''
+    }
+    let messages = [{ "role": "user", "content": message }]
+    try {
+        /** @type{Object} */
+        let ret = await (await fetch(config.chatGPTProxyURL(), {
+            method: 'POST',
+            headers: {
+                'x-client-id': config.chatGPTProxyClientId(),
+            },
+            body: JSON.stringify({
+                model: "gpt-3.5-turbo",
+                messages: messages,
+                // max_tokens: 4096,
+            })
+        })).json()
+        console.log(ret.choices[0].message.content)
+        return ret.choices[0].message.content
+    } catch (error) {
+        console.error(error)
+        return '\n' + error.stack
     }
 }
