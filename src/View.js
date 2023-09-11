@@ -1,6 +1,6 @@
-const vscode = require('vscode')
+import vscode from 'vscode'
 
-module.exports = class View {
+export class View {
 
     /**
      * @param {vscode.InputBoxOptions} [option] 
@@ -33,4 +33,6 @@ module.exports = class View {
             return await func()
         })
     }
+
+    // let selectItem = await vscode.window.showQuickPick(items, { matchOnDescription: true })
 }

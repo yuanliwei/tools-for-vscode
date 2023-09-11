@@ -1,0 +1,17 @@
+{
+  "name": "esm",
+  "version": "1.0.0",
+  "description": "tools-for-vscode-esm",
+  "main": "index.js",
+  "type": "module",
+  "private": "true",
+  "scripts": {
+    "dev": "rollup -c rollup.config.js -w",
+    "build": "rollup -c rollup.config.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "yuanliwei",
+  "license": "ISC",
+  "dependencies": {}
+}

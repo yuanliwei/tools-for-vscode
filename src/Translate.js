@@ -1,20 +1,23 @@
-const crypto = require('crypto')
-const fetch = require('node-fetch').default
-const { URLSearchParams } = require('url')
-const CodecUtil = require('./CodecUtil')
+import { createHash } from 'crypto'
+import fetch from 'node-fetch'
+import { URLSearchParams } from 'url'
+import { decodeNative } from './lib.js'
 
-module.exports = class Translate {
-    static async translate(iks, lang, text) {
-        return translateBaidu(iks, lang, text)
-    }
+export async function translate(iks, lang, text) {
+    return translateBaidu(iks, lang, text)
 }
 
-/*
-  百度翻译
-*/
+/**
+ * 百度翻译
+ * 
+ * @param {[string,string]} iks 
+ * @param {string} lang 
+ * @param {string} textString 
+ * @returns 
+ */
 async function translateBaidu(iks, lang, textString) {
     let MD5 = (text) => {
-        const hash = crypto.createHash('md5')
+        const hash = createHash('md5')
         hash.update(text)
         return hash.digest('hex')
     }
@@ -59,7 +62,7 @@ async function translateBaidu(iks, lang, textString) {
     }
     let map = {}
     for (const item of result.trans_result) {
-        map[item.src] = await CodecUtil.decodeNative(item.dst)
+        map[item.src] = await decodeNative(item.dst)
     }
     return textString.split('\n').map((item) => {
         let k = item.trim()

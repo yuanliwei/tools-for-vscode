@@ -1,22 +1,39 @@
-const vscode = require('vscode')
-const os = require('os')
-const path = require('path')
-const fetch = require('node-fetch').default
-const crypto = require('crypto')
-const fs = require('fs')
-const { spawn } = require('child_process')
-module.exports = class OCR {
-    static async pasteImage(iks) {
-        if (!iks) return
-        return vscode.window.withProgress({ location: vscode.ProgressLocation.Window, title: 'pasteImage...' }, async () => {
-            let imagePath = path.join(os.tmpdir(), `pasteImg-${Date.now()}.png`)
-            let resultImgPath = await saveClipboardImageToFileAndGetPath(imagePath)
-            if (!fs.existsSync(resultImgPath)) { return }
-            let text = await fetchImgTextByOCR(iks, resultImgPath)
-            return text
-        })
-    }
+import vscode from 'vscode'
+import os from 'os'
+import path from 'path'
+import fetch from 'node-fetch'
+import crypto from 'crypto'
+import fs from 'fs'
+import { spawn } from 'child_process'
+import { config, extensionContext } from './config.js'
+import { View } from './view.js'
+
+export async function pasteImage() {
+    const iks = getOCRIks()
+    if (!iks) return
+    return vscode.window.withProgress({ location: vscode.ProgressLocation.Window, title: 'pasteImage...' }, async () => {
+        let imagePath = path.join(os.tmpdir(), `pasteImg-${Date.now()}.png`)
+        let resultImgPath = await saveClipboardImageToFileAndGetPath(imagePath)
+        if (!fs.existsSync(resultImgPath)) { return }
+        let text = await fetchImgTextByOCR(iks, resultImgPath)
+        return text
+    })
 }
+
+/**
+ * 
+ * @returns {[string,string]}
+ */
+function getOCRIks() {
+    let appId = config.qqOCRAppId()
+    let appKey = config.qqOCRAppKey()
+    if (!appId || !appKey) {
+        View.toastWarn('需要配置 QQ OCR appId、appKey。')
+        return null
+    }
+    return [appId, appKey]
+}
+
 
 async function fetchImgTextByOCR([appId, appKey], imagePath) {
 
@@ -147,11 +164,12 @@ async function fetchImgTextByOCR([appId, appKey], imagePath) {
  */
 async function saveClipboardImageToFileAndGetPath(imagePath) {
     if (!imagePath) return
+    let extensionPath = extensionContext.context.extensionPath
     return new Promise((resolve, reject) => {
         let platform = process.platform
         if (platform === 'win32') {
             // Windows
-            const scriptPath = path.join(__dirname, '../res/pc.ps1')
+            const scriptPath = path.join(extensionPath, 'res/pc.ps1')
 
             let command = "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe"
             let powershellExisted = fs.existsSync(command)
@@ -178,7 +196,7 @@ async function saveClipboardImageToFileAndGetPath(imagePath) {
         }
         else if (platform === 'darwin') {
             // Mac
-            let scriptPath = path.join(__dirname, '../res/mac.applescript')
+            let scriptPath = path.join(extensionPath, 'res/mac.applescript')
 
             let ascript = spawn('osascript', [scriptPath, imagePath])
             ascript.on('error', function (e) {
@@ -190,7 +208,7 @@ async function saveClipboardImageToFileAndGetPath(imagePath) {
         } else {
             // Linux 
 
-            let scriptPath = path.join(__dirname, '../../res/linux.sh')
+            let scriptPath = path.join(extensionPath, 'res/linux.sh')
 
             let ascript = spawn('sh', [scriptPath, imagePath])
             ascript.on('error', function (e) {

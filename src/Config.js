@@ -1,4 +1,4 @@
-const vscode = require('vscode')
+import vscode from 'vscode'
 
 class Config {
     constructor() {
@@ -17,15 +17,16 @@ class Config {
     qqOCRAppKey() {
         return this.config.get('qq_ocr_app_key')
     }
-    chatGPTProxyURL() {
-        return this.config.get('chatgpt_proxy_url')
+    chatgptHttpAPI() {
+        return this.config.get('chatgpt_http_api')
     }
-    chatGPTProxyClientId() {
-        return eval(this.config.get('chatgpt_proxy_client_id'))
-    }
-
 }
 
-const config = new Config()
+export const config = new Config()
 
-module.exports = config
+
+/** @type{{context:vscode.ExtensionContext,translateDisposable:vscode.Disposable}} */
+export const extensionContext = {
+    context: null,
+    translateDisposable: null,
+}

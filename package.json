@@ -4,6 +4,8 @@
     "description": "yuanliwei (de) tool box!",
     "version": "0.0.1",
     "license": "BSD",
+    "publisher": "yuanliwei",
+    "type": "commonjs",
     "engines": {
         "vscode": "^1.50.0"
     },
@@ -11,302 +13,290 @@
         "Other"
     ],
     "activationEvents": [
-        "*"
+        "onStartupFinished"
     ],
-    "main": "./extension",
+    "main": "./dest/extension.js",
     "contributes": {
         "commands": [
             {
-                "command": "tools:MultiClip copy",
-                "title": "MultiClip copy"
+                "command": "tools:y-ocr",
+                "title": "OCR"
             },
             {
-                "command": "tools:MultiClip cut",
-                "title": "MultiClip cut"
-            },
-            {
-                "command": "tools:MultiClip list",
-                "title": "MultiClip list"
-            },
-            {
-                "command": "tools:MultiClip sync repo",
-                "title": "MultiClip sync repo"
-            },
-            {
-                "command": "tools:OCR Paste Image",
-                "title": "OCR Paste Image"
-            },
-            {
-                "command": "tools:Line Remove Duplicate",
-                "title": "Line Remove Duplicate"
-            },
-            {
-                "command": "tools:Line Remove Include Select",
-                "title": "Line Remove Include Select"
-            },
-            {
-                "command": "tools:Line Remove Exclude Select",
-                "title": "Line Remove Exclude Select"
-            },
-            {
-                "command": "tools:Line Remove Empty",
+                "command": "tools:y-remove-empty",
                 "title": "Line Remove Empty"
             },
             {
-                "command": "tools:Line Remove match regexp",
-                "title": "Line Remove match regexp"
+                "command": "tools:y-remove-duplicate",
+                "title": "Line Remove Duplicate"
             },
             {
-                "command": "tools:Line Remove not match regexp",
-                "title": "Line Remove not match regexp"
+                "command": "tools:y-remove-include-select",
+                "title": "Line Remove Include Select"
             },
             {
-                "command": "tools:Line Sort Asc",
+                "command": "tools:y-remove-exclude-select",
+                "title": "Line Remove Exclude Select"
+            },
+            {
+                "command": "tools:y-remove-match-regexp",
+                "title": "Line Remove Match Regexp"
+            },
+            {
+                "command": "tools:y-remove-not-match-regexp",
+                "title": "Line Remove Not Match Regexp"
+            },
+            {
+                "command": "tools:y-line-sort-asc",
                 "title": "Line Sort Asc"
             },
             {
-                "command": "tools:Line Sort Desc",
+                "command": "tools:y-line-sort-desc",
                 "title": "Line Sort Desc"
             },
             {
-                "command": "tools:Line Trim",
+                "command": "tools:y-line-trim",
                 "title": "Line Trim"
             },
             {
-                "command": "tools:Line Trim Left",
+                "command": "tools:y-line-trim-left",
                 "title": "Line Trim Left"
             },
             {
-                "command": "tools:Line Trim Right",
+                "command": "tools:y-line-trim-right",
                 "title": "Line Trim Right"
             },
             {
-                "command": "tools:Line add line number",
-                "title": "Line add line number"
+                "command": "tools:y-line-add-line-number",
+                "title": "Line Add Line Number"
             },
             {
-                "command": "tools:Line add line number from input",
-                "title": "Line add line number from input"
+                "command": "tools:y-line-add-line-number-from-input",
+                "title": "Line Add Line Number From Input"
             },
             {
-                "command": "tools:Line add line number with separator",
-                "title": "Line add line number with separator"
+                "command": "tools:y-line-add-line-number-with-separator",
+                "title": "Line Add Line Number With Separator"
             },
             {
-                "command": "tools:Line separator underline to hump",
-                "title": "Line separator underline to hump"
+                "command": "tools:y-line-separator-underline-to-hump",
+                "title": "Line Separator Underline To Hump"
             },
             {
-                "command": "tools:Line separator hump to underline",
-                "title": "Line separator hump to underline"
+                "command": "tools:y-line-separator-hump-to-underline",
+                "title": "Line Separator Hump To Underline"
             },
             {
-                "command": "tools:Line first letter lowercase",
-                "title": "Line first letter lowercase"
+                "command": "tools:y-line-first-letter-lowercase",
+                "title": "Line First Letter Lowercase"
             },
             {
-                "command": "tools:Line first letter uppercase",
-                "title": "Line first letter uppercase"
+                "command": "tools:y-line-first-letter-uppercase",
+                "title": "Line First Letter Uppercase"
             },
             {
-                "command": "tools:Line Group Duplicate",
+                "command": "tools:y-line-group-duplicate",
                 "title": "Line Group Duplicate"
             },
             {
-                "command": "tools:Line Sort Number",
+                "command": "tools:y-line-sort-number",
                 "title": "Line Sort Number"
             },
             {
-                "command": "tools:Line Reverse",
+                "command": "tools:y-line-reverse",
                 "title": "Line Reverse"
             },
             {
-                "command": "tools:Line Group Duplicate Sort Number Reverse",
+                "command": "tools:y-line-group-duplicate-sort-number-reverse",
                 "title": "Line Group Duplicate Sort Number Reverse"
             },
             {
-                "command": "tools:Current Time",
-                "title": "Current Time"
-            },
-            {
-                "command": "tools:guid",
+                "command": "tools:y-guid",
                 "title": "guid"
             },
             {
-                "command": "tools:Format Time",
+                "command": "tools:y-current-time",
+                "title": "Current Time"
+            },
+            {
+                "command": "tools:y-format-time",
                 "title": "Format Time"
             },
             {
-                "command": "tools:Run Code",
+                "command": "tools:y-run-code",
                 "title": "Run Code"
             },
             {
-                "command": "tools:Eval Print",
+                "command": "tools:y-eval-print",
                 "title": "Eval Print"
             },
             {
-                "command": "tools:Comment Align",
+                "command": "tools:y-comment-align",
                 "title": "Comment Align"
             },
             {
-                "command": "tools:Cursor Align",
+                "command": "tools:y-cursor-align",
                 "title": "Cursor Align"
             },
             {
-                "command": "tools:Clean ANSI Escape Codes",
+                "command": "tools:y-clean-ansi-escape-codes",
                 "title": "Clean ANSI Escape Codes"
             },
             {
-                "command": "tools:JS format",
+                "command": "tools:y-js-format",
                 "title": "JS format"
             },
             {
-                "command": "tools:CSS format",
+                "command": "tools:y-css-format",
                 "title": "CSS format"
             },
             {
-                "command": "tools:SQL format",
+                "command": "tools:y-sql-format",
                 "title": "SQL format"
             },
             {
-                "command": "tools:XML format",
+                "command": "tools:y-xml-format",
                 "title": "XML format"
             },
             {
-                "command": "tools:JSON format",
+                "command": "tools:y-json-format",
                 "title": "JSON format"
             },
             {
-                "command": "tools:SQL min",
+                "command": "tools:y-sql-min",
                 "title": "SQL min"
             },
             {
-                "command": "tools:XML min",
+                "command": "tools:y-xml-min",
                 "title": "XML min"
             },
             {
-                "command": "tools:CSS min",
+                "command": "tools:y-css-min",
                 "title": "CSS min"
             },
             {
-                "command": "tools:JSON min",
+                "command": "tools:y-json-min",
                 "title": "JSON min"
             },
             {
-                "command": "tools:Crypto md5",
+                "command": "tools:y-crypto-md5",
                 "title": "Crypto md5"
             },
             {
-                "command": "tools:Crypto sha1",
+                "command": "tools:y-crypto-sha1",
                 "title": "Crypto sha1"
             },
             {
-                "command": "tools:Crypto sha256",
+                "command": "tools:y-crypto-sha256",
                 "title": "Crypto sha256"
             },
             {
-                "command": "tools:Crypto sha512",
+                "command": "tools:y-crypto-sha512",
                 "title": "Crypto sha512"
             },
             {
-                "command": "tools:Decode json parse",
+                "command": "tools:y-decode-json-parse",
                 "title": "Decode json parse"
             },
             {
-                "command": "tools:Encode json stringify",
+                "command": "tools:y-encode-json-stringify",
                 "title": "Encode json stringify"
             },
             {
-                "command": "tools:Encode uri",
+                "command": "tools:y-encode-uri",
                 "title": "Encode uri"
             },
             {
-                "command": "tools:Decode uri",
+                "command": "tools:y-decode-uri",
                 "title": "Decode uri"
             },
             {
-                "command": "tools:Encode base64",
+                "command": "tools:y-encode-base64",
                 "title": "Encode base64"
             },
             {
-                "command": "tools:Decode base64",
+                "command": "tools:y-decode-base64",
                 "title": "Decode base64"
             },
             {
-                "command": "tools:Encode hex",
+                "command": "tools:y-encode-hex",
                 "title": "Encode hex"
             },
             {
-                "command": "tools:Decode hex",
+                "command": "tools:y-decode-hex",
                 "title": "Decode hex"
             },
             {
-                "command": "tools:Encode html",
+                "command": "tools:y-encode-html",
                 "title": "Encode html"
             },
             {
-                "command": "tools:Decode html",
+                "command": "tools:y-decode-html",
                 "title": "Decode html"
             },
             {
-                "command": "tools:Encode native",
+                "command": "tools:y-encode-native",
                 "title": "Encode native"
             },
             {
-                "command": "tools:Decode native",
+                "command": "tools:y-decode-native",
                 "title": "Decode native"
             },
             {
-                "command": "tools:Encode unicode",
+                "command": "tools:y-encode-unicode",
                 "title": "Encode unicode"
             },
             {
-                "command": "tools:Decode unicode",
+                "command": "tools:y-decode-unicode",
                 "title": "Decode unicode"
             },
             {
-                "command": "tools:Encode escape",
+                "command": "tools:y-encode-escape",
                 "title": "Encode escape"
             },
             {
-                "command": "tools:Encode escape simple",
+                "command": "tools:y-encode-escape-simple",
                 "title": "Encode escape simple"
             },
             {
-                "command": "tools:Encode escape with crlf",
+                "command": "tools:y-encode-escape-with-crlf",
                 "title": "Encode escape with crlf"
             },
             {
-                "command": "tools:Decode unescape",
+                "command": "tools:y-decode-unescape",
                 "title": "Decode unescape"
             },
             {
-                "command": "tools:Translate coffeescript to javascript",
+                "command": "tools:y-translate-coffeescript-to-javascript",
                 "title": "Translate coffeescript to javascript"
             },
             {
-                "command": "tools:Translate less to css",
+                "command": "tools:y-translate-less-to-css",
                 "title": "Translate less to css"
             },
             {
-                "command": "tools:Translate markdown to html",
+                "command": "tools:y-translate-markdown-to-html",
                 "title": "Translate markdown to html"
             },
             {
-                "command": "tools:Translate translate to zh",
+                "command": "tools:y-translate-translate-to-zh",
                 "title": "Translate translate to zh"
             },
             {
-                "command": "tools:Translate translate to en",
+                "command": "tools:y-translate-translate-to-en",
                 "title": "Translate translate to en"
             },
             {
-                "command": "tools:Translate toggle translate",
+                "command": "tools:y-translate-toggle-translate",
                 "title": "Translate toggle translate"
             },
             {
-                "command": "tools:chatGPT",
-                "title": "chatGPT"
+                "command": "tools:y-chatgpt",
+                "title": "chatgpt"
+            },
+            {
+                "command": "tools:y-lorem",
+                "title": "lorem"
             }
         ],
         "configuration": {
@@ -333,37 +323,18 @@
                     "default": "",
                     "description": "QQ OCR APP_KEY"
                 },
-                "tools.multiclip_repo_dir": {
+                "tools.chatgpt_http_api": {
                     "type": "string",
                     "default": "",
-                    "description": "MultiClip Git Repo Dir"
-                },
-                "tools.multiclip_repo": {
-                    "type": "string",
-                    "default": "",
-                    "description": "MultiClip Git Repo"
-                },
-                "tools.multiclip_max_buffer": {
-                    "type": "number",
-                    "default": 5000,
-                    "description": "MultiClip Buffer Count"
-                },
-                "tools.chatgpt_proxy_url": {
-                    "type": "string",
-                    "default": "",
-                    "description": "chatGPT Proxy URL"
-                },
-                "tools.chatgpt_proxy_client_id": {
-                    "type": "string",
-                    "default": "()=>''",
-                    "description": "chatGPT Proxy ClientId"
+                    "description": "chatGPT Proxy URL curl -X POST -d 'hello' https://chat.example.com/api/chat"
                 }
             }
         }
     },
     "scripts": {
-        "lint": "eslint .",
-        "pretest": "npm run lint",
+        "dev": "cd src && npm run dev",
+        "build": "cd src && npm run build",
+        "postinstall": "npm run build",
         "test": "node ./test/runTest.js"
     },
     "devDependencies": {
@@ -372,7 +343,12 @@
         "@vscode/test-electron": "^2.3.0",
         "eslint": "^8.27.0",
         "glob": "^8.0.3",
-        "mocha": "^10.1.0"
+        "mocha": "^10.1.0",
+        "@rollup/plugin-commonjs": "^25.0.4",
+        "@rollup/plugin-node-resolve": "^15.2.1",
+        "node-fetch": "^3.3.2",
+        "rollup": "^3.29.0",
+        "rollup-plugin-node-polyfills": "^0.2.1"
     },
     "dependencies": {
         "coffeescript": "^2.7.0",
@@ -381,7 +357,6 @@
         "js-beautify": "^1.14.7",
         "less": "^4.1.3",
         "markdown-it": "^13.0.1",
-        "node-fetch": "^2.6.9",
         "vkbeautify": "^0.99.3"
     }
 }
