@@ -21,6 +21,8 @@ export default defineConfig({
         'vkbeautify',
         'vscode',
         'nzh',
+        'flat',
+        'table',
     ],
     plugins: [
         resolve({}),

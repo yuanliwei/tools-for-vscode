@@ -179,6 +179,22 @@
                 "title": "JSON min"
             },
             {
+                "command": "tools:y-codec-deep-parse-json",
+                "title": "deep parse JSON"
+            },
+            {
+                "command": "tools:y-json-info",
+                "title": "JSON Info"
+            },
+            {
+                "command": "tools:y-codec-normalize-json",
+                "title": "normalize JSON"
+            },
+            {
+                "command": "tools:y-extract-json",
+                "title": "extract JSON"
+            },
+            {
                 "command": "tools:y-crypto-md5",
                 "title": "Crypto md5"
             },
@@ -469,11 +485,15 @@
     "dependencies": {
         "coffeescript": "^2.7.0",
         "dayjs": "^1.11.6",
+        "extract-json-from-string-y": "^1.0.2",
+        "flat": "^5.0.2",
         "he": "^1.2.0",
         "js-beautify": "^1.14.7",
+        "json-info": "^1.1.0",
         "less": "^4.1.3",
         "markdown-it": "^13.0.1",
         "nzh": "^1.0.11",
+        "table": "^6.8.1",
         "vkbeautify": "^0.99.3"
     }
 }

@@ -12,7 +12,10 @@ import fs from 'fs'
 import path from 'path'
 import os from 'os'
 import vscode from 'vscode'
-
+import { JSONInfo } from 'json-info'
+import { evalParser } from 'extract-json-from-string-y'
+import flatten from 'flat'
+import { table } from 'table'
 
 export async function parseJSON(text) {
     return JSON.parse(text)
@@ -570,4 +573,122 @@ export class NameGenerate {
         }
         return name.join('')
     }
+}
+
+/**
+ * @param {string} obj
+ */
+export function jsonDeepParse(obj) {
+    /** @type{Object} */
+    let o = obj
+    if (typeof (obj) == 'string') {
+        try { o = JSON.parse(obj) } catch (e) { return o }
+    }
+    if (o instanceof Array) {
+        for (let i = 0; i < o.length; i++) {
+            o[i] = jsonDeepParse(o[i])
+        }
+    } else {
+        for (let k in o) {
+            if (Object.prototype.hasOwnProperty.call(o, k)) {
+                o[k] = jsonDeepParse(o[k])
+            }
+        }
+    }
+    return o
+}
+
+
+/**
+ * 
+ * @param {string} text 
+ * @returns 
+ */
+export async function parseJSONInfo(text) {
+    await sleep(30)
+    let maxLines = 20
+    let json = evalParser(text)
+    let array = []
+    let items = flatten(json)
+    for (const k in items) {
+        let value = items[k]
+        let key = k.replace(/(\.?)\d+(\.?)/g, '$1[]$2')
+        let o = {}
+        o[key] = value
+        array.push(o)
+    }
+    let info = new JSONInfo(o => o, maxLines)
+    info.parse(array)
+    // info.print()
+    let time = Date.now()
+    let ret = []
+    let datas = info.auto.result()
+    for (const data of datas) {
+        // console.log('key:', data.description)
+        ret.push('key:' + data.description)
+        let arr = data.datas
+        if (arr.length > maxLines) {
+            let otherNums = arr.reduce((p, c, i) => {
+                if (i > maxLines) {
+                    return p + c.number
+                } else {
+                    return 0
+                }
+            }, 0)
+            let otherKeyLength = arr.length - maxLines
+            arr = arr.slice(0, maxLines)
+            arr.push({ value: `(...others...)[${otherKeyLength}]`, number: otherNums })
+        }
+        // console.table(arr)
+        // console.log(arr)
+        let rows = [['(index)', 'value', 'number']]
+        let maxLength = rows[0][1].length
+        for (let index = 0; index < arr.length; index++) {
+            const o = arr[index]
+            maxLength = Math.max(`${o.value}`.length, maxLength)
+            rows.push([String(index), o.value, String(o.number)])
+        }
+        ret.push('    ' + table(rows, Object.assign({}, tableConfig, {
+            columns: [
+                {},
+                { width: Math.min(200, maxLength) },
+            ]
+        })).replace(/\n/g, '\n    ').trimEnd())
+        if (Date.now() - time > 3000) {
+            time = Date.now()
+            await sleep(1)
+        }
+    }
+    return ret.join('\n')
+}
+
+/** @type{import('table').TableUserConfig} */
+const tableConfig = {
+    border: {
+        topBody: `─`,
+        topJoin: `┬`,
+        topLeft: `┌`,
+        topRight: `┐`,
+
+        bottomBody: `─`,
+        bottomJoin: `┴`,
+        bottomLeft: `└`,
+        bottomRight: `┘`,
+
+        bodyLeft: `│`,
+        bodyRight: `│`,
+        bodyJoin: `│`,
+
+        joinBody: `─`,
+        joinLeft: `├`,
+        joinRight: `┤`,
+        joinJoin: `┼`
+    },
+    drawHorizontalLine: (lineIndex, rowCount) => {
+        return lineIndex === 0 || lineIndex === 1 || lineIndex === rowCount
+    },
+    columns: [
+        {},
+        { width: 100 },
+    ],
 }

@@ -1,10 +1,12 @@
 import { addTranslateHoverProvider, getAllText, getInputSeparator, getInputStartNumber, getRegexpText, getSelectText, getTranslateIks, registerDocType, updatePackageJsonCommands } from './tools.js'
 import { pasteImage } from './ocr.js'
 import vscode from 'vscode'
-import { NameGenerate, addLineNumber, addLineNumberFromInput, addLineNumberWithSeparator, chatgpt, cleanAnsiEscapeCodes, commentAlign, currentTime, cursorAlign, decodeBase64, decodeCoffee, decodeHex, decodeHtml, decodeLess, decodeNative, decodeUnescape, decodeUnicode, decodeUri, encodeBase64, encodeEscape, encodeHex, encodeHtml, encodeNative, encodeUnicode, encodeUri, escapeSimple, escapeWithcrlf, evalPrint, firstLetterLowercase, firstLetterUppercase, formatCSS, formatJS, formatJSON, formatSQL, formatTime, formatXML, guid, lineGroupDuplicate, lineRemoveDuplicate, lineRemoveEmpty, lineRemoveExcludeSelect, lineRemoveIncludeSelect, lineRemoveMatchRegexp, lineRemoveNotMatchRegexp, lineReverse, lineSortAsc, lineSortDesc, lineSortNumber, lineTrim, lineTrimLeft, lineTrimRight, markdownToHtml, md5, minCSS, minJSON, minSQL, minXML, parseJSON, runCode, separatorHumpToUnderline, separatorUnderlineToHump, sha1, sha256, sha512, stringify } from './lib.js'
+import { NameGenerate, addLineNumber, addLineNumberFromInput, addLineNumberWithSeparator, chatgpt, cleanAnsiEscapeCodes, commentAlign, currentTime, cursorAlign, decodeBase64, decodeCoffee, decodeHex, decodeHtml, decodeLess, decodeNative, decodeUnescape, decodeUnicode, decodeUri, encodeBase64, encodeEscape, encodeHex, encodeHtml, encodeNative, encodeUnicode, encodeUri, escapeSimple, escapeWithcrlf, evalPrint, firstLetterLowercase, firstLetterUppercase, formatCSS, formatJS, formatJSON, formatSQL, formatTime, formatXML, guid, jsonDeepParse, lineGroupDuplicate, lineRemoveDuplicate, lineRemoveEmpty, lineRemoveExcludeSelect, lineRemoveIncludeSelect, lineRemoveMatchRegexp, lineRemoveNotMatchRegexp, lineReverse, lineSortAsc, lineSortDesc, lineSortNumber, lineTrim, lineTrimLeft, lineTrimRight, markdownToHtml, md5, minCSS, minJSON, minSQL, minXML, parseJSON, parseJSONInfo, runCode, separatorHumpToUnderline, separatorUnderlineToHump, sha1, sha256, sha512, stringify } from './lib.js'
 import { translate } from './translate.js'
 import { config, extensionContext } from './config.js'
 import Nzh from 'nzh'
+import { evalParser, extractJsonFromString } from 'extract-json-from-string-y'
+
 /**
  * @typedef {Object} EditOptions 命令选项
  * @property {boolean} [append] 在当前光标位置之后插入内容
@@ -402,6 +404,51 @@ const commands = [
         run: async function (/**@type{vscode.TextEditor}*/ed) {
             editText(ed, {}, async (text) => {
                 return await minJSON(text)
+            })
+        }
+    },
+    {
+        id: 'y-codec-deep-parse-json',
+        label: 'deep parse JSON',
+        run: async function (ed) {
+            editText(ed, {}, (text) => {
+                return formatJSON(JSON.stringify(jsonDeepParse(text)))
+            })
+        }
+    },
+    {
+        id: 'y-json-info',
+        label: 'JSON Info',
+        run: async (ed) => {
+            editText(ed, { append: true }, async (text) => {
+                return vscode.window.withProgress({ location: vscode.ProgressLocation.Window, title: "..." }, async () => {
+                    try {
+                        return await parseJSONInfo(text)
+                    } catch (error) {
+                        console.error(error)
+                        vscode.window.showErrorMessage(error.stack)
+                        return error.stack
+                    }
+                })
+            })
+        }
+    },
+    {
+        id: 'y-codec-normalize-json',
+        label: 'normalize JSON',
+        run: async function (ed) {
+            editText(ed, {}, (text) => {
+                return JSON.stringify(evalParser(text), null, 4)
+            })
+        }
+    },
+    {
+        id: 'y-extract-json',
+        label: 'extract JSON',
+        run: async function (ed) {
+            editText(ed, {}, (text) => {
+                let json = extractJsonFromString(text)
+                return formatJSON(JSON.stringify(json))
             })
         }
     },
