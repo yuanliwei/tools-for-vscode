@@ -1,10 +1,10 @@
 import { addTranslateHoverProvider, getAllText, getInputSeparator, getInputStartNumber, getRegexpText, getSelectText, getTranslateIks, registerDocType, updatePackageJsonCommands } from './tools.js'
 import { pasteImage } from './ocr.js'
 import vscode from 'vscode'
-import { addLineNumber, addLineNumberFromInput, addLineNumberWithSeparator, chatgpt, cleanAnsiEscapeCodes, commentAlign, currentTime, cursorAlign, decodeBase64, decodeCoffee, decodeHex, decodeHtml, decodeLess, decodeNative, decodeUnescape, decodeUnicode, decodeUri, encodeBase64, encodeEscape, encodeHex, encodeHtml, encodeNative, encodeUnicode, encodeUri, escapeSimple, escapeWithcrlf, evalPrint, firstLetterLowercase, firstLetterUppercase, formatCSS, formatJS, formatJSON, formatSQL, formatTime, formatXML, guid, lineGroupDuplicate, lineRemoveDuplicate, lineRemoveEmpty, lineRemoveExcludeSelect, lineRemoveIncludeSelect, lineRemoveMatchRegexp, lineRemoveNotMatchRegexp, lineReverse, lineSortAsc, lineSortDesc, lineSortNumber, lineTrim, lineTrimLeft, lineTrimRight, markdownToHtml, md5, minCSS, minJSON, minSQL, minXML, parseJSON, runCode, separatorHumpToUnderline, separatorUnderlineToHump, sha1, sha256, sha512, stringify } from './lib.js'
+import { NameGenerate, addLineNumber, addLineNumberFromInput, addLineNumberWithSeparator, chatgpt, cleanAnsiEscapeCodes, commentAlign, currentTime, cursorAlign, decodeBase64, decodeCoffee, decodeHex, decodeHtml, decodeLess, decodeNative, decodeUnescape, decodeUnicode, decodeUri, encodeBase64, encodeEscape, encodeHex, encodeHtml, encodeNative, encodeUnicode, encodeUri, escapeSimple, escapeWithcrlf, evalPrint, firstLetterLowercase, firstLetterUppercase, formatCSS, formatJS, formatJSON, formatSQL, formatTime, formatXML, guid, lineGroupDuplicate, lineRemoveDuplicate, lineRemoveEmpty, lineRemoveExcludeSelect, lineRemoveIncludeSelect, lineRemoveMatchRegexp, lineRemoveNotMatchRegexp, lineReverse, lineSortAsc, lineSortDesc, lineSortNumber, lineTrim, lineTrimLeft, lineTrimRight, markdownToHtml, md5, minCSS, minJSON, minSQL, minXML, parseJSON, runCode, separatorHumpToUnderline, separatorUnderlineToHump, sha1, sha256, sha512, stringify } from './lib.js'
 import { translate } from './translate.js'
 import { config, extensionContext } from './config.js'
-
+import Nzh from 'nzh'
 /**
  * @typedef {Object} EditOptions 命令选项
  * @property {boolean} [append] 在当前光标位置之后插入内容
@@ -698,7 +698,133 @@ const commands = [
             })
         }
     },
+    {
+        id: "y-sequence-number-1",
+        label: "sequence number 1",
+        run: async function (/**@type{vscode.TextEditor}*/ed) {
+            let seq = 1
+            editText(ed, { insert: true }, async () => {
+                return `${seq++}`
+            })
+        },
+    },
+    {
+        id: "y-sequence-number-一",
+        label: "sequence number 一",
+        run: async function (/**@type{vscode.TextEditor}*/ed) {
+            let seq = 1
+            editText(ed, { insert: true }, async () => {
+                return Nzh.cn.encodeS(seq++)
+            })
+        },
+    },
+    {
+        id: "y-sequence-number-壹",
+        label: "sequence number 壹",
+        run: async function (/**@type{vscode.TextEditor}*/ed) {
+            let seq = 1
+            editText(ed, { insert: true }, async () => {
+                return Nzh.cn.encodeB(seq++)
+            })
+        },
+    },
+    {
+        id: "y-xing-ming",
+        label: "xing ming",
+        run: async function (/**@type{vscode.TextEditor}*/ed) {
+            let g = new NameGenerate()
+            editText(ed, { insert: true }, async () => {
+                return g.get()
+            })
+        },
+    },
+    buildSequenceNum("a", 0),
+    buildSequenceNum("A", 0),
+    buildSequenceNum("①", 0),
+    buildSequenceNum("Ⅰ", 0),
+    buildSequenceNum("ⅰ", 0),
+    buildSequenceNum("㍘", 0),
+    buildSequenceNum("㎀", 0),
+    buildSequenceNum("㏠", 0),
+    buildSequenceNum("😀", 0),
+    buildSequenceNum("👩", 0),
+    buildSequenceNum("💪", 0),
+    buildSequenceNum("🎈", 0),
+    buildSequenceNum("🍕", 0),
+    buildSequenceNum("🚗", 0),
+    buildSequenceNum("❤", 0),
+    buildSequenceNum("☮", 0),
+    buildSequenceNum("0️⃣", 0),
+    buildSequenceNum("🔴", 0),
+    buildSequenceNum("🟥", 0),
+    buildSequenceNum("🔶", 0),
+    buildSequenceNum("🕐", 0),
+    {
+        id: "y-full-space",
+        label: "full space",
+        run: async function (/**@type{vscode.TextEditor}*/ed) {
+            editText(ed, {}, async (text) => {
+                return ' '.repeat(text.length)
+            })
+        },
+    },
+    {
+        id: "y-cursors-drop",
+        label: "cursors drop",
+        run: async function (/**@type{vscode.TextEditor}*/ed) {
+            let selections = ed.selections
+            let tmp = []
+            for (let i = 0; i < selections.length; i += 2) {
+                const element = selections[i]
+                tmp.push(element)
+            }
+            ed.selections = tmp
+        },
+    },
+    {
+        id: "y-numbers-summation",
+        label: "numbers summation 求和",
+        run: async function (/**@type{vscode.TextEditor}*/ed) {
+            editText(ed, { append: true }, async (text) => {
+                let match = text.split(/[ ,;\r\n\t"]/) || []
+                let numbers = match.map((o) => parseFloat(o)).filter((o) => !isNaN(o))
+                return `summation: ${numbers.reduce((p, c) => p + c, 0)}`
+            })
+        },
+    },
+    {
+        id: "y-numbers-average",
+        label: "numbers average 求平均值",
+        run: async function (/**@type{vscode.TextEditor}*/ed) {
+            editText(ed, { append: true }, async (text) => {
+                let match = text.split(/[ ,;\r\n\t"]/) || []
+                let numbers = match.map((o) => parseFloat(o)).filter((o) => !isNaN(o))
+                return `average: ${numbers.reduce((p, c) => p + c, 0) / numbers.length}`
+            })
+        },
+    },
 ]
+
+function buildSequenceNum(char, start) {
+    return {
+        id: `y-sequence-number-${char}`,
+        label: `sequence number ${char}`,
+        run: async function (/**@type{vscode.TextEditor}*/ed) {
+            let seq = start
+            let codes = []
+            let endCode = char.charCodeAt(0)
+            for (let i = 0; i < char.length; i++) {
+                const charCode = char.charCodeAt(i)
+                codes.push(charCode)
+                endCode = charCode
+            }
+            codes.pop()
+            editText(ed, { insert: true }, async () => {
+                return String.fromCharCode(...codes, endCode + seq++)
+            })
+        },
+    }
+}
 
 /**
  * @param {vscode.ExtensionContext} context 

@@ -297,6 +297,122 @@
             {
                 "command": "tools:y-lorem",
                 "title": "lorem"
+            },
+            {
+                "command": "tools:y-sequence-number-1",
+                "title": "sequence number 1"
+            },
+            {
+                "command": "tools:y-sequence-number-一",
+                "title": "sequence number 一"
+            },
+            {
+                "command": "tools:y-sequence-number-壹",
+                "title": "sequence number 壹"
+            },
+            {
+                "command": "tools:y-xing-ming",
+                "title": "xing ming"
+            },
+            {
+                "command": "tools:y-sequence-number-a",
+                "title": "sequence number a"
+            },
+            {
+                "command": "tools:y-sequence-number-A",
+                "title": "sequence number A"
+            },
+            {
+                "command": "tools:y-sequence-number-①",
+                "title": "sequence number ①"
+            },
+            {
+                "command": "tools:y-sequence-number-Ⅰ",
+                "title": "sequence number Ⅰ"
+            },
+            {
+                "command": "tools:y-sequence-number-ⅰ",
+                "title": "sequence number ⅰ"
+            },
+            {
+                "command": "tools:y-sequence-number-㍘",
+                "title": "sequence number ㍘"
+            },
+            {
+                "command": "tools:y-sequence-number-㎀",
+                "title": "sequence number ㎀"
+            },
+            {
+                "command": "tools:y-sequence-number-㏠",
+                "title": "sequence number ㏠"
+            },
+            {
+                "command": "tools:y-sequence-number-😀",
+                "title": "sequence number 😀"
+            },
+            {
+                "command": "tools:y-sequence-number-👩",
+                "title": "sequence number 👩"
+            },
+            {
+                "command": "tools:y-sequence-number-💪",
+                "title": "sequence number 💪"
+            },
+            {
+                "command": "tools:y-sequence-number-🎈",
+                "title": "sequence number 🎈"
+            },
+            {
+                "command": "tools:y-sequence-number-🍕",
+                "title": "sequence number 🍕"
+            },
+            {
+                "command": "tools:y-sequence-number-🚗",
+                "title": "sequence number 🚗"
+            },
+            {
+                "command": "tools:y-sequence-number-❤",
+                "title": "sequence number ❤"
+            },
+            {
+                "command": "tools:y-sequence-number-☮",
+                "title": "sequence number ☮"
+            },
+            {
+                "command": "tools:y-sequence-number-0️⃣",
+                "title": "sequence number 0️⃣"
+            },
+            {
+                "command": "tools:y-sequence-number-🔴",
+                "title": "sequence number 🔴"
+            },
+            {
+                "command": "tools:y-sequence-number-🟥",
+                "title": "sequence number 🟥"
+            },
+            {
+                "command": "tools:y-sequence-number-🔶",
+                "title": "sequence number 🔶"
+            },
+            {
+                "command": "tools:y-sequence-number-🕐",
+                "title": "sequence number 🕐"
+            },
+            {
+                "command": "tools:y-full-space",
+                "title": "full space"
+            },
+            {
+                "command": "tools:y-cursors-drop",
+                "title": "cursors drop"
+            },
+            {
+                "command": "tools:y-numbers-summation",
+                "title": "numbers summation 求和"
+            },
+            {
+                "command": "tools:y-numbers-average",
+                "title": "numbers average 求平均值"
             }
         ],
         "configuration": {
@@ -338,14 +454,14 @@
         "test": "node ./test/runTest.js"
     },
     "devDependencies": {
+        "@rollup/plugin-commonjs": "^25.0.4",
+        "@rollup/plugin-node-resolve": "^15.2.1",
         "@types/node": "^18.11.9",
         "@types/vscode": "^1.73.1",
         "@vscode/test-electron": "^2.3.0",
         "eslint": "^8.27.0",
         "glob": "^8.0.3",
         "mocha": "^10.1.0",
-        "@rollup/plugin-commonjs": "^25.0.4",
-        "@rollup/plugin-node-resolve": "^15.2.1",
         "node-fetch": "^3.3.2",
         "rollup": "^3.29.0",
         "rollup-plugin-node-polyfills": "^0.2.1"
@@ -357,6 +473,7 @@
         "js-beautify": "^1.14.7",
         "less": "^4.1.3",
         "markdown-it": "^13.0.1",
+        "nzh": "^1.0.11",
         "vkbeautify": "^0.99.3"
     }
 }

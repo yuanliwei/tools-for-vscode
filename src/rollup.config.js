@@ -20,6 +20,7 @@ export default defineConfig({
         'markdown-it',
         'vkbeautify',
         'vscode',
+        'nzh',
     ],
     plugins: [
         resolve({}),
