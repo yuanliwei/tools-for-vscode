@@ -612,7 +612,9 @@ export async function parseJSONInfo(text) {
     let items = flatten(json)
     for (const k in items) {
         let value = items[k]
-        let key = k.replace(/(\.?)\d+(\.?)/g, '$1[]$2')
+        let key = k.replace(/^\d+\./, '[].')
+            .replace(/\.\d+\./, '.[].')
+            .replace(/\.\d+$/, '.[]')
         let o = {}
         o[key] = value
         array.push(o)
