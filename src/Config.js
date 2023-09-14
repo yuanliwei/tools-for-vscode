@@ -17,6 +17,10 @@ class Config {
     qqOCRAppKey() {
         return this.config.get('qq_ocr_app_key')
     }
+
+    /**
+     * @returns {string[]}
+     */
     chatgptHttpAPI() {
         return this.config.get('chatgpt_http_api')
     }

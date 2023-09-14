@@ -307,8 +307,12 @@
                 "title": "Translate toggle translate"
             },
             {
-                "command": "tools:y-chatgpt",
-                "title": "chatgpt"
+                "command": "tools:y-chatgpt-1",
+                "title": "chatgpt 1"
+            },
+            {
+                "command": "tools:y-chatgpt-2",
+                "title": "chatgpt 2"
             },
             {
                 "command": "tools:y-lorem",
@@ -456,9 +460,9 @@
                     "description": "QQ OCR APP_KEY"
                 },
                 "tools.chatgpt_http_api": {
-                    "type": "string",
-                    "default": "",
-                    "description": "chatGPT Proxy URL curl -X POST -d 'hello' https://chat.example.com/api/chat"
+                    "type": "array",
+                    "default": [],
+                    "description": "chatGPT Proxy URL list. Test URL : `curl -X POST -d 'hello' https://chat.example.com/api/chat`"
                 }
             }
         }

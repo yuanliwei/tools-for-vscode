@@ -714,28 +714,7 @@ const commands = [
             })
         }
     },
-    {
-        id: "y-chatgpt",
-        label: "chatgpt",
-        run: async function (/**@type{vscode.TextEditor}*/ed) {
-            editText(ed, { noChange: true }, async (text) => {
-                let selection = ed.selection
-                let pos = selection.end.translate(0, 1)
-                const chatgptHttpAPI = config.chatgptHttpAPI()
-                await chatgpt(chatgptHttpAPI, text, async (str) => {
-                    let insertPos = pos
-                    ed.selection = new vscode.Selection(pos, pos)
-                    const lineDelta = str.split(/\r?\n/).length - 1
-                    const characterDelta = str.split(/\r?\n/).at(-1).length
-                    pos = pos.translate(lineDelta, characterDelta)
-                    return await ed.edit((builder) => {
-                        builder.insert(insertPos, str)
-                    })
-                })
-                return null
-            })
-        }
-    },
+    ...buildChatGPTCommands(),
     {
         id: "y-lorem",
         label: "lorem",
@@ -975,3 +954,29 @@ async function editText(editor, option, func) {
     })
 }
 
+function buildChatGPTCommands() {
+    const apis = config.chatgptHttpAPI() || []
+    return apis.map((api, index) => {
+        return {
+            id: `y-chatgpt-${index + 1}`,
+            label: `chatgpt ${index + 1}`,
+            run: async function (/**@type{vscode.TextEditor}*/ed) {
+                editText(ed, { noChange: true }, async (text) => {
+                    let selection = ed.selection
+                    let pos = selection.end.translate(0, 1)
+                    await chatgpt(api, text, async (str) => {
+                        let insertPos = pos
+                        ed.selection = new vscode.Selection(pos, pos)
+                        const lineDelta = str.split(/\r?\n/).length - 1
+                        const characterDelta = str.split(/\r?\n/).at(-1).length
+                        pos = pos.translate(lineDelta, characterDelta)
+                        return await ed.edit((builder) => {
+                            builder.insert(insertPos, str)
+                        })
+                    })
+                    return null
+                })
+            }
+        }
+    })
+}
