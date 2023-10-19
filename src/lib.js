@@ -295,7 +295,7 @@ export async function lineSortNumber(text) {
     function toNum(value) {
         let match = value.match(/(\d+\.?\d*e-\d+)|(\d+\.?\d*e\d+)|(\d*\.\d+)|(\d+)/g) || []
         let nums = match.map((o) => parseFloat(o))
-        return nums[0] || Infinity
+        return nums[0] ?? Infinity
     }
     let lines = text.split('\n')
     lines.sort((l, h) => toNum(l) - toNum(h))
