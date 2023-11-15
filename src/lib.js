@@ -694,3 +694,32 @@ const tableConfig = {
         { width: 100 },
     ],
 }
+
+/**
+ * @param {object} variable
+ */
+function isPlainObject(variable) {
+    return typeof variable === "object" && variable !== null && Object.prototype.toString.call(variable) === "[object Object]"
+}
+
+/**
+ * @param {object} json
+ */
+export function rearrangeJsonKey(json) {
+    if (Array.isArray(json)) {
+        for (let i = 0; i < json.length; i++) {
+            json[i] = rearrangeJsonKey(json[i])
+        }
+        return json
+    }
+    if (isPlainObject(json)) {
+        let sortedObj = {}
+        let keys = Object.keys(json).sort()
+        for (const key of keys) {
+            let value = json[key]
+            sortedObj[key] = rearrangeJsonKey(value)
+        }
+        return sortedObj
+    }
+    return json
+}

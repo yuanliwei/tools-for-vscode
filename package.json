@@ -183,6 +183,10 @@
                 "title": "deep parse JSON"
             },
             {
+                "command": "tools:y-codec-rearrange-json-key",
+                "title": "rearrange JSON key"
+            },
+            {
                 "command": "tools:y-json-info",
                 "title": "JSON Info"
             },
