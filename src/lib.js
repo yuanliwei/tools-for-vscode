@@ -14,7 +14,7 @@ import os from 'os'
 import vscode from 'vscode'
 import { JSONInfo } from 'json-info'
 import { evalParser } from 'extract-json-from-string-y'
-import flatten from 'flat'
+import { flatten } from 'flat'
 import { table } from 'table'
 
 export async function parseJSON(text) {
@@ -722,4 +722,61 @@ export function rearrangeJsonKey(json) {
         return sortedObj
     }
     return json
+}
+
+/**
+ * @typedef {import('./api/git.js').GitExtension} GitExtension
+ */
+
+export function getGitApi() {
+    /** @type{GitExtension} */
+    const gitExtension = vscode.extensions.getExtension('vscode.git').exports
+    const git = gitExtension.getAPI(1)
+    return git
+}
+
+export function getWebviewContent(html) {
+    return `<!DOCTYPE html>
+    <html>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Document</title>
+    </head>
+    <body>
+        <pre><code>${html}</code><pre/>
+    </body>
+    </html>`
+}
+
+export async function todo(text) {
+    let git = getGitApi()
+    console.log(git)
+    let logs = []
+
+    for (const repository of git.repositories) {
+        let log = await repository.log({shortStats:true})
+        logs.push(log)
+
+        let ref1 = 'ecec6a15dc036f6ddfbabdb7506fc690828043e1'
+        let ref2 = 'HEAD'
+        let changes = await repository.diffBetween(ref1, ref2)
+        logs.push(changes)
+        for (const change of changes) {
+            // let path = change.uri.path.replace(repository.rootUri.path+'/','')
+            // let path = change.uri.fsPath
+            // git.git.path
+            let uri1 = git.toGitUri(change.uri, ref1)
+            let uri2 = git.toGitUri(change.uri, ref2)
+
+            // let uris = git.toMultiFileDiffEditorUris(change, ref1, ref2)
+            // vscode.commands.executeCommand('vscode.diff', uris.originalUri, uris.modifiedUri, `${change.uri.fsPath} ${ref1} vs. ${ref2}`)
+
+            vscode.commands.executeCommand('vscode.diff', uri1, uri2, `${change.uri.fsPath} ${ref1} vs. ${ref2}`)
+
+            break
+        }
+    }
+
+    return `todo `
 }

@@ -3,9 +3,9 @@ import commonjs from '@rollup/plugin-commonjs'
 import { defineConfig } from 'rollup'
 
 export default defineConfig({
-    input: 'index.js',
+    input: 'src/index.js',
     output: {
-        file: '../dest/extension.js',
+        file: 'dest/extension.cjs',
         format: 'cjs',
         inlineDynamicImports: true,
         sourcemap: false,
@@ -21,7 +21,6 @@ export default defineConfig({
         'vkbeautify',
         'vscode',
         'nzh',
-        'flat',
         'table',
     ],
     plugins: [

@@ -1,7 +1,7 @@
 import { addTranslateHoverProvider, getAllText, getInputSeparator, getInputStartNumber, getRegexpText, getSelectText, getTranslateIks, registerDocType, updatePackageJsonCommands } from './tools.js'
 import { pasteImage } from './ocr.js'
 import vscode from 'vscode'
-import { NameGenerate, addLineNumber, addLineNumberFromInput, addLineNumberWithSeparator, chatgpt, cleanAnsiEscapeCodes, commentAlign, currentTime, cursorAlign, decodeBase64, decodeCoffee, decodeHex, decodeHtml, decodeLess, decodeNative, decodeUnescape, decodeUnicode, decodeUri, encodeBase64, encodeEscape, encodeHex, encodeHtml, encodeNative, encodeUnicode, encodeUri, escapeSimple, escapeWithcrlf, evalPrint, firstLetterLowercase, firstLetterUppercase, formatCSS, formatJS, formatJSON, formatSQL, formatTime, formatXML, guid, jsonDeepParse, lineGroupDuplicate, lineRemoveDuplicate, lineRemoveEmpty, lineRemoveExcludeSelect, lineRemoveIncludeSelect, lineRemoveMatchRegexp, lineRemoveNotMatchRegexp, lineReverse, lineSortAsc, lineSortDesc, lineSortNumber, lineTrim, lineTrimLeft, lineTrimRight, markdownToHtml, md5, minCSS, minJSON, minSQL, minXML, parseJSON, parseJSONInfo, rearrangeJsonKey, runCode, separatorHumpToUnderline, separatorUnderlineToHump, sha1, sha256, sha512, stringify } from './lib.js'
+import { NameGenerate, addLineNumber, addLineNumberFromInput, addLineNumberWithSeparator, chatgpt, cleanAnsiEscapeCodes, commentAlign, currentTime, cursorAlign, decodeBase64, decodeCoffee, decodeHex, decodeHtml, decodeLess, decodeNative, decodeUnescape, decodeUnicode, decodeUri, encodeBase64, encodeEscape, encodeHex, encodeHtml, encodeNative, encodeUnicode, encodeUri, escapeSimple, escapeWithcrlf, evalPrint, firstLetterLowercase, firstLetterUppercase, formatCSS, formatJS, formatJSON, formatSQL, formatTime, formatXML, getGitApi, getWebviewContent, guid, jsonDeepParse, lineGroupDuplicate, lineRemoveDuplicate, lineRemoveEmpty, lineRemoveExcludeSelect, lineRemoveIncludeSelect, lineRemoveMatchRegexp, lineRemoveNotMatchRegexp, lineReverse, lineSortAsc, lineSortDesc, lineSortNumber, lineTrim, lineTrimLeft, lineTrimRight, markdownToHtml, md5, minCSS, minJSON, minSQL, minXML, parseJSON, parseJSONInfo, rearrangeJsonKey, runCode, separatorHumpToUnderline, separatorUnderlineToHump, sha1, sha256, sha512, stringify, todo } from './lib.js'
 import { translate } from './translate.js'
 import { config, extensionContext } from './config.js'
 import Nzh from 'nzh'
@@ -835,6 +835,15 @@ const commands = [
                 let match = text.split(/[ ,;\r\n\t"]/) || []
                 let numbers = match.map((o) => parseFloat(o)).filter((o) => !isNaN(o))
                 return `average: ${numbers.reduce((p, c) => p + c, 0) / numbers.length}`
+            })
+        },
+    },
+    {
+        id: "y-todo",
+        label: "y-todo",
+        run: async function (/**@type{vscode.TextEditor}*/ed) {
+            editText(ed, { append: true }, async (text) => {
+               return todo(text)
             })
         },
     },

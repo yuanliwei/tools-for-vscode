@@ -4,7 +4,7 @@
 //
 
 // The module 'assert' provides assertion methods from node
-const assert = require('assert');
+import { equal } from 'assert'
 
 // You can import and use all API from the 'vscode' module
 // as well as import your extension to test it
@@ -16,6 +16,6 @@ suite("Encode Tests", function () {
 
     // Defines a Mocha unit test
     test("CodecUtil.escapeWithcrlf test", async function () {
-        assert.equal(123, 123);
+        equal(123, 123);
     });
 });
