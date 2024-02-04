@@ -750,12 +750,58 @@ export function getWebviewContent(html) {
 }
 
 export async function todo(text) {
+    // vscode.window.showInformationMessage('123456789', 'a', 'b')
+    let git = getGitApi()
+    console.log(git)
+    const repository = git.repositories.at(0)
+    let ref1 = '402483378f924a062'
+    let ref2 = 'HEAD'
+    let changes = await repository.diffBetween(ref1, ref2)
+    console.log(changes)
+
+    // repository.repository.sourceControl
+
+    // debugger
+
+    // let sourceControl = vscode.scm.createSourceControl('y-diff', 'diff', repository.rootUri)
+    // let sourceControl = vscode.scm.createSourceControl('git', 'Git', repository.rootUri)
+    // let groupA = sourceControl.createResourceGroup('y-diff', 'diff')
+    let groupA = repository.repository.sourceControl.createResourceGroup('y-diff', 'diff')
+    groupA.hideWhenEmpty = false
+
+    groupA.resourceStates = [
+        ...changes.map(o => {
+            let uri1 = git.toGitUri(o.uri, ref1)
+            let uri2 = git.toGitUri(o.uri, ref2)
+            return Object.assign({
+                resourceUri: o.uri,
+                command: {
+                    title: 'rrrr',
+                    command: 'command',
+                    tooltip: 'command-tooltip',
+                    arguments: [uri1, uri2, `${o.uri.fsPath} ${ref1} vs. ${ref2}`],
+                }
+            }, o)
+        }),
+    ]
+
+    sourceControl.quickDiffProvider = {
+        provideOriginalResource(uri, token) {
+            // vscode.commands.executeCommand('vscode.diff', uri1, uri2, `${change.uri.fsPath} ${ref1} vs. ${ref2}`)
+
+            return git.toGitUri(uri, ref2)
+        }
+    }
+    sourceControl.inputBox.visible = true
+}
+
+export async function todo1(text) {
     let git = getGitApi()
     console.log(git)
     let logs = []
 
     for (const repository of git.repositories) {
-        let log = await repository.log({shortStats:true})
+        let log = await repository.log({ shortStats: true })
         logs.push(log)
 
         let ref1 = 'ecec6a15dc036f6ddfbabdb7506fc690828043e1'
