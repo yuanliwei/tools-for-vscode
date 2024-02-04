@@ -18,3 +18,10 @@ commands.executeCommand('vscode.open', Uri.parse('https://aka.ms/vscode-download
 
 // panel.webview.html = getWebviewContent(text)
 // return `todo ${Date.now()} \n${JSON.stringify(logs, null, 4)}`
+
+
+// let sourceControl = vscode.scm.createSourceControl('git', 'Git', repository.rootUri)
+// let groupA = repository.repository.sourceControl.createResourceGroup('y-diff', 'diff')
+
+let sourceControl = vscode.scm.createSourceControl('y-diff', 'diff', repository.rootUri)
+let groupA = sourceControl.createResourceGroup('y-diff', 'diff')

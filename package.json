@@ -439,6 +439,10 @@
                 "title": "numbers average 求平均值"
             },
             {
+                "command": "tools:y-show-change",
+                "title": "show-change"
+            },
+            {
                 "command": "tools:y-todo",
                 "title": "y-todo"
             }

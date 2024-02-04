@@ -1,7 +1,7 @@
 import { addTranslateHoverProvider, getAllText, getInputSeparator, getInputStartNumber, getRegexpText, getSelectText, getTranslateIks, registerDocType, updatePackageJsonCommands } from './tools.js'
 import { pasteImage } from './ocr.js'
 import vscode from 'vscode'
-import { NameGenerate, addLineNumber, addLineNumberFromInput, addLineNumberWithSeparator, chatgpt, cleanAnsiEscapeCodes, commentAlign, currentTime, cursorAlign, decodeBase64, decodeCoffee, decodeHex, decodeHtml, decodeLess, decodeNative, decodeUnescape, decodeUnicode, decodeUri, encodeBase64, encodeEscape, encodeHex, encodeHtml, encodeNative, encodeUnicode, encodeUri, escapeSimple, escapeWithcrlf, evalPrint, firstLetterLowercase, firstLetterUppercase, formatCSS, formatJS, formatJSON, formatSQL, formatTime, formatXML, getGitApi, getWebviewContent, guid, jsonDeepParse, lineGroupDuplicate, lineRemoveDuplicate, lineRemoveEmpty, lineRemoveExcludeSelect, lineRemoveIncludeSelect, lineRemoveMatchRegexp, lineRemoveNotMatchRegexp, lineReverse, lineSortAsc, lineSortDesc, lineSortNumber, lineTrim, lineTrimLeft, lineTrimRight, markdownToHtml, md5, minCSS, minJSON, minSQL, minXML, parseJSON, parseJSONInfo, rearrangeJsonKey, runCode, separatorHumpToUnderline, separatorUnderlineToHump, sha1, sha256, sha512, stringify, todo } from './lib.js'
+import { NameGenerate, addLineNumber, addLineNumberFromInput, addLineNumberWithSeparator, chatgpt, cleanAnsiEscapeCodes, commentAlign, currentTime, cursorAlign, decodeBase64, decodeCoffee, decodeHex, decodeHtml, decodeLess, decodeNative, decodeUnescape, decodeUnicode, decodeUri, encodeBase64, encodeEscape, encodeHex, encodeHtml, encodeNative, encodeUnicode, encodeUri, escapeSimple, escapeWithcrlf, evalPrint, firstLetterLowercase, firstLetterUppercase, formatCSS, formatJS, formatJSON, formatSQL, formatTime, formatXML, getGitApi, getWebviewContent, guid, jsonDeepParse, lineGroupDuplicate, lineRemoveDuplicate, lineRemoveEmpty, lineRemoveExcludeSelect, lineRemoveIncludeSelect, lineRemoveMatchRegexp, lineRemoveNotMatchRegexp, lineReverse, lineSortAsc, lineSortDesc, lineSortNumber, lineTrim, lineTrimLeft, lineTrimRight, markdownToHtml, md5, minCSS, minJSON, minSQL, minXML, parseJSON, parseJSONInfo, rearrangeJsonKey, runCode, separatorHumpToUnderline, separatorUnderlineToHump, sha1, sha256, sha512, showChange, stringify, todo } from './lib.js'
 import { translate } from './translate.js'
 import { config, extensionContext } from './config.js'
 import Nzh from 'nzh'
@@ -26,7 +26,7 @@ import { evalParser, extractJsonFromString } from 'extract-json-from-string-y'
  * @type {{
  *   id: string;
  *   label: string;
- *   run: (ed: any) => Promise<void>;
+ *   run: (ed: any, args:any[]|any) => Promise<void>;
  * }[]} 
  */
 const commands = [
@@ -839,11 +839,18 @@ const commands = [
         },
     },
     {
+        id: "y-show-change",
+        label: "show-change",
+        run: async function (/**@type{vscode.TextEditor}*/ed, args) {
+            return showChange(args)
+        },
+    },
+    {
         id: "y-todo",
         label: "y-todo",
-        run: async function (/**@type{vscode.TextEditor}*/ed) {
+        run: async function (/**@type{vscode.TextEditor}*/ed, args) {
             editText(ed, { append: true }, async (text) => {
-               return todo(text)
+                return todo(text, args)
             })
         },
     },
@@ -876,9 +883,9 @@ function buildSequenceNum(char, start) {
 export function setUpCommands(context) {
     for (const command of commands) {
         context.subscriptions.push(
-            vscode.commands.registerCommand('tools:' + command.id, () => {
+            vscode.commands.registerCommand('tools:' + command.id, (...args) => {
                 let editor = vscode.window.activeTextEditor
-                command.run(editor)
+                command.run(editor, args)
             })
         )
     }

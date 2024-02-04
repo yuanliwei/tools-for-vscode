@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { Uri, Event, Disposable, ProviderResult, Command, CancellationToken } from 'vscode';
+import { Uri, Event, Disposable, ProviderResult, Command, CancellationToken, SourceControl } from 'vscode';
 export { ProviderResult } from 'vscode';
 
 export interface Git {
@@ -187,12 +187,17 @@ export interface BranchQuery extends RefQuery {
 	readonly remote?: boolean;
 }
 
+export interface BaseRepository {
+	readonly sourceControl: SourceControl;
+}
+
 export interface Repository {
 
 	readonly rootUri: Uri;
 	readonly inputBox: InputBox;
 	readonly state: RepositoryState;
 	readonly ui: RepositoryUIState;
+	readonly repository: BaseRepository;
 
 	readonly onDidCommit: Event<void>;
 

@@ -9,7 +9,7 @@ import coffee from 'coffeescript'
 import less from 'less'
 import MarkdownIt from 'markdown-it'
 import fs from 'fs'
-import path from 'path'
+import path, { sep } from 'path'
 import os from 'os'
 import vscode from 'vscode'
 import { JSONInfo } from 'json-info'
@@ -749,50 +749,171 @@ export function getWebviewContent(html) {
     </html>`
 }
 
-export async function todo(text) {
+/** @type{vscode.SourceControlResourceGroup} */
+let groupShowChanges = null
+
+export async function showChange([ref1, ref2]) {
+
+    if (!ref1) {
+        let version = await vscode.window.showInputBox({
+            title: '输入git版本号',
+            placeHolder: '1234567 0987654'
+        })
+        version = version.trim()
+        if (!version || version.split(' ').length != 2) {
+            return
+        }
+        [ref1, ref2] = version.split(' ')
+    }
+
+    let git = getGitApi()
+    const repository = git.repositories.at(0)
+    let changes = []
+
+    let title = ref1.substring(0, 10)
+    if (ref1 && ref2) {
+        title = `${ref1.substring(0, 10)}..${ref2.substring(0, 10)}`
+    } else if (ref1) {
+        ref2 = ref1
+        ref1 = ref1 + '~1'
+    }
+    changes = await repository.diffBetween(ref1, ref2)
+
+    if (!groupShowChanges) {
+        let sourceControl = repository.repository?.sourceControl
+        if (!sourceControl) {
+            sourceControl = vscode.scm.createSourceControl('y-diff', 'commit', repository.rootUri)
+        }
+        groupShowChanges = sourceControl.createResourceGroup('y-show-commit', 'commit-changes')
+        groupShowChanges.hideWhenEmpty = true
+    }
+
+    groupShowChanges.resourceStates = [
+        ...changes.map(o => {
+
+            console.log(repository.rootUri.fsPath)
+            console.log(o.uri.fsPath)
+
+            let rootPath = repository.rootUri.fsPath
+            if (!rootPath.endsWith(sep)) {
+                rootPath += sep
+            }
+            let filePath = o.uri.fsPath.replace(rootPath, '')
+
+            let uri1 = git.toGitUri(o.uri, ref1)
+            let uri2 = git.toGitUri(o.uri, ref2)
+            return {
+                resourceUri: o.uri,
+                command: {
+                    title: 'rrrr',
+                    command: 'vscode.diff',
+                    tooltip: 'command-tooltip',
+                    arguments: [uri1, uri2, `${filePath}:${title}`],
+                }
+            }
+        }),
+    ]
+}
+
+export async function todo(text, [ref1 = 'HEAD~4', ref2 = 'HEAD']) {
     // vscode.window.showInformationMessage('123456789', 'a', 'b')
     let git = getGitApi()
     console.log(git)
     const repository = git.repositories.at(0)
-    let ref1 = '402483378f924a062'
-    let ref2 = 'HEAD'
+    // let ref1 = '402483378f924a062'
+    // let ref2 = 'HEAD'
     let changes = await repository.diffBetween(ref1, ref2)
     console.log(changes)
 
     // repository.repository.sourceControl
 
     // debugger
+    let sourceControl = vscode.scm.createSourceControl('y-diff', 'diff', repository.rootUri)
+    let groupA = sourceControl.createResourceGroup('y-diff', 'diff')
 
-    // let sourceControl = vscode.scm.createSourceControl('y-diff', 'diff', repository.rootUri)
     // let sourceControl = vscode.scm.createSourceControl('git', 'Git', repository.rootUri)
-    // let groupA = sourceControl.createResourceGroup('y-diff', 'diff')
-    let groupA = repository.repository.sourceControl.createResourceGroup('y-diff', 'diff')
+    // let groupA = repository.repository.sourceControl.createResourceGroup('y-diff', 'diff')
     groupA.hideWhenEmpty = false
 
     groupA.resourceStates = [
         ...changes.map(o => {
+
+            console.log(repository.rootUri.fsPath)
+            console.log(o.uri.fsPath)
+
+            let rootPath = repository.rootUri.fsPath
+            if (!rootPath.endsWith(sep)) {
+                rootPath += sep
+            }
+            let filePath = o.uri.fsPath.replace(rootPath, '')
+
             let uri1 = git.toGitUri(o.uri, ref1)
             let uri2 = git.toGitUri(o.uri, ref2)
             return Object.assign({
                 resourceUri: o.uri,
                 command: {
                     title: 'rrrr',
-                    command: 'command',
+                    command: 'vscode.diff',
                     tooltip: 'command-tooltip',
-                    arguments: [uri1, uri2, `${o.uri.fsPath} ${ref1} vs. ${ref2}`],
+                    arguments: [uri1, uri2, `${filePath} ${ref1} vs. ${ref2}`],
                 }
             }, o)
         }),
     ]
 
-    sourceControl.quickDiffProvider = {
-        provideOriginalResource(uri, token) {
-            // vscode.commands.executeCommand('vscode.diff', uri1, uri2, `${change.uri.fsPath} ${ref1} vs. ${ref2}`)
+    // sourceControl.quickDiffProvider = {
+    //     provideOriginalResource(uri, token) {
+    //         // vscode.commands.executeCommand('vscode.diff', uri1, uri2, `${change.uri.fsPath} ${ref1} vs. ${ref2}`)
 
-            return git.toGitUri(uri, ref2)
-        }
+    //         return git.toGitUri(uri, ref2)
+    //     }
+    // }
+    // sourceControl.inputBox.visible = true
+
+    return '12345678'
+}
+
+export const Status = {
+    INDEX_MODIFIED: 0,
+    INDEX_ADDED: 1,
+    INDEX_DELETED: 2,
+    INDEX_RENAMED: 3,
+    INDEX_COPIED: 4,
+
+    MODIFIED: 5,
+    DELETED: 6,
+    UNTRACKED: 7,
+    IGNORED: 8,
+    INTENT_TO_ADD: 9,
+    INTENT_TO_RENAME: 10,
+    TYPE_CHANGED: 11,
+
+    ADDED_BY_US: 12,
+    ADDED_BY_THEM: 13,
+    DELETED_BY_US: 14,
+    DELETED_BY_THEM: 15,
+    BOTH_ADDED: 16,
+    BOTH_DELETED: 17,
+    BOTH_MODIFIED: 18,
+}
+
+/**
+ * @param {import("./api/git.js").API} git
+ * @param {import('./api/git.js').Change} change
+ * @param {string} originalRef
+ * @param {string} modifiedRef
+ */
+export function toMultiFileDiffEditorUris(git, change, originalRef, modifiedRef) {
+    switch (change.status) {
+        case Status.INDEX_ADDED:
+            return { originalUri: undefined, modifiedUri: git.toGitUri(change.uri, modifiedRef) }
+        case Status.DELETED:
+            return { originalUri: git.toGitUri(change.uri, originalRef), modifiedUri: undefined }
+        case Status.INDEX_RENAMED:
+            return { originalUri: git.toGitUri(change.originalUri, originalRef), modifiedUri: git.toGitUri(change.uri, modifiedRef) }
+        default:
+            return { originalUri: git.toGitUri(change.uri, originalRef), modifiedUri: git.toGitUri(change.uri, modifiedRef) }
     }
-    sourceControl.inputBox.visible = true
 }
 
 export async function todo1(text) {
