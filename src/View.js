@@ -44,6 +44,11 @@ export class View {
  */
 export async function runWithLoading(title, func) {
     return vscode.window.withProgress({ location: vscode.ProgressLocation.Window, title }, async () => {
-        return await func()
+        try {
+            return await func()
+        } catch (error) {
+            console.error(error)
+            vscode.window.showErrorMessage(`${error.message || ''}\n${error.stack || ''}`)
+        }
     })
 }

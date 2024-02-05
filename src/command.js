@@ -1,7 +1,7 @@
 import { addGitCommitHoverProvider, addTranslateHoverProvider, getAllText, getInputSeparator, getInputStartNumber, getRegexpText, getSelectText, getTranslateIks, registerDocType, updatePackageJsonCommands } from './tools.js'
 import { pasteImage } from './ocr.js'
 import vscode from 'vscode'
-import { NameGenerate, addLineNumber, addLineNumberFromInput, addLineNumberWithSeparator, chatgpt, cleanAnsiEscapeCodes, commentAlign, currentTime, cursorAlign, decodeBase64, decodeCoffee, decodeHex, decodeHtml, decodeLess, decodeNative, decodeUnescape, decodeUnicode, decodeUri, encodeBase64, encodeEscape, encodeHex, encodeHtml, encodeNative, encodeUnicode, encodeUri, escapeSimple, escapeWithcrlf, evalPrint, firstLetterLowercase, firstLetterUppercase, formatCSS, formatJS, formatJSON, formatSQL, formatTime, formatXML, getGitApi, getWebviewContent, gitFetchAll, guid, jsonDeepParse, lineGroupDuplicate, lineRemoveDuplicate, lineRemoveEmpty, lineRemoveExcludeSelect, lineRemoveIncludeSelect, lineRemoveMatchRegexp, lineRemoveNotMatchRegexp, lineReverse, lineSortAsc, lineSortDesc, lineSortNumber, lineTrim, lineTrimLeft, lineTrimRight, markdownToHtml, md5, minCSS, minJSON, minSQL, minXML, parseJSON, parseJSONInfo, rearrangeJsonKey, runCode, separatorHumpToUnderline, separatorUnderlineToHump, sha1, sha256, sha512, showChange, showGitBlame, showGitLogGraph, showGitLogGraphAll, showGitLogGraphOneline, stringify, todo } from './lib.js'
+import { NameGenerate, addLineNumber, addLineNumberFromInput, addLineNumberWithSeparator, chatgpt, cleanAnsiEscapeCodes, commentAlign, currentTime, cursorAlign, decodeBase64, decodeCoffee, decodeHex, decodeHtml, decodeLess, decodeNative, decodeUnescape, decodeUnicode, decodeUri, encodeBase64, encodeEscape, encodeHex, encodeHtml, encodeNative, encodeUnicode, encodeUri, escapeSimple, escapeWithcrlf, evalPrint, firstLetterLowercase, firstLetterUppercase, formatCSS, formatJS, formatJSON, formatSQL, formatTime, formatXML, getGitApi, gitFetchAll, guid, jsonDeepParse, lineGroupDuplicate, lineRemoveDuplicate, lineRemoveEmpty, lineRemoveExcludeSelect, lineRemoveIncludeSelect, lineRemoveMatchRegexp, lineRemoveNotMatchRegexp, lineReverse, lineSortAsc, lineSortDesc, lineSortNumber, lineTrim, lineTrimLeft, lineTrimRight, markdownToHtml, md5, minCSS, minJSON, minSQL, minXML, parseJSON, parseJSONInfo, previewHTML, rearrangeJsonKey, runCode, separatorHumpToUnderline, separatorUnderlineToHump, sha1, sha256, sha512, showChange, showGitBlame, showGitLogGraph, showGitLogGraphAll, showGitLogGraphOneline, stringify, todo } from './lib.js'
 import { translate } from './translate.js'
 import { config, extensionContext } from './config.js'
 import Nzh from 'nzh'
@@ -840,7 +840,7 @@ const commands = [
     },
     {
         id: "y-show-change",
-        label: "git show-change",
+        label: "git show change",
         run: async function (/**@type{vscode.TextEditor}*/ed, args) {
             console.log('show change', args)
             return showChange(args)
@@ -879,6 +879,15 @@ const commands = [
         label: "git fetch all",
         run: async function (/**@type{vscode.TextEditor}*/ed, args) {
             return gitFetchAll()
+        },
+    },
+    {
+        id: "y-preview-html",
+        label: "preview html",
+        run: async function (/**@type{vscode.TextEditor}*/ed, args) {
+            editText(ed, { noChange: true }, async (text) => {
+                return previewHTML(text)
+            })
         },
     },
     {

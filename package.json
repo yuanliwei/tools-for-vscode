@@ -440,7 +440,7 @@
             },
             {
                 "command": "tools:y-show-change",
-                "title": "git show-change"
+                "title": "git show change"
             },
             {
                 "command": "tools:y-show-blame",
@@ -461,6 +461,10 @@
             {
                 "command": "tools:y-git-fetch-all",
                 "title": "git fetch all"
+            },
+            {
+                "command": "tools:y-preview-html",
+                "title": "preview html"
             },
             {
                 "command": "tools:y-todo",

@@ -736,7 +736,41 @@ export function getGitApi() {
     return git
 }
 
+/**
+ * @typedef {import('./api/git.js').IExecutionResult<string>} IExecutionResult
+ */
+
+/**
+ * @param {string[]} args
+ * @returns {Promise<IExecutionResult|null>}
+ */
+export async function gitexec(args) {
+    let git = getGitApi()
+    const repository = git.repositories.at(0)
+    if (!repository) {
+        vscode.window.showWarningMessage('no repository')
+        return null
+    }
+    let exec = async () => { }
+    let instance = null
+    for (const key in repository.repository) {
+        const v = repository.repository[key]
+        if (v?.exec) {
+            instance = v
+            exec = v.exec
+            break
+        }
+    }
+    return await exec.call(instance, args)
+}
+
+/**
+ * @param {string} html
+ */
 export function getWebviewContent(html) {
+    if (html.substring(0, 30).toLowerCase().startsWith('<!doctype')) {
+        return html
+    }
     return `<!DOCTYPE html>
     <html>
     <head>
@@ -745,9 +779,30 @@ export function getWebviewContent(html) {
         <title>Document</title>
     </head>
     <body>
-        <pre><code>${html}</code><pre/>
+        ${html}
     </body>
     </html>`
+}
+
+/**
+ * @param {string} text
+ */
+export function previewHTML(text) {
+    const panel = vscode.window.createWebviewPanel(
+        'webview',
+        'Preview',
+        vscode.ViewColumn.Active,
+        {
+            enableCommandUris: true,
+            enableScripts: true,
+            enableFindWidget: true,
+            enableForms: true,
+            localResourceRoots:[],
+        }
+    )
+
+    panel.webview.html = getWebviewContent(text)
+    return null
 }
 
 /** @type{vscode.SourceControlResourceGroup} */
@@ -820,82 +875,40 @@ export async function showChange([ref1, ref2]) {
     ]
 }
 
-export async function todo(text, [ref1 = 'HEAD~4', ref2 = 'HEAD']) {
-    let activeTextEditor = vscode.window.activeTextEditor
-    // let terminal = vscode.window.activeTerminal
-    // if (!terminal) {
-    //     terminal = vscode.window.createTerminal('git')
-    // }
-    let git = getGitApi()
-    const repository = git.repositories.at(0)
-    console.log('git.git.path', git.git.path)
-    // repository.repository.sourceControl.
-    // let blame = await repository.blame(activeTextEditor.document.uri.fsPath)
-    // vscode.workspace.openTextDocument({ language: 'markdown', content: blame })
-
-    // repository
-
-
-
-    // debugger
-    // return (await gitexec(['log'])).stdout
-    return (await gitexec(['log', '--graph', '--all'])).stdout
-}
-
-/**
- * @typedef {import('./api/git.js').IExecutionResult<string>} IExecutionResult
- */
-
-/**
- * @param {string[]} args
- * @returns {Promise<IExecutionResult>}
- */
-export async function gitexec(args) {
-    let git = getGitApi()
-    const repository = git.repositories.at(0)
-    let exec = async () => { }
-    let instance = null
-    for (const key in repository.repository) {
-        const v = repository.repository[key]
-        if (v?.exec) {
-            instance = v
-            exec = v.exec
-            break
-        }
-    }
-    return await exec.call(instance, args)
-}
-
 export async function showGitBlame() {
     runWithLoading('git blame ...', async () => {
         let activeTextEditor = vscode.window.activeTextEditor
         let fsPath = activeTextEditor.document.uri.fsPath
-        let blame = (await gitexec(['blame', fsPath])).stdout
-        let doc = await vscode.workspace.openTextDocument({ content: blame, language: 'plaintext' })
+        let content = (await gitexec(['blame', fsPath]))?.stdout
+        if (!content) return
+        let doc = await vscode.workspace.openTextDocument({ content: content, language: 'plaintext' })
         vscode.window.showTextDocument(doc, { preview: true })
     })
 }
 
 export async function showGitLogGraph() {
     runWithLoading('git log --graph ...', async () => {
-        let blame = (await gitexec('log --graph --decorate=full'.split(' '))).stdout
-        let doc = await vscode.workspace.openTextDocument({ content: blame, language: 'plaintext' })
+        let content = (await gitexec('log --graph --decorate=full'.split(' ')))?.stdout
+        if (!content) return
+        let doc = await vscode.workspace.openTextDocument({ content: content, language: 'plaintext' })
         vscode.window.showTextDocument(doc, { preview: true })
     })
 }
 
 export async function showGitLogGraphAll() {
     runWithLoading('git log --graph --all ...', async () => {
-        let blame = (await gitexec('log --graph --all --date-order --decorate=full'.split(' '))).stdout
-        let doc = await vscode.workspace.openTextDocument({ content: blame, language: 'plaintext' })
+        let content = (await gitexec('log --graph --all --date-order --decorate=full'.split(' ')))?.stdout
+        if (!content) return
+        let doc = await vscode.workspace.openTextDocument({ content: content, language: 'plaintext' })
         vscode.window.showTextDocument(doc, { preview: true })
     })
 }
 
 export async function showGitLogGraphOneline() {
     runWithLoading('log --graph --oneline --all ...', async () => {
-        let blame = (await gitexec('log --graph --oneline --all --date-order --decorate=full'.split(' '))).stdout
-        let doc = await vscode.workspace.openTextDocument({ content: blame, language: 'plaintext' })
+        let content = (await gitexec('log --graph --oneline --all --date-order --decorate=full'.split(' ')))?.stdout
+        if (!content) return
+        let doc = await vscode.workspace.openTextDocument({ content: content, language: 'plaintext' })
         vscode.window.showTextDocument(doc, { preview: true })
     })
 }
@@ -903,6 +916,7 @@ export async function showGitLogGraphOneline() {
 export async function gitFetchAll() {
     runWithLoading('fetch --all ...', async () => {
         let ret = await gitexec('fetch --all'.split(' '))
+        if (!ret) return
         if (ret.exitCode != 0) {
             vscode.window.showInformationMessage(ret.stderr)
         }
@@ -918,61 +932,6 @@ export async function execInTerminal(command) {
         terminal = vscode.window.createTerminal('tools')
     }
     terminal.sendText(command)
-}
-
-export async function todo2(text, [ref1 = 'HEAD~4', ref2 = 'HEAD']) {
-    // vscode.window.showInformationMessage('123456789', 'a', 'b')
-    let git = getGitApi()
-    console.log(git)
-    const repository = git.repositories.at(0)
-    // let ref1 = '402483378f924a062'
-    // let ref2 = 'HEAD'
-    let changes = await repository.diffBetween(ref1, ref2)
-    console.log(changes)
-
-    // repository.repository.sourceControl
-
-    // debugger
-    let sourceControl = vscode.scm.createSourceControl('y-diff', 'diff', repository.rootUri)
-    let groupA = sourceControl.createResourceGroup('y-diff', 'diff')
-    groupA.hideWhenEmpty = false
-
-    groupA.resourceStates = [
-        ...changes.map(o => {
-
-            console.log(repository.rootUri.fsPath)
-            console.log(o.uri.fsPath)
-
-            let rootPath = repository.rootUri.fsPath
-            if (!rootPath.endsWith(sep)) {
-                rootPath += sep
-            }
-            let filePath = o.uri.fsPath.replace(rootPath, '')
-
-            let uri1 = git.toGitUri(o.uri, ref1)
-            let uri2 = git.toGitUri(o.uri, ref2)
-            return Object.assign({
-                resourceUri: o.uri,
-                command: {
-                    title: 'change',
-                    command: 'vscode.diff',
-                    tooltip: 'command-tooltip',
-                    arguments: [uri1, uri2, `${filePath} ${ref1} vs. ${ref2}`],
-                }
-            }, o)
-        }),
-    ]
-
-    // sourceControl.quickDiffProvider = {
-    //     provideOriginalResource(uri, token) {
-    //         // vscode.commands.executeCommand('vscode.diff', uri1, uri2, `${change.uri.fsPath} ${ref1} vs. ${ref2}`)
-
-    //         return git.toGitUri(uri, ref2)
-    //     }
-    // }
-    // sourceControl.inputBox.visible = true
-
-    return '12345678'
 }
 
 export const Status = {
@@ -1018,34 +977,24 @@ export function toMultiFileDiffEditorUris(git, change, originalRef, modifiedRef)
     }
 }
 
-export async function todo1(text) {
+export async function todo(text, [ref1 = 'HEAD~4', ref2 = 'HEAD']) {
+    let activeTextEditor = vscode.window.activeTextEditor
+    // let terminal = vscode.window.activeTerminal
+    // if (!terminal) {
+    //     terminal = vscode.window.createTerminal('git')
+    // }
     let git = getGitApi()
-    console.log(git)
-    let logs = []
+    const repository = git.repositories.at(0)
+    console.log('git.git.path', git.git.path)
+    // repository.repository.sourceControl.
+    // let blame = await repository.blame(activeTextEditor.document.uri.fsPath)
+    // vscode.workspace.openTextDocument({ language: 'markdown', content: blame })
 
-    for (const repository of git.repositories) {
-        let log = await repository.log({ shortStats: true })
-        logs.push(log)
+    // repository
 
-        let ref1 = 'ecec6a15dc036f6ddfbabdb7506fc690828043e1'
-        let ref2 = 'HEAD'
-        let changes = await repository.diffBetween(ref1, ref2)
-        logs.push(changes)
-        for (const change of changes) {
-            // let path = change.uri.path.replace(repository.rootUri.path+'/','')
-            // let path = change.uri.fsPath
-            // git.git.path
-            let uri1 = git.toGitUri(change.uri, ref1)
-            let uri2 = git.toGitUri(change.uri, ref2)
 
-            // let uris = git.toMultiFileDiffEditorUris(change, ref1, ref2)
-            // vscode.commands.executeCommand('vscode.diff', uris.originalUri, uris.modifiedUri, `${change.uri.fsPath} ${ref1} vs. ${ref2}`)
 
-            vscode.commands.executeCommand('vscode.diff', uri1, uri2, `${change.uri.fsPath} ${ref1} vs. ${ref2}`)
-
-            break
-        }
-    }
-
-    return `todo `
+    // debugger
+    // return (await gitexec(['log'])).stdout
+    return (await gitexec(['log', '--graph', '--all'])).stdout
 }
