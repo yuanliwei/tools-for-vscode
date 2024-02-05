@@ -759,11 +759,19 @@ export async function showChange([ref1, ref2]) {
             title: '输入git版本号',
             placeHolder: '1234567 0987654'
         })
-        version = version.trim()
-        if (!version || version.split(' ').length != 2) {
+        if (!version) {
             return
         }
-        [ref1, ref2] = version.split(' ')
+        const split = version.split(/ +/).map(o => o.trim()).filter(o => o)
+        if (split.length == 0) {
+            return
+        }
+        if (split.length == 1) {
+            ref1 = split[0]
+        }
+        if (split.length > 1) {
+            [ref1, ref2] = split
+        }
     }
 
     let git = getGitApi()
@@ -790,10 +798,6 @@ export async function showChange([ref1, ref2]) {
 
     groupShowChanges.resourceStates = [
         ...changes.map(o => {
-
-            console.log(repository.rootUri.fsPath)
-            console.log(o.uri.fsPath)
-
             let rootPath = repository.rootUri.fsPath
             if (!rootPath.endsWith(sep)) {
                 rootPath += sep
@@ -805,7 +809,7 @@ export async function showChange([ref1, ref2]) {
             return {
                 resourceUri: o.uri,
                 command: {
-                    title: 'rrrr',
+                    title: 'change',
                     command: 'vscode.diff',
                     tooltip: 'command-tooltip',
                     arguments: [uri1, uri2, `${filePath}:${title}`],
@@ -816,6 +820,45 @@ export async function showChange([ref1, ref2]) {
 }
 
 export async function todo(text, [ref1 = 'HEAD~4', ref2 = 'HEAD']) {
+    let activeTextEditor = vscode.window.activeTextEditor
+    // let terminal = vscode.window.activeTerminal
+    // if (!terminal) {
+    //     terminal = vscode.window.createTerminal('git')
+    // }
+    // let git = getGitApi()
+    // const repository = git.repositories.at(0)
+    // let blame = await repository.blame(activeTextEditor.document.uri.fsPath)
+    // vscode.workspace.openTextDocument({ language: 'markdown', content: blame })
+
+    return ''
+}
+
+export async function showGitBlame() {
+    let activeTextEditor = vscode.window.activeTextEditor
+    let fsPath = activeTextEditor.document.uri.fsPath
+    execInTerminal(`git blame ${fsPath} | code -`)
+}
+
+export async function showGitLogGraph() {
+    execInTerminal(`git log --graph --all | code -`)
+}
+
+export async function showGitLogGraphOneline() {
+    execInTerminal(`git log --graph --oneline --all | code -`)
+}
+
+/**
+ * @param {string} command
+ */
+export async function execInTerminal(command) {
+    let terminal = vscode.window.activeTerminal
+    if (!terminal) {
+        terminal = vscode.window.createTerminal('tools')
+    }
+    terminal.sendText(command)
+}
+
+export async function todo2(text, [ref1 = 'HEAD~4', ref2 = 'HEAD']) {
     // vscode.window.showInformationMessage('123456789', 'a', 'b')
     let git = getGitApi()
     console.log(git)
@@ -830,9 +873,6 @@ export async function todo(text, [ref1 = 'HEAD~4', ref2 = 'HEAD']) {
     // debugger
     let sourceControl = vscode.scm.createSourceControl('y-diff', 'diff', repository.rootUri)
     let groupA = sourceControl.createResourceGroup('y-diff', 'diff')
-
-    // let sourceControl = vscode.scm.createSourceControl('git', 'Git', repository.rootUri)
-    // let groupA = repository.repository.sourceControl.createResourceGroup('y-diff', 'diff')
     groupA.hideWhenEmpty = false
 
     groupA.resourceStates = [
@@ -852,7 +892,7 @@ export async function todo(text, [ref1 = 'HEAD~4', ref2 = 'HEAD']) {
             return Object.assign({
                 resourceUri: o.uri,
                 command: {
-                    title: 'rrrr',
+                    title: 'change',
                     command: 'vscode.diff',
                     tooltip: 'command-tooltip',
                     arguments: [uri1, uri2, `${filePath} ${ref1} vs. ${ref2}`],

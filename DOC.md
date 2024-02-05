@@ -25,3 +25,28 @@ commands.executeCommand('vscode.open', Uri.parse('https://aka.ms/vscode-download
 
 let sourceControl = vscode.scm.createSourceControl('y-diff', 'diff', repository.rootUri)
 let groupA = sourceControl.createResourceGroup('y-diff', 'diff')
+
+const commentCommandUri = vscode.Uri.parse(`command:editor.action.addCommentLine`);
+let commitChangeUri = vscode.Uri.parse(`command:tools:y-show-change?${encodeURIComponent(JSON.stringify([commit.hash]))}`)
+const contents = new vscode.MarkdownString(`[Add comment](${commentCommandUri})`);
+
+let uri = activeTextEditor.document.uri.with({ scheme: 'git-blame' })
+let doc = await vscode.workspace.openTextDocument(uri)
+vscode.languages.setTextDocumentLanguage(doc, 'markdown')
+vscode.window.showTextDocument(doc, { preview: false })
+
+/**
+ * @param {vscode.ExtensionContext} context
+ */
+function addGitBlameContentProvider(context) {
+    context.subscriptions.push(vscode.workspace.registerTextDocumentContentProvider('git-blame', {
+        async provideTextDocumentContent(uri, token) {
+            let git = getGitApi()
+            const repository = git.repositories.at(0)
+            let blame = await repository.blame(uri.fsPath)
+            if (!token.isCancellationRequested) {
+                return blame
+            }
+        }
+    }))
+

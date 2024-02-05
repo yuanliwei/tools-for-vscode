@@ -1,7 +1,7 @@
-import { addTranslateHoverProvider, getAllText, getInputSeparator, getInputStartNumber, getRegexpText, getSelectText, getTranslateIks, registerDocType, updatePackageJsonCommands } from './tools.js'
+import { addGitCommitHoverProvider, addTranslateHoverProvider, getAllText, getInputSeparator, getInputStartNumber, getRegexpText, getSelectText, getTranslateIks, registerDocType, updatePackageJsonCommands } from './tools.js'
 import { pasteImage } from './ocr.js'
 import vscode from 'vscode'
-import { NameGenerate, addLineNumber, addLineNumberFromInput, addLineNumberWithSeparator, chatgpt, cleanAnsiEscapeCodes, commentAlign, currentTime, cursorAlign, decodeBase64, decodeCoffee, decodeHex, decodeHtml, decodeLess, decodeNative, decodeUnescape, decodeUnicode, decodeUri, encodeBase64, encodeEscape, encodeHex, encodeHtml, encodeNative, encodeUnicode, encodeUri, escapeSimple, escapeWithcrlf, evalPrint, firstLetterLowercase, firstLetterUppercase, formatCSS, formatJS, formatJSON, formatSQL, formatTime, formatXML, getGitApi, getWebviewContent, guid, jsonDeepParse, lineGroupDuplicate, lineRemoveDuplicate, lineRemoveEmpty, lineRemoveExcludeSelect, lineRemoveIncludeSelect, lineRemoveMatchRegexp, lineRemoveNotMatchRegexp, lineReverse, lineSortAsc, lineSortDesc, lineSortNumber, lineTrim, lineTrimLeft, lineTrimRight, markdownToHtml, md5, minCSS, minJSON, minSQL, minXML, parseJSON, parseJSONInfo, rearrangeJsonKey, runCode, separatorHumpToUnderline, separatorUnderlineToHump, sha1, sha256, sha512, showChange, stringify, todo } from './lib.js'
+import { NameGenerate, addLineNumber, addLineNumberFromInput, addLineNumberWithSeparator, chatgpt, cleanAnsiEscapeCodes, commentAlign, currentTime, cursorAlign, decodeBase64, decodeCoffee, decodeHex, decodeHtml, decodeLess, decodeNative, decodeUnescape, decodeUnicode, decodeUri, encodeBase64, encodeEscape, encodeHex, encodeHtml, encodeNative, encodeUnicode, encodeUri, escapeSimple, escapeWithcrlf, evalPrint, firstLetterLowercase, firstLetterUppercase, formatCSS, formatJS, formatJSON, formatSQL, formatTime, formatXML, getGitApi, getWebviewContent, guid, jsonDeepParse, lineGroupDuplicate, lineRemoveDuplicate, lineRemoveEmpty, lineRemoveExcludeSelect, lineRemoveIncludeSelect, lineRemoveMatchRegexp, lineRemoveNotMatchRegexp, lineReverse, lineSortAsc, lineSortDesc, lineSortNumber, lineTrim, lineTrimLeft, lineTrimRight, markdownToHtml, md5, minCSS, minJSON, minSQL, minXML, parseJSON, parseJSONInfo, rearrangeJsonKey, runCode, separatorHumpToUnderline, separatorUnderlineToHump, sha1, sha256, sha512, showChange, showGitBlame, showGitLogGraph, showGitLogGraphOneline, stringify, todo } from './lib.js'
 import { translate } from './translate.js'
 import { config, extensionContext } from './config.js'
 import Nzh from 'nzh'
@@ -840,9 +840,31 @@ const commands = [
     },
     {
         id: "y-show-change",
-        label: "show-change",
+        label: "git show-change",
         run: async function (/**@type{vscode.TextEditor}*/ed, args) {
+            console.log('show change', args)
             return showChange(args)
+        },
+    },
+    {
+        id: "y-show-blame",
+        label: "git show blame",
+        run: async function (/**@type{vscode.TextEditor}*/ed, args) {
+            return showGitBlame()
+        },
+    },
+    {
+        id: "y-show-graph",
+        label: "git show log graph",
+        run: async function (/**@type{vscode.TextEditor}*/ed, args) {
+            return showGitLogGraph()
+        },
+    },
+    {
+        id: "y-show-graph-oneline",
+        label: "git show log graph oneline",
+        run: async function (/**@type{vscode.TextEditor}*/ed, args) {
+            return showGitLogGraphOneline()
         },
     },
     {
@@ -898,6 +920,9 @@ export function setUpCommands(context) {
     // add translate provide hover
     addTranslateHoverProvider(context)
 
+    // addGitBlameContentProvider(context)
+
+    addGitCommitHoverProvider(context)
 }
 
 /**
@@ -1004,4 +1029,20 @@ function buildChatGPTCommands() {
             }
         }
     })
+}
+
+/**
+ * @param {vscode.ExtensionContext} context
+ */
+function addGitBlameContentProvider(context) {
+    context.subscriptions.push(vscode.workspace.registerTextDocumentContentProvider('git-blame', {
+        async provideTextDocumentContent(uri, token) {
+            let git = getGitApi()
+            const repository = git.repositories.at(0)
+            let blame = await repository.blame(uri.fsPath)
+            if (!token.isCancellationRequested) {
+                return blame
+            }
+        }
+    }))
 }
