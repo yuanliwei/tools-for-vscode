@@ -886,7 +886,7 @@ export async function showGitLogGraph() {
 
 export async function showGitLogGraphAll() {
     runWithLoading('git log --graph --all ...', async () => {
-        let blame = (await gitexec('log --graph --all'.split(' '))).stdout
+        let blame = (await gitexec('log --graph --all --date-order'.split(' '))).stdout
         let doc = await vscode.workspace.openTextDocument({ content: blame, language: 'plaintext' })
         vscode.window.showTextDocument(doc, { preview: true })
     })
@@ -894,7 +894,7 @@ export async function showGitLogGraphAll() {
 
 export async function showGitLogGraphOneline() {
     runWithLoading('log --graph --oneline --all ...', async () => {
-        let blame = (await gitexec('log --graph --oneline --all'.split(' '))).stdout
+        let blame = (await gitexec('log --graph --oneline --all --date-order'.split(' '))).stdout
         let doc = await vscode.workspace.openTextDocument({ content: blame, language: 'plaintext' })
         vscode.window.showTextDocument(doc, { preview: true })
     })
