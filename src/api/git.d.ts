@@ -415,3 +415,10 @@ export const enum GitErrorCodes {
 	BranchNotYetBorn = 'BranchNotYetBorn',
 	TagConflict = 'TagConflict'
 }
+
+/// internal api
+export interface IExecutionResult<T extends string | Buffer> {
+	exitCode: number;
+	stdout: T;
+	stderr: string;
+}

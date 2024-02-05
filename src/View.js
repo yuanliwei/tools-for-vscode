@@ -36,3 +36,14 @@ export class View {
 
     // let selectItem = await vscode.window.showQuickPick(items, { matchOnDescription: true })
 }
+
+/**
+ * 
+ * @param {string} title 
+ * @param {Function} func 
+ */
+export async function runWithLoading(title, func) {
+    return vscode.window.withProgress({ location: vscode.ProgressLocation.Window, title }, async () => {
+        return await func()
+    })
+}

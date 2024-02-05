@@ -451,6 +451,10 @@
                 "title": "git show log graph"
             },
             {
+                "command": "tools:y-show-graph-all",
+                "title": "git show log graph all"
+            },
+            {
                 "command": "tools:y-show-graph-oneline",
                 "title": "git show log graph oneline"
             },

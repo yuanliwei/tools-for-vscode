@@ -16,6 +16,7 @@ import { JSONInfo } from 'json-info'
 import { evalParser } from 'extract-json-from-string-y'
 import { flatten } from 'flat'
 import { table } from 'table'
+import { runWithLoading } from './view.js'
 
 export async function parseJSON(text) {
     return JSON.parse(text)
@@ -825,26 +826,78 @@ export async function todo(text, [ref1 = 'HEAD~4', ref2 = 'HEAD']) {
     // if (!terminal) {
     //     terminal = vscode.window.createTerminal('git')
     // }
-    // let git = getGitApi()
-    // const repository = git.repositories.at(0)
+    let git = getGitApi()
+    const repository = git.repositories.at(0)
+    console.log('git.git.path', git.git.path)
+    // repository.repository.sourceControl.
     // let blame = await repository.blame(activeTextEditor.document.uri.fsPath)
     // vscode.workspace.openTextDocument({ language: 'markdown', content: blame })
 
-    return ''
+    // repository
+
+
+
+    // debugger
+    // return (await gitexec(['log'])).stdout
+    return (await gitexec(['log', '--graph', '--all'])).stdout
+}
+
+/**
+ * @typedef {import('./api/git.js').IExecutionResult<string>} IExecutionResult
+ */
+
+/**
+ * @param {string[]} args
+ * @returns {Promise<IExecutionResult>}
+ */
+export async function gitexec(args) {
+    let git = getGitApi()
+    const repository = git.repositories.at(0)
+    let exec = async () => { }
+    let instance = null
+    for (const key in repository.repository) {
+        const v = repository.repository[key]
+        if (v?.exec) {
+            instance = v
+            exec = v.exec
+            break
+        }
+    }
+    return await exec.call(instance, args)
 }
 
 export async function showGitBlame() {
-    let activeTextEditor = vscode.window.activeTextEditor
-    let fsPath = activeTextEditor.document.uri.fsPath
-    execInTerminal(`git blame ${fsPath} | code -`)
+    runWithLoading('git blame ...', async () => {
+        let activeTextEditor = vscode.window.activeTextEditor
+        let fsPath = activeTextEditor.document.uri.fsPath
+        let blame = (await gitexec(['blame', fsPath])).stdout
+        let doc = await vscode.workspace.openTextDocument({ content: blame, language: 'plaintext' })
+        vscode.window.showTextDocument(doc, { preview: true })
+    })
 }
 
 export async function showGitLogGraph() {
-    execInTerminal(`git log --graph --all | code -`)
+    runWithLoading('git log --graph ...', async () => {
+        let blame = (await gitexec('log --graph'.split(' '))).stdout
+        let doc = await vscode.workspace.openTextDocument({ content: blame, language: 'plaintext' })
+        vscode.window.showTextDocument(doc, { preview: true })
+    })
+}
+
+export async function showGitLogGraphAll() {
+    runWithLoading('git log --graph --all ...', async () => {
+        let blame = (await gitexec('log --graph --all'.split(' '))).stdout
+        let doc = await vscode.workspace.openTextDocument({ content: blame, language: 'plaintext' })
+        vscode.window.showTextDocument(doc, { preview: true })
+    })
 }
 
 export async function showGitLogGraphOneline() {
-    execInTerminal(`git log --graph --oneline --all | code -`)
+    runWithLoading('log --graph --oneline --all ...', async () => {
+        let blame = (await gitexec('log --graph --oneline --all'.split(' '))).stdout
+        let doc = await vscode.workspace.openTextDocument({ content: blame, language: 'plaintext' })
+        vscode.window.showTextDocument(doc, { preview: true })
+    })
 }
 
 /**
