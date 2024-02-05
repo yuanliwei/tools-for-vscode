@@ -459,6 +459,10 @@
                 "title": "git show log graph oneline"
             },
             {
+                "command": "tools:y-git-fetch-all",
+                "title": "git fetch all"
+            },
+            {
                 "command": "tools:y-todo",
                 "title": "y-todo"
             }

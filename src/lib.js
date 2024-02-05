@@ -900,6 +900,15 @@ export async function showGitLogGraphOneline() {
     })
 }
 
+export async function gitFetchAll() {
+    runWithLoading('fetch --all ...', async () => {
+        let ret = await gitexec('fetch --all'.split(' '))
+        if (ret.exitCode != 0) {
+            vscode.window.showInformationMessage(ret.stderr)
+        }
+    })
+}
+
 /**
  * @param {string} command
  */
