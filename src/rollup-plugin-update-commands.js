@@ -1,7 +1,7 @@
 import { statSync } from 'node:fs'
 import { register } from 'node:module'
 import { fileURLToPath } from 'node:url'
-register(import.meta.url)
+register('./vscode-mock.js', import.meta.url)
 
 /**
  * @returns {Promise<import("rollup").Plugin>}
@@ -17,15 +17,4 @@ export default async function updateCommands() {
             updatePackageJsonCommands(rootPath, commands)
         }
     }
-}
-
-/** @type{import('node:module').ResolveHook} */
-export const resolve = async (specifier, context, nextResolve) => {
-    if ('vscode' == specifier) {
-        return {
-            shortCircuit: true,
-            url: new URL('./vscode-mock.js', import.meta.url).toString(),
-        }
-    }
-    return nextResolve(specifier, context)
 }

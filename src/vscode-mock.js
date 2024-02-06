@@ -14,3 +14,17 @@ export default {
         }
     }
 }
+
+/** @type{import('node:module').ResolveHook} */
+export const resolve = async (specifier, context, nextResolve) => {
+    console.log('call resolve', specifier)
+    if (specifier.includes('command.js')) {
+    }
+    if ('vscode' == specifier) {
+        return {
+            shortCircuit: true,
+            url: import.meta.url,
+        }
+    }
+    return nextResolve(specifier, context)
+}
