@@ -1,6 +1,7 @@
 import resolve from '@rollup/plugin-node-resolve'
 import commonjs from '@rollup/plugin-commonjs'
 import { defineConfig } from 'rollup'
+import updateCommands from './rollup-plugin-update-commands.js'
 
 export default defineConfig({
     input: 'src/index.js',
@@ -26,6 +27,7 @@ export default defineConfig({
     plugins: [
         resolve({}),
         commonjs(),
+        updateCommands(),
     ],
 
 })

@@ -29,7 +29,7 @@ import { evalParser, extractJsonFromString } from 'extract-json-from-string-y'
  *   run: (ed: any, args:any[]|any) => Promise<void>;
  * }[]} 
  */
-const commands = [
+export const commands = [
     {
         id: 'y-ocr',
         label: 'OCR',
