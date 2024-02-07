@@ -45,7 +45,7 @@ export async function updatePackageJsonCommands(rootPath, commands) {
  * @param {vscode.ExtensionContext} context
  * @param {vscode.DocumentSelector} type
  */
-export function registerDocType(context, type) {
+export function registerDocumentFormattingEditProviderCSS(context, type) {
     const formatCSS_ = async (/** @type {vscode.TextDocument} */ document, /** @type {vscode.Range} */ range) => {
         let content = document.getText(range)
         let formatted = await formatCSS(content)
@@ -69,16 +69,9 @@ const lastSelection = {}
 /**
  * @param {vscode.ExtensionContext} context
  */
-export function addTranslateHoverProvider(context) {
+export function setupTranslateHoverProvider(context) {
     context.subscriptions.push(vscode.languages.registerHoverProvider({ scheme: '*', language: '*' }, {
         async provideHover(document, position) {
-            const range = document.getWordRangeAtPosition(position, /(\d{13})|(\d{10})/)
-            if (range) {
-                const word = document.getText(range)
-                let time = await formatTime(word)
-                return new vscode.Hover(time)
-            }
-
             if (!extensionContext.translateDisposable) { return }
             let editor = vscode.window.activeTextEditor
             if (!editor) { return }
@@ -93,6 +86,22 @@ export function addTranslateHoverProvider(context) {
             let result = await translate(getTranslateIks(), 'zh', text)
             lastSelection.lastResult = result
             return new vscode.Hover(result)
+        }
+    }))
+}
+
+/**
+ * @param {vscode.ExtensionContext} context
+ */
+export function setupTimeFormatHoverProvider(context) {
+    context.subscriptions.push(vscode.languages.registerHoverProvider({ scheme: '*', language: '*' }, {
+        async provideHover(document, position) {
+            const range = document.getWordRangeAtPosition(position, /(\d{13})|(\d{10})/)
+            if (range) {
+                const word = document.getText(range)
+                let time = await formatTime(word)
+                return new vscode.Hover(time)
+            }
         }
     }))
 }
@@ -168,7 +177,7 @@ export async function getInputSeparator() {
 /**
  * @param {vscode.ExtensionContext} context
  */
-export function addGitCommitHoverProvider(context) {
+export function setupGitCommitHoverProvider(context) {
     context.subscriptions.push(vscode.languages.registerHoverProvider({ scheme: '*', language: '*' }, {
         async provideHover(document, position) {
             const range = document.getWordRangeAtPosition(position, /[\d|a-f]{6,40}/)

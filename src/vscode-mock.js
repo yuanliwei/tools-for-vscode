@@ -1,3 +1,5 @@
+import { statSync } from 'node:fs'
+
 export default {
     workspace: {
         getConfiguration() {
@@ -22,6 +24,10 @@ export const resolve = async (specifier, context, nextResolve) => {
             shortCircuit: true,
             url: import.meta.url,
         }
+    }
+    if (specifier.startsWith('.') && !context.parentURL.includes('node_modules')) {
+        const { mtimeMs } = statSync(new URL(specifier, context.parentURL))
+        return nextResolve(`${specifier}?v=${mtimeMs}`, context)
     }
     return nextResolve(specifier, context)
 }

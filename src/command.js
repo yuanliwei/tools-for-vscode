@@ -1,4 +1,4 @@
-import { addGitCommitHoverProvider, addTranslateHoverProvider, getAllText, getInputSeparator, getInputStartNumber, getRegexpText, getSelectText, getTranslateIks, registerDocType, updatePackageJsonCommands } from './tools.js'
+import { setupGitCommitHoverProvider, setupTranslateHoverProvider, getAllText, getInputSeparator, getInputStartNumber, getRegexpText, getSelectText, getTranslateIks, registerDocumentFormattingEditProviderCSS, updatePackageJsonCommands, setupTimeFormatHoverProvider } from './tools.js'
 import { pasteImage } from './ocr.js'
 import vscode from 'vscode'
 import { NameGenerate, addLineNumber, addLineNumberFromInput, addLineNumberWithSeparator, chatgpt, cleanAnsiEscapeCodes, commentAlign, currentTime, cursorAlign, decodeBase64, decodeCoffee, decodeHex, decodeHtml, decodeLess, decodeNative, decodeUnescape, decodeUnicode, decodeUri, encodeBase64, encodeEscape, encodeHex, encodeHtml, encodeNative, encodeUnicode, encodeUri, escapeSimple, escapeWithcrlf, evalPrint, firstLetterLowercase, firstLetterUppercase, formatCSS, formatJS, formatJSON, formatSQL, formatTime, formatXML, getGitApi, gitFetchAll, guid, jsonDeepParse, lineGroupDuplicate, lineRemoveDuplicate, lineRemoveEmpty, lineRemoveExcludeSelect, lineRemoveIncludeSelect, lineRemoveMatchRegexp, lineRemoveNotMatchRegexp, lineReverse, lineSortAsc, lineSortDesc, lineSortNumber, lineTrim, lineTrimLeft, lineTrimRight, markdownToHtml, md5, minCSS, minJSON, minSQL, minXML, parseJSON, parseJSONInfo, previewHTML, rearrangeJsonKey, runCode, separatorHumpToUnderline, separatorUnderlineToHump, sha1, sha256, sha512, showChange, showGitBlame, showGitLogGraph, showGitLogGraphAll, showGitLogGraphOneline, stringify, todo } from './lib.js'
@@ -937,15 +937,14 @@ export function setUpCommands(context) {
 
     updatePackageJsonCommands(context.extensionPath, commands)
 
-    // register css doc type formater
-    registerDocType(context, 'css')
+    registerDocumentFormattingEditProviderCSS(context, 'css')
 
-    // add translate provide hover
-    addTranslateHoverProvider(context)
+    setupTranslateHoverProvider(context)
+    setupTimeFormatHoverProvider(context)
 
     // addGitBlameContentProvider(context)
 
-    addGitCommitHoverProvider(context)
+    setupGitCommitHoverProvider(context)
 }
 
 /**

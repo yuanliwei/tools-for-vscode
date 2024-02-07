@@ -1,7 +1,6 @@
 import resolve from '@rollup/plugin-node-resolve'
 import commonjs from '@rollup/plugin-commonjs'
 import { defineConfig } from 'rollup'
-import { statSync } from 'fs'
 import { fileURLToPath } from 'url'
 import { register } from 'module'
 register('./vscode-mock.js', import.meta.url)
@@ -42,8 +41,7 @@ async function updateCommands() {
     return {
         name: 'update-commands',
         async buildStart() {
-            const { mtimeMs } = statSync(new URL('./command.js', import.meta.url))
-            let { commands } = await import(`./command.js?v=${mtimeMs}`)
+            let { commands } = await import('./command.js')
             const { updatePackageJsonCommands } = await import('./tools.js')
             let rootPath = fileURLToPath(new URL('../', import.meta.url))
             updatePackageJsonCommands(rootPath, commands)
