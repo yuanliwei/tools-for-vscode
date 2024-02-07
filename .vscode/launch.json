@@ -23,6 +23,15 @@
                 "--extensionDevelopmentPath=${workspaceFolder}",
                 "--extensionTestsPath=${workspaceFolder}/test"
             ]
-        }
+        },
+        {
+            "name": "NodeJS",
+            "program": "${file}",
+            "request": "launch",
+            "skipFiles": [
+                // "<node_internals>/**"
+            ],
+            "type": "node"
+        },
     ]
 }
