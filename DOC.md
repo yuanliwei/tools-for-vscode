@@ -50,3 +50,9 @@ function addGitBlameContentProvider(context) {
         }
     }))
 
+
+npx @vscode/dts dev
+- https://code.visualstudio.com/api/advanced-topics/using-proposed-api
+"enabledApiProposals": [
+    "documentPaste"
+],
