@@ -65,6 +65,7 @@ export function registerDocumentFormattingEditProviderCSS(context, type) {
 }
 
 const lastSelection = {}
+const tanslateCacheMap = new Map()
 
 /**
  * @param {vscode.ExtensionContext} context
@@ -76,7 +77,19 @@ export function setupTranslateHoverProvider(context) {
             let editor = vscode.window.activeTextEditor
             if (!editor) { return }
             let selection = editor.selection
-            if (selection.isEmpty) { return }
+            if (selection.isEmpty) {
+                const range = document.getWordRangeAtPosition(position, /\w+/)
+                if (!range) { return }
+                const word = document.getText(range)
+                if (!word) { return }
+                let cache = tanslateCacheMap.get(word)
+                if (!cache) {
+                    cache = await translate(getTranslateIks(), 'zh', word)
+                    tanslateCacheMap.set(word, cache)
+                }
+                if (!cache) { return }
+                return new vscode.Hover(cache)
+            }
             if (selection.start == lastSelection.start && selection.end == lastSelection.end) {
                 return new vscode.Hover(lastSelection.lastResult)
             }
