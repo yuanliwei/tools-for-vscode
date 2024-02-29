@@ -6,28 +6,44 @@ import { translate } from './translate.js'
 import { formatCSS, formatTime, getGitApi } from './lib.js'
 
 /**
- * @param {string} rootPath 
- * @param {{
+ * @typedef {{
  *     id: string;
  *     label: string;
- * }[]} commands 
+ *     icon?: string;
+ * }} CommandItem
+ * @typedef {{
+ *     command: string;
+ *     title: string;
+ *     icon?: string;
+ * }} CommandItem2
+ */
+
+/**
+ * @param {string} rootPath 
+ * @param {CommandItem[]} commands 
  */
 export async function updatePackageJsonCommands(rootPath, commands) {
     let package_json_path = rootPath + '/package.json'
     let json = JSON.parse(await readFile(package_json_path, 'utf-8'))
     let items = []
     for (const command of commands) {
-        items.push({
+        /** @type{CommandItem2} */
+        const item = {
             command: `tools:${command.id}`,
             title: `${command.label}`,
-        })
+        }
+        if (command.icon) {
+            item.icon = command.icon
+        }
+        items.push(item)
     }
     let isSame = json.contributes.commands?.length == items.length
     if (isSame) {
         for (let index = 0; index < items.length; index++) {
             const itemNew = items[index]
+            /** @type{CommandItem2} */
             const itemOld = json.contributes.commands[index]
-            if (itemNew.command != itemOld.command || itemNew.title != itemOld.title) {
+            if (itemNew.command != itemOld.command || itemNew.title != itemOld.title || itemNew.icon != itemOld.icon) {
                 isSame = false
                 break
             }

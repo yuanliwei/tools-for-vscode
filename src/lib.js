@@ -797,7 +797,7 @@ export function previewHTML(text) {
             enableScripts: true,
             enableFindWidget: true,
             enableForms: true,
-            localResourceRoots:[],
+            localResourceRoots: [],
         }
     )
 
@@ -848,7 +848,7 @@ export async function showChange([ref1, ref2]) {
         if (!sourceControl) {
             sourceControl = vscode.scm.createSourceControl('y-diff', 'commit', repository.rootUri)
         }
-        groupShowChanges = sourceControl.createResourceGroup('y-show-commit', 'commit-changes')
+        groupShowChanges = sourceControl.createResourceGroup('y-diff-changes', 'diff-changes')
         groupShowChanges.hideWhenEmpty = true
     }
 
@@ -873,6 +873,10 @@ export async function showChange([ref1, ref2]) {
             }
         }),
     ]
+}
+
+export async function clearDiffChanges() {
+    groupShowChanges.resourceStates = []
 }
 
 export async function showGitBlame() {

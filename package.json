@@ -467,8 +467,14 @@
                 "title": "preview html"
             },
             {
+                "command": "tools:y-clear-diff",
+                "title": "clear diff",
+                "icon": "$(clear-all)"
+            },
+            {
                 "command": "tools:y-todo",
-                "title": "y-todo"
+                "title": "y-todo",
+                "icon": "$(checklist)"
             }
         ],
         "configuration": {
@@ -501,6 +507,15 @@
                     "description": "chatGPT Proxy URL list. Test URL : `curl -X POST -d 'hello' https://chat.example.com/api/chat`"
                 }
             }
+        },
+        "menus": {
+            "scm/resourceGroup/context": [
+                {
+                    "command": "tools:y-clear-diff",
+                    "group": "inline@1",
+                    "when": "scmResourceGroup == y-diff-changes"
+                }
+            ]
         }
     },
     "extensionDependencies": [
