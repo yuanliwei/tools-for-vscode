@@ -839,7 +839,7 @@ export async function showChange([ref1, ref2]) {
         title = `${ref1.substring(0, 10)}..${ref2.substring(0, 10)}`
     } else if (ref1) {
         ref2 = ref1
-        ref1 = ref1 + '~1'
+        ref1 = ref1 + '^'
     }
     changes = await repository.diffBetween(ref1, ref2)
 
@@ -862,17 +862,62 @@ export async function showChange([ref1, ref2]) {
 
             let uri1 = git.toGitUri(o.uri, ref1)
             let uri2 = git.toGitUri(o.uri, ref2)
-            return {
+            /** @type{vscode.SourceControlResourceState} */
+            let resourceState = {
                 resourceUri: o.uri,
                 command: {
                     title: 'change',
                     command: 'vscode.diff',
                     tooltip: 'command-tooltip',
                     arguments: [uri1, uri2, `${filePath}:${title}`],
-                }
+                },
+                decorations: buildGitStatusDecorations(o)
             }
+            return resourceState
         }),
     ]
+}
+
+/**
+ * @param {import("./api/git.js").Change} change
+ * @returns {vscode.SourceControlResourceDecorations}
+ */
+function buildGitStatusDecorations(change) {
+    const modified = new vscode.ThemeIcon('diff-modified', new vscode.ThemeColor('gitDecoration.modifiedResourceForeground'))
+    const removed = new vscode.ThemeIcon('diff-removed', new vscode.ThemeColor('gitDecoration.deletedResourceForeground'))
+    const added = new vscode.ThemeIcon('diff-added', new vscode.ThemeColor('gitDecoration.addedResourceForeground'))
+    const renamed = new vscode.ThemeIcon('diff-renamed', new vscode.ThemeColor('gitDecoration.renamedResourceForeground'))
+    const ignored = new vscode.ThemeIcon('diff-ignored', new vscode.ThemeColor('gitDecoration.ignoredResourceForeground'))
+    switch (change.status) {
+        case Status.MODIFIED:
+            return {
+                light: { iconPath: modified }, dark: { iconPath: modified }
+            }
+        case Status.DELETED:
+            return {
+                strikeThrough: true,
+                faded: true,
+                light: { iconPath: removed }, dark: { iconPath: removed }
+            }
+        case Status.INDEX_ADDED:
+            return {
+                light: { iconPath: added }, dark: { iconPath: added }
+            }
+        case Status.INDEX_RENAMED:
+            return {
+                light: { iconPath: renamed }, dark: { iconPath: renamed }
+            }
+        case Status.IGNORED:
+            return {
+                light: { iconPath: ignored }, dark: { iconPath: ignored }
+            }
+        default:
+            vscode.window.showErrorMessage(`unknown change.status: ${change.status}`)
+            console.error('unknown change.status', change.status)
+            return {
+                strikeThrough: true
+            }
+    }
 }
 
 export async function clearDiffChanges() {
