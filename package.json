@@ -319,6 +319,10 @@
                 "title": "chatgpt 2"
             },
             {
+                "command": "tools:y-chatgpt-3",
+                "title": "chatgpt 3"
+            },
+            {
                 "command": "tools:y-lorem",
                 "title": "lorem"
             },

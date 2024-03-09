@@ -9,7 +9,7 @@ export default {
                  */
                 get(key) {
                     return {
-                        chatgpt_http_api: ['1', '2']
+                        chatgpt_http_api: ['1', '2', '3']
                     }[key]
                 }
             }
