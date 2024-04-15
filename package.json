@@ -15,6 +15,13 @@
     "activationEvents": [
         "onStartupFinished"
     ],
+    "extensionKind": [
+        "ui",
+        "workspace"
+    ],
+    "capabilities": {
+        "virtualWorkspaces": true
+    },
     "main": "./dest/extension.cjs",
     "contributes": {
         "commands": [
@@ -522,9 +529,6 @@
             ]
         }
     },
-    "extensionDependencies": [
-        "vscode.git"
-    ],
     "scripts": {
         "dev": "rollup -c src/rollup.config.js -w",
         "build": "rollup -c src/rollup.config.js",
