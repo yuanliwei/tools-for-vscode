@@ -118,6 +118,10 @@
                 "title": "Line Group Duplicate Sort Number Reverse"
             },
             {
+                "command": "tools:y-line-replace-backslash-to-slash",
+                "title": "Line Replace Backslash(\\) To Slash(/)"
+            },
+            {
                 "command": "tools:y-guid",
                 "title": "guid"
             },

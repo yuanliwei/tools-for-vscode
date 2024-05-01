@@ -254,6 +254,15 @@ export const commands = [
         }
     },
     {
+        id: 'y-line-replace-backslash-to-slash',
+        label: 'Line Replace Backslash(\\) To Slash(/)',
+        run: async function (/**@type{vscode.TextEditor}*/ed) {
+            editText(ed, {}, async (text) => {
+                return text.replaceAll('\\', '/')
+            })
+        }
+    },
+    {
         id: 'y-guid',
         label: 'guid',
         run: async function (/**@type{vscode.TextEditor}*/ed) {
