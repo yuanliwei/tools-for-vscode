@@ -134,6 +134,10 @@
                 "title": "Format Time"
             },
             {
+                "command": "tools:y-format-bytes",
+                "title": "Format bytes"
+            },
+            {
                 "command": "tools:y-run-code",
                 "title": "Run Code"
             },

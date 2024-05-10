@@ -365,6 +365,32 @@ export async function formatTime(text) {
     })
 }
 
+/**
+ * @param {string} text 
+ * @returns 
+ */
+export async function formatBytes(text) {
+    return text.replace(/(\d+)/g, (val) => {
+        let size = parseInt(val)
+        return String(formatByteSize(size))
+    })
+}
+
+/**
+ * @param {number} size
+ */
+export function formatByteSize(size) {
+    if (!size) return ''
+    if (size < 0) { return '0B'.padStart(8, ' ') }
+    let companys = 'B KB MB GB TB'.split(' ')
+    let cur = size
+    while (cur >= 1024) {
+        companys.shift()
+        cur /= 1024
+    }
+    return Number(cur.toFixed(2)) + companys[0]
+}
+
 export async function runCode(code) {
     let runFilePath = path.join(os.tmpdir(), `tmp-${Date.now()}.js`)
     let editor = vscode.window.activeTextEditor
