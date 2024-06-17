@@ -611,6 +611,9 @@ export function jsonDeepParse(obj) {
     if (typeof (obj) == 'string') {
         try { o = JSON.parse(obj) } catch (e) { return o }
     }
+    if (typeof (o) == 'string') {
+        return jsonDeepParse(o)
+    }
     if (o instanceof Array) {
         for (let i = 0; i < o.length; i++) {
             o[i] = jsonDeepParse(o[i])
