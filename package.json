@@ -214,6 +214,10 @@
                 "title": "extract JSON"
             },
             {
+                "command": "tools:y-extract-types",
+                "title": "extract js|json types"
+            },
+            {
                 "command": "tools:y-crypto-md5",
                 "title": "Crypto md5"
             },
@@ -560,6 +564,7 @@
         "coffeescript": "^2.7.0",
         "dayjs": "^1.11.10",
         "extract-json-from-string-y": "^1.0.2",
+        "extract-types": "^1.0.1",
         "flat": "^6.0.1",
         "he": "^1.2.0",
         "js-beautify": "^1.14.11",

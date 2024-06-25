@@ -17,6 +17,7 @@ import { evalParser } from 'extract-json-from-string-y'
 import { flatten } from 'flat'
 import { table } from 'table'
 import { runWithLoading } from './view.js'
+import { extractTypesFromSource } from 'extract-types'
 
 export async function parseJSON(text) {
     return JSON.parse(text)
@@ -1075,4 +1076,19 @@ export async function todo(text, [ref1 = 'HEAD~4', ref2 = 'HEAD']) {
     // debugger
     // return (await gitexec(['log'])).stdout
     return (await gitexec(['log', '--graph', '--all'])).stdout
+}
+
+/**
+ * @param {string} text
+ */
+export function extractTypesFromString(text) {
+    let isJson = false
+    if (text.trim().startsWith('[') || text.trim().startsWith('{')) {
+        isJson = true
+    }
+    return extractTypesFromSource(text, isJson, {
+        allowJs: true,
+        declaration: true,
+        emitDeclarationOnly: true,
+    })
 }
