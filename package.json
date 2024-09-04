@@ -134,6 +134,10 @@
                 "title": "Format Time"
             },
             {
+                "command": "tools:y-parse-time",
+                "title": "Parse Time"
+            },
+            {
                 "command": "tools:y-format-bytes",
                 "title": "Format bytes"
             },

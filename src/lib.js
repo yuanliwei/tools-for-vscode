@@ -343,7 +343,7 @@ export async function minSQL(text) {
     return vkbeautify.sqlmin(text)
 }
 export async function currentTime() {
-    return new Date().toLocaleString()
+    return dayjs().format('YYYY/MM/DD HH:mm:ss')
 }
 export async function guid() {
     return randomBytes(16).toString('hex')
@@ -364,6 +364,18 @@ export async function formatTime(text) {
         }
         return dayjs(date).format('YYYY-MM-DD HH:mm:ss.SSS')
     })
+}
+
+/**
+ * @param {string} text
+ */
+export async function parseTime(text) {
+    let textTrim = text.trim()
+    let millis = new Date(textTrim).getTime()
+    if (!isNaN(millis)) {
+        return '' + millis
+    }
+    return text
 }
 
 /**
