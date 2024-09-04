@@ -195,6 +195,19 @@ export async function getInputStartNumber() {
     return num
 }
 
+export async function getInputRepeatCount() {
+    let startNum = await View.getString({
+        placeHolder: 'repeat number',
+        prompt: '输入重复数量',
+        value: '3',
+    })
+    let num = parseInt(startNum)
+    if (isNaN(num)) {
+        return 1
+    }
+    return num
+}
+
 export async function getInputSeparator() {
     let separator = await View.getString({
         placeHolder: '.: ,></?][{}-=_+',

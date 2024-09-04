@@ -122,6 +122,10 @@
                 "title": "Line Replace Backslash(\\) To Slash(/)"
             },
             {
+                "command": "tools:y-line-repeat",
+                "title": "Line Repeat"
+            },
+            {
                 "command": "tools:y-guid",
                 "title": "guid"
             },
