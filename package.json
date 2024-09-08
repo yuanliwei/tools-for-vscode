@@ -5,6 +5,7 @@
     "version": "0.0.1",
     "license": "BSD",
     "publisher": "yuanliwei",
+    "icon": "res/icon-256.png",
     "type": "module",
     "engines": {
         "vscode": "^1.50.0"
