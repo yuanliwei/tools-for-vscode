@@ -626,6 +626,9 @@ export function jsonDeepParse(obj) {
             o = JSON.parse(obj)
         } catch (e) {
             try {
+                if (o.length < 33) {
+                    return o
+                }
                 o = evalParser(o)
                 return jsonDeepParse(o)
             } catch (e1) {
