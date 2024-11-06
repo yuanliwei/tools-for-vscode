@@ -450,7 +450,11 @@ export const commands = [
         label: 'deep parse JSON',
         run: async function (ed) {
             editText(ed, {}, (text) => {
-                return formatJSON(JSON.stringify(jsonDeepParse(text)))
+                let o = jsonDeepParse(text)
+                if (typeof o !== "string") {
+                    o = JSON.stringify(o)
+                }
+                return formatJSON(o)
             })
         }
     },

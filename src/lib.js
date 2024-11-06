@@ -619,10 +619,19 @@ export class NameGenerate {
  * @param {string} obj
  */
 export function jsonDeepParse(obj) {
-    /** @type{Object} */
+    /** @type{object} */
     let o = obj
     if (typeof (obj) == 'string') {
-        try { o = JSON.parse(obj) } catch (e) { return o }
+        try {
+            o = JSON.parse(obj)
+        } catch (e) {
+            try {
+                o = evalParser(o)
+                return jsonDeepParse(o)
+            } catch (e1) {
+                return o
+            }
+        }
     }
     if (typeof (o) == 'string') {
         return jsonDeepParse(o)
@@ -640,7 +649,6 @@ export function jsonDeepParse(obj) {
     }
     return o
 }
-
 
 /**
  * 
