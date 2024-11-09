@@ -101,12 +101,13 @@ export async function markdownToHtml(text) {
 }
 
 
-/*
+/**
+ * @param {string} ascii
  * ascii2native
  */
 function ascii2native(ascii) {
     let code, i, j, len, native1, words
-    words = ascii.split('\\u')
+    words = ascii.split(/[\\%]u/)
     native1 = words[0]
     for (i = j = 0, len = words.length; j < len; i = ++j) {
         code = words[i]
