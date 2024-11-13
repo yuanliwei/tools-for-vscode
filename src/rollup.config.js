@@ -25,6 +25,7 @@ export default defineConfig({
         'vscode',
         'nzh',
         'table',
+        'typescript',
     ],
     plugins: [
         resolve({}),
