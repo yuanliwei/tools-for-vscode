@@ -163,6 +163,10 @@
                 "title": "Cursor Align"
             },
             {
+                "command": "tools:y-format-multi-line-comment",
+                "title": "Format Multi Line Comment"
+            },
+            {
                 "command": "tools:y-clean-ansi-escape-codes",
                 "title": "Clean ANSI Escape Codes"
             },

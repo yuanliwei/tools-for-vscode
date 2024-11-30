@@ -1116,3 +1116,29 @@ export function extractTypesFromString(text) {
         emitDeclarationOnly: true,
     })
 }
+
+/**
+ * @param {string} text
+ */
+export function formatMultiLineComment(text) {
+    return text.replace(/\/\*[\s\S]*?\*\//g, (a) => {
+        let lines = a.split('\n')
+        if (lines.length < 2) {
+            return a
+        }
+        let results = []
+        for (let i = 0; i < lines.length; i++) {
+            const line = lines[i]
+            if (i == 0 && line.startsWith('/**')) {
+                results.push(line)
+                continue
+            }
+            if (i == lines.length - 1 && line.trim() == '*/') {
+                results.push(` ${line.trim()}`)
+                continue
+            }
+            results.push(line.replace(/\s*\*?\s*/, ' * '))
+        }
+        return results.join('\n')
+    })
+}

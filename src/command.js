@@ -1,7 +1,7 @@
 import { setupGitCommitHoverProvider, setupTranslateHoverProvider, getAllText, getInputSeparator, getInputStartNumber, getRegexpText, getSelectText, getTranslateIks, registerDocumentFormattingEditProviderCSS, updatePackageJsonCommands, setupTimeFormatHoverProvider, getInputRepeatCount } from './tools.js'
 import { pasteImage } from './ocr.js'
 import vscode from 'vscode'
-import { NameGenerate, addLineNumber, addLineNumberFromInput, addLineNumberWithSeparator, chatgpt, cleanAnsiEscapeCodes, clearDiffChanges, commentAlign, currentTime, cursorAlign, decodeBase64, decodeCoffee, decodeHex, decodeHtml, decodeLess, decodeNative, decodeUnescape, decodeUnicode, decodeUri, encodeBase64, encodeEscape, encodeHex, encodeHtml, encodeNative, encodeUnicode, encodeUri, escapeSimple, escapeWithcrlf, evalPrint, extractTypesFromString, firstLetterLowercase, firstLetterUppercase, formatBytes, formatCSS, formatJS, formatJSON, formatSQL, formatTime, formatXML, getGitApi, gitFetchAll, guid, jsonDeepParse, lineGroupDuplicate, lineRemoveDuplicate, lineRemoveEmpty, lineRemoveExcludeSelect, lineRemoveIncludeSelect, lineRemoveMatchRegexp, lineRemoveNotMatchRegexp, lineReverse, lineSortAsc, lineSortDesc, lineSortNumber, lineTrim, lineTrimLeft, lineTrimRight, markdownToHtml, md5, minCSS, minJSON, minSQL, minXML, parseJSON, parseJSONInfo, parseTime, previewHTML, rearrangeJsonKey, runCode, separatorHumpToUnderline, separatorUnderlineToHump, sha1, sha256, sha512, showChange, showGitBlame, showGitLogGraph, showGitLogGraphAll, showGitLogGraphOneline, stringify, todo } from './lib.js'
+import { NameGenerate, addLineNumber, addLineNumberFromInput, addLineNumberWithSeparator, chatgpt, cleanAnsiEscapeCodes, clearDiffChanges, commentAlign, currentTime, cursorAlign, decodeBase64, decodeCoffee, decodeHex, decodeHtml, decodeLess, decodeNative, decodeUnescape, decodeUnicode, decodeUri, encodeBase64, encodeEscape, encodeHex, encodeHtml, encodeNative, encodeUnicode, encodeUri, escapeSimple, escapeWithcrlf, evalPrint, extractTypesFromString, firstLetterLowercase, firstLetterUppercase, formatBytes, formatCSS, formatJS, formatJSON, formatMultiLineComment, formatSQL, formatTime, formatXML, getGitApi, gitFetchAll, guid, jsonDeepParse, lineGroupDuplicate, lineRemoveDuplicate, lineRemoveEmpty, lineRemoveExcludeSelect, lineRemoveIncludeSelect, lineRemoveMatchRegexp, lineRemoveNotMatchRegexp, lineReverse, lineSortAsc, lineSortDesc, lineSortNumber, lineTrim, lineTrimLeft, lineTrimRight, markdownToHtml, md5, minCSS, minJSON, minSQL, minXML, parseJSON, parseJSONInfo, parseTime, previewHTML, rearrangeJsonKey, runCode, separatorHumpToUnderline, separatorUnderlineToHump, sha1, sha256, sha512, showChange, showGitBlame, showGitLogGraph, showGitLogGraphAll, showGitLogGraphOneline, stringify, todo } from './lib.js'
 import { translate } from './translate.js'
 import { config, extensionContext } from './config.js'
 import Nzh from 'nzh'
@@ -344,7 +344,6 @@ export const commands = [
             })
         }
     },
-    // ==============
     {
         id: "y-cursor-align",
         label: "Cursor Align",
@@ -352,6 +351,15 @@ export const commands = [
             const func = await cursorAlign(ed)
             editText(ed, { insert: true }, async () => {
                 return func()
+            })
+        }
+    },
+    {
+        id: 'y-format-multi-line-comment',
+        label: 'Format Multi Line Comment',
+        run: async function (ed) {
+            editText(ed, {}, (text) => {
+                return formatMultiLineComment(text)
             })
         }
     },
