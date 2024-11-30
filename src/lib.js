@@ -1121,24 +1121,27 @@ export function extractTypesFromString(text) {
  * @param {string} text
  */
 export function formatMultiLineComment(text) {
-    return text.replace(/\/\*[\s\S]*?\*\//g, (a) => {
-        let lines = a.split('\n')
+    return text.replace(/(^|\n)(.*?\/\*[\s\S]*?\*\/)/g, (a, b, c) => {
+        /** @type{string[]} */
+        let lines = c.split('\n')
         if (lines.length < 2) {
             return a
         }
         let results = []
+        let indent = ' '
         for (let i = 0; i < lines.length; i++) {
             const line = lines[i]
-            if (i == 0 && line.startsWith('/**')) {
+            if (i == 0 && line.trim().startsWith('/**')) {
+                indent = ' '.repeat(line.indexOf('/**') + 1)
                 results.push(line)
                 continue
             }
             if (i == lines.length - 1 && line.trim() == '*/') {
-                results.push(` ${line.trim()}`)
+                results.push(`${indent}${line.trimStart()}`)
                 continue
             }
-            results.push(line.replace(/\s*\*?\s*/, ' * '))
+            results.push(line.replace(/\s*\*?\s*/, `${indent}* `))
         }
-        return results.join('\n')
+        return a.replace(c, results.join('\n'))
     })
 }
