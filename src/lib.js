@@ -1140,7 +1140,7 @@ export function formatMultiLineComment(text) {
                 results.push(`${indent}${line.trimStart()}`)
                 continue
             }
-            results.push(line.replace(/\s*\*?\s*/, `${indent}* `))
+            results.push(line.replace(/\s*\* ?/, `${indent}* `))
         }
         return a.replace(c, results.join('\n'))
     })
