@@ -422,10 +422,18 @@ export async function runCode(code) {
     return code
 }
 
-export async function evalPrint(code) {
+/**
+ * @param {string} text
+ */
+export async function evalPrint(text) {
+    let code = text.replace(/=\s*$/, '')
     let result = runInNewContext(code)
-    return code + ' ' + result
+    return String(result)
 }
+
+/**
+ * @param {string} text
+ */
 export async function commentAlign(text) {
     var maxLength = 0
     var lines = text.split('\n')
@@ -1144,4 +1152,11 @@ export function formatMultiLineComment(text) {
         }
         return a.replace(c, results.join('\n'))
     })
+}
+
+export function randomNumber() {
+    return String(randomBytes(4).readUInt32LE())
+}
+export function randomHex() {
+    return randomBytes(4).toString('hex')
 }

@@ -359,6 +359,14 @@
                 "title": "lorem"
             },
             {
+                "command": "tools:y-random-number",
+                "title": "random number"
+            },
+            {
+                "command": "tools:y-random-hex",
+                "title": "random hex"
+            },
+            {
                 "command": "tools:y-sequence-number-1",
                 "title": "sequence number 1"
             },

@@ -1,7 +1,7 @@
 import { setupGitCommitHoverProvider, setupTranslateHoverProvider, getAllText, getInputSeparator, getInputStartNumber, getRegexpText, getSelectText, getTranslateIks, registerDocumentFormattingEditProviderCSS, updatePackageJsonCommands, setupTimeFormatHoverProvider, getInputRepeatCount } from './tools.js'
 import { pasteImage } from './ocr.js'
 import vscode from 'vscode'
-import { NameGenerate, addLineNumber, addLineNumberFromInput, addLineNumberWithSeparator, chatgpt, cleanAnsiEscapeCodes, clearDiffChanges, commentAlign, currentTime, cursorAlign, decodeBase64, decodeCoffee, decodeHex, decodeHtml, decodeLess, decodeNative, decodeUnescape, decodeUnicode, decodeUri, encodeBase64, encodeEscape, encodeHex, encodeHtml, encodeNative, encodeUnicode, encodeUri, escapeSimple, escapeWithcrlf, evalPrint, extractTypesFromString, firstLetterLowercase, firstLetterUppercase, formatBytes, formatCSS, formatJS, formatJSON, formatMultiLineComment, formatSQL, formatTime, formatXML, getGitApi, gitFetchAll, guid, jsonDeepParse, lineGroupDuplicate, lineRemoveDuplicate, lineRemoveEmpty, lineRemoveExcludeSelect, lineRemoveIncludeSelect, lineRemoveMatchRegexp, lineRemoveNotMatchRegexp, lineReverse, lineSortAsc, lineSortDesc, lineSortNumber, lineTrim, lineTrimLeft, lineTrimRight, markdownToHtml, md5, minCSS, minJSON, minSQL, minXML, parseJSON, parseJSONInfo, parseTime, previewHTML, rearrangeJsonKey, runCode, separatorHumpToUnderline, separatorUnderlineToHump, sha1, sha256, sha512, showChange, showGitBlame, showGitLogGraph, showGitLogGraphAll, showGitLogGraphOneline, stringify, todo } from './lib.js'
+import { NameGenerate, addLineNumber, addLineNumberFromInput, addLineNumberWithSeparator, chatgpt, cleanAnsiEscapeCodes, clearDiffChanges, commentAlign, currentTime, cursorAlign, decodeBase64, decodeCoffee, decodeHex, decodeHtml, decodeLess, decodeNative, decodeUnescape, decodeUnicode, decodeUri, encodeBase64, encodeEscape, encodeHex, encodeHtml, encodeNative, encodeUnicode, encodeUri, escapeSimple, escapeWithcrlf, evalPrint, extractTypesFromString, firstLetterLowercase, firstLetterUppercase, formatBytes, formatCSS, formatJS, formatJSON, formatMultiLineComment, formatSQL, formatTime, formatXML, getGitApi, gitFetchAll, guid, jsonDeepParse, lineGroupDuplicate, lineRemoveDuplicate, lineRemoveEmpty, lineRemoveExcludeSelect, lineRemoveIncludeSelect, lineRemoveMatchRegexp, lineRemoveNotMatchRegexp, lineReverse, lineSortAsc, lineSortDesc, lineSortNumber, lineTrim, lineTrimLeft, lineTrimRight, markdownToHtml, md5, minCSS, minJSON, minSQL, minXML, parseJSON, parseJSONInfo, parseTime, previewHTML, randomHex, randomNumber, rearrangeJsonKey, runCode, separatorHumpToUnderline, separatorUnderlineToHump, sha1, sha256, sha512, showChange, showGitBlame, showGitLogGraph, showGitLogGraphAll, showGitLogGraphOneline, stringify, todo } from './lib.js'
 import { translate } from './translate.js'
 import { config, extensionContext } from './config.js'
 import Nzh from 'nzh'
@@ -27,14 +27,14 @@ import { evalParser, extractJsonFromString } from 'extract-json-from-string-y'
  *   id: string;
  *   label: string;
  *   icon?: string;
- *   run: (ed: any, args:any[]|any) => Promise<void>;
+ *   run: (ed: vscode.TextEditor, args:any[]|any) => Promise<void>;
  * }[]} 
  */
 export const commands = [
     {
         id: 'y-ocr',
         label: 'OCR',
-        run: async function (/**@type{vscode.TextEditor}*/ed) {
+        run: async function (ed) {
             let text = await pasteImage()
             editText(ed, { insert: true }, () => {
                 return text
@@ -44,7 +44,7 @@ export const commands = [
     {
         id: 'y-remove-empty',
         label: 'Line Remove Empty',
-        run: async function (/**@type{vscode.TextEditor}*/ed) {
+        run: async function (ed) {
             editText(ed, {}, (text) => {
                 return lineRemoveEmpty(text)
             })
@@ -53,7 +53,7 @@ export const commands = [
     {
         id: 'y-remove-duplicate',
         label: 'Line Remove Duplicate',
-        run: async function (/**@type{vscode.TextEditor}*/ed) {
+        run: async function (ed) {
             editText(ed, {}, (text) => {
                 return lineRemoveDuplicate(text)
             })
@@ -62,7 +62,7 @@ export const commands = [
     {
         id: 'y-remove-include-select',
         label: 'Line Remove Include Select',
-        run: async function (/**@type{vscode.TextEditor}*/ed) {
+        run: async function (ed) {
             let selection = getSelectText(ed)
             let doc = getAllText(ed)
             if (!selection) return
@@ -74,7 +74,7 @@ export const commands = [
     {
         id: 'y-remove-exclude-select',
         label: 'Line Remove Exclude Select',
-        run: async function (/**@type{vscode.TextEditor}*/ed) {
+        run: async function (ed) {
             let selection = getSelectText(ed)
             let doc = getAllText(ed)
             if (!selection) return
@@ -86,7 +86,7 @@ export const commands = [
     {
         id: 'y-remove-match-regexp',
         label: 'Line Remove Match Regexp',
-        run: async function (/**@type{vscode.TextEditor}*/ed) {
+        run: async function (ed) {
             let regexp = await getRegexpText()
             let doc = getAllText(ed)
             if (!regexp) return
@@ -98,7 +98,7 @@ export const commands = [
     {
         id: 'y-remove-not-match-regexp',
         label: 'Line Remove Not Match Regexp',
-        run: async function (/**@type{vscode.TextEditor}*/ed) {
+        run: async function (ed) {
             let regexp = await getRegexpText()
             let doc = getAllText(ed)
             if (!regexp) return
@@ -110,7 +110,7 @@ export const commands = [
     {
         id: 'y-line-sort-asc',
         label: 'Line Sort Asc',
-        run: async function (/**@type{vscode.TextEditor}*/ed) {
+        run: async function (ed) {
             editText(ed, {}, (text) => {
                 return lineSortAsc(text)
             })
@@ -119,7 +119,7 @@ export const commands = [
     {
         id: 'y-line-sort-desc',
         label: 'Line Sort Desc',
-        run: async function (/**@type{vscode.TextEditor}*/ed) {
+        run: async function (ed) {
             editText(ed, {}, (text) => {
                 return lineSortDesc(text)
             })
@@ -128,7 +128,7 @@ export const commands = [
     {
         id: 'y-line-trim',
         label: 'Line Trim',
-        run: async function (/**@type{vscode.TextEditor}*/ed) {
+        run: async function (ed) {
             editText(ed, {}, (text) => {
                 return lineTrim(text)
             })
@@ -137,7 +137,7 @@ export const commands = [
     {
         id: 'y-line-trim-left',
         label: 'Line Trim Left',
-        run: async function (/**@type{vscode.TextEditor}*/ed) {
+        run: async function (ed) {
             editText(ed, {}, (text) => {
                 return lineTrimLeft(text)
             })
@@ -146,7 +146,7 @@ export const commands = [
     {
         id: 'y-line-trim-right',
         label: 'Line Trim Right',
-        run: async function (/**@type{vscode.TextEditor}*/ed) {
+        run: async function (ed) {
             editText(ed, {}, (text) => {
                 return lineTrimRight(text)
             })
@@ -155,7 +155,7 @@ export const commands = [
     {
         id: 'y-line-add-line-number',
         label: 'Line Add Line Number',
-        run: async function (/**@type{vscode.TextEditor}*/ed) {
+        run: async function (ed) {
             editText(ed, {}, (text) => {
                 return addLineNumber(text)
             })
@@ -164,7 +164,7 @@ export const commands = [
     {
         id: 'y-line-add-line-number-from-input',
         label: 'Line Add Line Number From Input',
-        run: async function (/**@type{vscode.TextEditor}*/ed) {
+        run: async function (ed) {
             let startNumber = await getInputStartNumber()
             editText(ed, {}, (text) => {
                 return addLineNumberFromInput(text, startNumber)
@@ -174,7 +174,7 @@ export const commands = [
     {
         id: 'y-line-add-line-number-with-separator',
         label: 'Line Add Line Number With Separator',
-        run: async function (/**@type{vscode.TextEditor}*/ed) {
+        run: async function (ed) {
             let separator = await getInputSeparator()
             editText(ed, {}, (text) => {
                 return addLineNumberWithSeparator(text, separator)
@@ -184,7 +184,7 @@ export const commands = [
     {
         id: 'y-line-separator-underline-to-hump',
         label: 'Line Separator Underline To Hump',
-        run: async function (/**@type{vscode.TextEditor}*/ed) {
+        run: async function (ed) {
             editText(ed, {}, (text) => {
                 return separatorUnderlineToHump(text)
             })
@@ -193,7 +193,7 @@ export const commands = [
     {
         id: 'y-line-separator-hump-to-underline',
         label: 'Line Separator Hump To Underline',
-        run: async function (/**@type{vscode.TextEditor}*/ed) {
+        run: async function (ed) {
             editText(ed, {}, (text) => {
                 return separatorHumpToUnderline(text)
             })
@@ -202,7 +202,7 @@ export const commands = [
     {
         id: 'y-line-first-letter-lowercase',
         label: 'Line First Letter Lowercase',
-        run: async function (/**@type{vscode.TextEditor}*/ed) {
+        run: async function (ed) {
             editText(ed, {}, (text) => {
                 return firstLetterLowercase(text)
             })
@@ -211,7 +211,7 @@ export const commands = [
     {
         id: 'y-line-first-letter-uppercase',
         label: 'Line First Letter Uppercase',
-        run: async function (/**@type{vscode.TextEditor}*/ed) {
+        run: async function (ed) {
             editText(ed, {}, (text) => {
                 return firstLetterUppercase(text)
             })
@@ -220,7 +220,7 @@ export const commands = [
     {
         id: 'y-line-group-duplicate',
         label: 'Line Group Duplicate',
-        run: async function (/**@type{vscode.TextEditor}*/ed) {
+        run: async function (ed) {
             editText(ed, {}, (text) => {
                 return lineGroupDuplicate(text)
             })
@@ -229,7 +229,7 @@ export const commands = [
     {
         id: 'y-line-sort-number',
         label: 'Line Sort Number',
-        run: async function (/**@type{vscode.TextEditor}*/ed) {
+        run: async function (ed) {
             editText(ed, {}, (text) => {
                 return lineSortNumber(text)
             })
@@ -238,7 +238,7 @@ export const commands = [
     {
         id: 'y-line-reverse',
         label: 'Line Reverse',
-        run: async function (/**@type{vscode.TextEditor}*/ed) {
+        run: async function (ed) {
             editText(ed, {}, (text) => {
                 return lineReverse(text)
             })
@@ -247,7 +247,7 @@ export const commands = [
     {
         id: 'y-line-group-duplicate-sort-number-reverse',
         label: 'Line Group Duplicate Sort Number Reverse',
-        run: async function (/**@type{vscode.TextEditor}*/ed) {
+        run: async function (ed) {
             editText(ed, {}, async (text) => {
                 return await lineReverse(await lineSortNumber(await lineGroupDuplicate(text)))
             })
@@ -256,7 +256,7 @@ export const commands = [
     {
         id: 'y-line-replace-backslash-to-slash',
         label: 'Line Replace Backslash(\\) To Slash(/)',
-        run: async function (/**@type{vscode.TextEditor}*/ed) {
+        run: async function (ed) {
             editText(ed, {}, async (text) => {
                 return text.replaceAll('\\', '/')
             })
@@ -265,7 +265,7 @@ export const commands = [
     {
         id: 'y-line-repeat',
         label: 'Line Repeat',
-        run: async function (/**@type{vscode.TextEditor}*/ed) {
+        run: async function (ed) {
             editText(ed, {}, async (text) => {
                 let count = await getInputRepeatCount()
                 return text.repeat(count)
@@ -275,7 +275,7 @@ export const commands = [
     {
         id: 'y-guid',
         label: 'guid',
-        run: async function (/**@type{vscode.TextEditor}*/ed) {
+        run: async function (ed) {
             editText(ed, { insert: true }, async () => {
                 return await guid()
             })
@@ -284,7 +284,7 @@ export const commands = [
     {
         id: 'y-current-time',
         label: 'Current Time',
-        run: async function (/**@type{vscode.TextEditor}*/ed) {
+        run: async function (ed) {
             editText(ed, { insert: true }, async () => {
                 return await currentTime()
             })
@@ -293,7 +293,7 @@ export const commands = [
     {
         id: 'y-format-time',
         label: 'Format Time',
-        run: async function (/**@type{vscode.TextEditor}*/ed) {
+        run: async function (ed) {
             editText(ed, {}, async (text) => {
                 return await formatTime(text)
             })
@@ -302,7 +302,7 @@ export const commands = [
     {
         id: 'y-parse-time',
         label: 'Parse Time',
-        run: async function (/**@type{vscode.TextEditor}*/ed) {
+        run: async function (ed) {
             editText(ed, {}, async (text) => {
                 return await parseTime(text)
             })
@@ -311,7 +311,7 @@ export const commands = [
     {
         id: 'y-format-bytes',
         label: 'Format bytes',
-        run: async function (/**@type{vscode.TextEditor}*/ed) {
+        run: async function (ed) {
             editText(ed, {}, async (text) => {
                 return await formatBytes(text)
             })
@@ -320,7 +320,7 @@ export const commands = [
     {
         id: 'y-run-code',
         label: 'Run Code',
-        run: async function (/**@type{vscode.TextEditor}*/ed) {
+        run: async function (ed) {
             editText(ed, {}, async (text) => {
                 return await runCode(text)
             })
@@ -329,8 +329,8 @@ export const commands = [
     {
         id: 'y-eval-print',
         label: 'Eval Print',
-        run: async function (/**@type{vscode.TextEditor}*/ed) {
-            editText(ed, {}, async (text) => {
+        run: async function (ed) {
+            editText(ed, { append: true }, async (text) => {
                 return await evalPrint(text)
             })
         }
@@ -338,7 +338,7 @@ export const commands = [
     {
         id: 'y-comment-align',
         label: 'Comment Align',
-        run: async function (/**@type{vscode.TextEditor}*/ed) {
+        run: async function (ed) {
             editText(ed, {}, async (text) => {
                 return await commentAlign(text)
             })
@@ -347,7 +347,7 @@ export const commands = [
     {
         id: "y-cursor-align",
         label: "Cursor Align",
-        run: async function (/**@type{vscode.TextEditor}*/ed) {
+        run: async function (ed) {
             const func = await cursorAlign(ed)
             editText(ed, { insert: true }, async () => {
                 return func()
@@ -366,7 +366,7 @@ export const commands = [
     {
         id: "y-clean-ansi-escape-codes",
         label: "Clean ANSI Escape Codes",
-        run: async function (/**@type{vscode.TextEditor}*/ed) {
+        run: async function (ed) {
             editText(ed, {}, async (text) => {
                 return await cleanAnsiEscapeCodes(text)
             })
@@ -375,7 +375,7 @@ export const commands = [
     {
         id: "y-js-format",
         label: "JS format",
-        run: async function (/**@type{vscode.TextEditor}*/ed) {
+        run: async function (ed) {
             editText(ed, {}, async (text) => {
                 return await formatJS(text)
             })
@@ -384,7 +384,7 @@ export const commands = [
     {
         id: "y-css-format",
         label: "CSS format",
-        run: async function (/**@type{vscode.TextEditor}*/ed) {
+        run: async function (ed) {
             editText(ed, {}, async (text) => {
                 return await formatCSS(text)
             })
@@ -393,7 +393,7 @@ export const commands = [
     {
         id: "y-sql-format",
         label: "SQL format",
-        run: async function (/**@type{vscode.TextEditor}*/ed) {
+        run: async function (ed) {
             editText(ed, {}, async (text) => {
                 return await formatSQL(text)
             })
@@ -402,7 +402,7 @@ export const commands = [
     {
         id: "y-xml-format",
         label: "XML format",
-        run: async function (/**@type{vscode.TextEditor}*/ed) {
+        run: async function (ed) {
             editText(ed, {}, async (text) => {
                 return await formatXML(text)
             })
@@ -411,7 +411,7 @@ export const commands = [
     {
         id: "y-json-format",
         label: "JSON format",
-        run: async function (/**@type{vscode.TextEditor}*/ed) {
+        run: async function (ed) {
             editText(ed, {}, async (text) => {
                 return await formatJSON(text)
             })
@@ -420,7 +420,7 @@ export const commands = [
     {
         id: "y-sql-min",
         label: "SQL min",
-        run: async function (/**@type{vscode.TextEditor}*/ed) {
+        run: async function (ed) {
             editText(ed, {}, async (text) => {
                 return await minSQL(text)
             })
@@ -429,7 +429,7 @@ export const commands = [
     {
         id: "y-xml-min",
         label: "XML min",
-        run: async function (/**@type{vscode.TextEditor}*/ed) {
+        run: async function (ed) {
             editText(ed, {}, async (text) => {
                 return await minXML(text)
             })
@@ -438,7 +438,7 @@ export const commands = [
     {
         id: "y-css-min",
         label: "CSS min",
-        run: async function (/**@type{vscode.TextEditor}*/ed) {
+        run: async function (ed) {
             editText(ed, {}, async (text) => {
                 return await minCSS(text)
             })
@@ -447,7 +447,7 @@ export const commands = [
     {
         id: "y-json-min",
         label: "JSON min",
-        run: async function (/**@type{vscode.TextEditor}*/ed) {
+        run: async function (ed) {
             editText(ed, {}, async (text) => {
                 return await minJSON(text)
             })
@@ -524,7 +524,7 @@ export const commands = [
     {
         id: "y-crypto-md5",
         label: "Crypto md5",
-        run: async function (/**@type{vscode.TextEditor}*/ed) {
+        run: async function (ed) {
             editText(ed, {}, async (text) => {
                 return await md5(text)
             })
@@ -533,7 +533,7 @@ export const commands = [
     {
         id: "y-crypto-sha1",
         label: "Crypto sha1",
-        run: async function (/**@type{vscode.TextEditor}*/ed) {
+        run: async function (ed) {
             editText(ed, {}, async (text) => {
                 return await sha1(text)
             })
@@ -542,7 +542,7 @@ export const commands = [
     {
         id: "y-crypto-sha256",
         label: "Crypto sha256",
-        run: async function (/**@type{vscode.TextEditor}*/ed) {
+        run: async function (ed) {
             editText(ed, {}, async (text) => {
                 return await sha256(text)
             })
@@ -551,7 +551,7 @@ export const commands = [
     {
         id: "y-crypto-sha512",
         label: "Crypto sha512",
-        run: async function (/**@type{vscode.TextEditor}*/ed) {
+        run: async function (ed) {
             editText(ed, {}, async (text) => {
                 return await sha512(text)
             })
@@ -560,7 +560,7 @@ export const commands = [
     {
         id: "y-decode-json-parse",
         label: "Decode json parse",
-        run: async function (/**@type{vscode.TextEditor}*/ed) {
+        run: async function (ed) {
             editText(ed, {}, async (text) => {
                 return await parseJSON(text)
             })
@@ -569,7 +569,7 @@ export const commands = [
     {
         id: "y-encode-json-stringify",
         label: "Encode json stringify",
-        run: async function (/**@type{vscode.TextEditor}*/ed) {
+        run: async function (ed) {
             editText(ed, {}, async (text) => {
                 return await stringify(text)
             })
@@ -578,7 +578,7 @@ export const commands = [
     {
         id: "y-encode-uri",
         label: "Encode uri",
-        run: async function (/**@type{vscode.TextEditor}*/ed) {
+        run: async function (ed) {
             editText(ed, {}, async (text) => {
                 return await encodeUri(text)
             })
@@ -587,7 +587,7 @@ export const commands = [
     {
         id: "y-decode-uri",
         label: "Decode uri",
-        run: async function (/**@type{vscode.TextEditor}*/ed) {
+        run: async function (ed) {
             editText(ed, {}, async (text) => {
                 return await decodeUri(text)
             })
@@ -596,7 +596,7 @@ export const commands = [
     {
         id: "y-encode-base64",
         label: "Encode base64",
-        run: async function (/**@type{vscode.TextEditor}*/ed) {
+        run: async function (ed) {
             editText(ed, {}, async (text) => {
                 return await encodeBase64(text)
             })
@@ -605,7 +605,7 @@ export const commands = [
     {
         id: "y-decode-base64",
         label: "Decode base64",
-        run: async function (/**@type{vscode.TextEditor}*/ed) {
+        run: async function (ed) {
             editText(ed, {}, async (text) => {
                 return await decodeBase64(text)
             })
@@ -614,7 +614,7 @@ export const commands = [
     {
         id: "y-encode-hex",
         label: "Encode hex",
-        run: async function (/**@type{vscode.TextEditor}*/ed) {
+        run: async function (ed) {
             editText(ed, {}, async (text) => {
                 return await encodeHex(text)
             })
@@ -623,7 +623,7 @@ export const commands = [
     {
         id: "y-decode-hex",
         label: "Decode hex",
-        run: async function (/**@type{vscode.TextEditor}*/ed) {
+        run: async function (ed) {
             editText(ed, {}, async (text) => {
                 return await decodeHex(text)
             })
@@ -632,7 +632,7 @@ export const commands = [
     {
         id: "y-encode-html",
         label: "Encode html",
-        run: async function (/**@type{vscode.TextEditor}*/ed) {
+        run: async function (ed) {
             editText(ed, {}, async (text) => {
                 return await encodeHtml(text)
             })
@@ -641,7 +641,7 @@ export const commands = [
     {
         id: "y-decode-html",
         label: "Decode html",
-        run: async function (/**@type{vscode.TextEditor}*/ed) {
+        run: async function (ed) {
             editText(ed, {}, async (text) => {
                 return await decodeHtml(text)
             })
@@ -650,7 +650,7 @@ export const commands = [
     {
         id: "y-encode-native",
         label: "Encode native",
-        run: async function (/**@type{vscode.TextEditor}*/ed) {
+        run: async function (ed) {
             editText(ed, {}, async (text) => {
                 return await encodeNative(text)
             })
@@ -659,7 +659,7 @@ export const commands = [
     {
         id: "y-decode-native",
         label: "Decode native",
-        run: async function (/**@type{vscode.TextEditor}*/ed) {
+        run: async function (ed) {
             editText(ed, {}, async (text) => {
                 return await decodeNative(text)
             })
@@ -668,7 +668,7 @@ export const commands = [
     {
         id: "y-encode-unicode",
         label: "Encode unicode",
-        run: async function (/**@type{vscode.TextEditor}*/ed) {
+        run: async function (ed) {
             editText(ed, {}, async (text) => {
                 return await encodeUnicode(text)
             })
@@ -677,7 +677,7 @@ export const commands = [
     {
         id: "y-decode-unicode",
         label: "Decode unicode",
-        run: async function (/**@type{vscode.TextEditor}*/ed) {
+        run: async function (ed) {
             editText(ed, {}, async (text) => {
                 return await decodeUnicode(text)
             })
@@ -686,7 +686,7 @@ export const commands = [
     {
         id: "y-encode-escape",
         label: "Encode escape",
-        run: async function (/**@type{vscode.TextEditor}*/ed) {
+        run: async function (ed) {
             editText(ed, {}, async (text) => {
                 return await encodeEscape(text)
             })
@@ -695,7 +695,7 @@ export const commands = [
     {
         id: "y-encode-escape-simple",
         label: "Encode escape simple",
-        run: async function (/**@type{vscode.TextEditor}*/ed) {
+        run: async function (ed) {
             editText(ed, {}, async (text) => {
                 return await escapeSimple(text)
             })
@@ -704,7 +704,7 @@ export const commands = [
     {
         id: "y-encode-escape-with-crlf",
         label: "Encode escape with crlf",
-        run: async function (/**@type{vscode.TextEditor}*/ed) {
+        run: async function (ed) {
             editText(ed, {}, async (text) => {
                 return await escapeWithcrlf(text)
             })
@@ -713,7 +713,7 @@ export const commands = [
     {
         id: "y-decode-unescape",
         label: "Decode unescape",
-        run: async function (/**@type{vscode.TextEditor}*/ed) {
+        run: async function (ed) {
             editText(ed, {}, async (text) => {
                 return await decodeUnescape(text)
             })
@@ -722,7 +722,7 @@ export const commands = [
     {
         id: "y-translate-coffeescript-to-javascript",
         label: "Translate coffeescript to javascript",
-        run: async function (/**@type{vscode.TextEditor}*/ed) {
+        run: async function (ed) {
             editText(ed, {}, async (text) => {
                 return await decodeCoffee(text)
             })
@@ -731,7 +731,7 @@ export const commands = [
     {
         id: "y-translate-less-to-css",
         label: "Translate less to css",
-        run: async function (/**@type{vscode.TextEditor}*/ed) {
+        run: async function (ed) {
             editText(ed, {}, async (text) => {
                 return await decodeLess(text)
             })
@@ -740,7 +740,7 @@ export const commands = [
     {
         id: "y-translate-markdown-to-html",
         label: "Translate markdown to html",
-        run: async function (/**@type{vscode.TextEditor}*/ed) {
+        run: async function (ed) {
             editText(ed, {}, async (text) => {
                 return await markdownToHtml(text)
             })
@@ -749,7 +749,7 @@ export const commands = [
     {
         id: "y-translate-translate-to-zh",
         label: "Translate translate to zh",
-        run: async function (/**@type{vscode.TextEditor}*/ed) {
+        run: async function (ed) {
             let iks = getTranslateIks()
             if (!iks) return
             editText(ed, {}, async (text) => {
@@ -760,7 +760,7 @@ export const commands = [
     {
         id: "y-translate-translate-to-en",
         label: "Translate translate to en",
-        run: async function (/**@type{vscode.TextEditor}*/ed) {
+        run: async function (ed) {
             let iks = getTranslateIks()
             if (!iks) return
             editText(ed, {}, async (text) => {
@@ -771,7 +771,7 @@ export const commands = [
     {
         id: "y-translate-toggle-translate",
         label: "Translate toggle translate",
-        run: async function (/**@type{vscode.TextEditor}*/ed) {
+        run: async function (ed) {
             editText(ed, { noChange: true }, async () => {
                 if (extensionContext.translateDisposable) {
                     extensionContext.translateDisposable.dispose()
@@ -787,16 +787,34 @@ export const commands = [
     {
         id: "y-lorem",
         label: "lorem",
-        run: async function (/**@type{vscode.TextEditor}*/ed) {
+        run: async function (ed) {
             editText(ed, { insert: true }, async () => {
                 return `Lorem ipsum dolor sit amet consectetur adipisicing elit. Deserunt nulla quisquam blanditiis fugit quia beatae, ducimus in provident commodi similique, necessitatibus quae exercitationem doloribus hic impedit maxime voluptate velit consequuntur?`
             })
         }
     },
     {
+        id: "y-random-number",
+        label: "random number",
+        run: async function (ed) {
+            editText(ed, { insert: true, handleEmptySelection: true, }, async () => {
+                return randomNumber()
+            })
+        },
+    },
+    {
+        id: "y-random-hex",
+        label: "random hex",
+        run: async function (ed) {
+            editText(ed, { insert: true, handleEmptySelection: true, }, async () => {
+                return randomHex()
+            })
+        },
+    },
+    {
         id: "y-sequence-number-1",
         label: "sequence number 1",
-        run: async function (/**@type{vscode.TextEditor}*/ed) {
+        run: async function (ed) {
             let seq = 1
             editText(ed, { insert: true }, async () => {
                 return `${seq++}`
@@ -806,7 +824,7 @@ export const commands = [
     {
         id: "y-sequence-number-一",
         label: "sequence number 一",
-        run: async function (/**@type{vscode.TextEditor}*/ed) {
+        run: async function (ed) {
             let seq = 1
             editText(ed, { insert: true }, async () => {
                 return Nzh.cn.encodeS(seq++)
@@ -816,7 +834,7 @@ export const commands = [
     {
         id: "y-sequence-number-壹",
         label: "sequence number 壹",
-        run: async function (/**@type{vscode.TextEditor}*/ed) {
+        run: async function (ed) {
             let seq = 1
             editText(ed, { insert: true }, async () => {
                 return Nzh.cn.encodeB(seq++)
@@ -826,7 +844,7 @@ export const commands = [
     {
         id: "y-xing-ming",
         label: "xing ming",
-        run: async function (/**@type{vscode.TextEditor}*/ed) {
+        run: async function (ed) {
             let g = new NameGenerate()
             editText(ed, { insert: true }, async () => {
                 return g.get()
@@ -857,7 +875,7 @@ export const commands = [
     {
         id: "y-full-space",
         label: "full space",
-        run: async function (/**@type{vscode.TextEditor}*/ed) {
+        run: async function (ed) {
             editText(ed, {}, async (text) => {
                 return ' '.repeat(text.length)
             })
@@ -866,7 +884,7 @@ export const commands = [
     {
         id: "y-cursors-drop",
         label: "cursors drop",
-        run: async function (/**@type{vscode.TextEditor}*/ed) {
+        run: async function (ed) {
             let selections = ed.selections
             let tmp = []
             for (let i = 0; i < selections.length; i += 2) {
@@ -879,7 +897,7 @@ export const commands = [
     {
         id: "y-numbers-summation",
         label: "numbers summation 求和",
-        run: async function (/**@type{vscode.TextEditor}*/ed) {
+        run: async function (ed) {
             editText(ed, { append: true }, async (text) => {
                 let match = text.split(/[ ,;\r\n\t"]/) || []
                 let numbers = match.map((o) => parseFloat(o)).filter((o) => !isNaN(o))
@@ -890,7 +908,7 @@ export const commands = [
     {
         id: "y-numbers-average",
         label: "numbers average 求平均值",
-        run: async function (/**@type{vscode.TextEditor}*/ed) {
+        run: async function (ed) {
             editText(ed, { append: true }, async (text) => {
                 let match = text.split(/[ ,;\r\n\t"]/) || []
                 let numbers = match.map((o) => parseFloat(o)).filter((o) => !isNaN(o))
@@ -974,7 +992,7 @@ function buildSequenceNum(char, start) {
     return {
         id: `y-sequence-number-${char}`,
         label: `sequence number ${char}`,
-        run: async function (/**@type{vscode.TextEditor}*/ed) {
+        run: async function (ed) {
             let seq = start
             let codes = []
             let endCode = char.charCodeAt(0)
@@ -1101,7 +1119,7 @@ function buildChatGPTCommands() {
         return {
             id: `y-chatgpt-${index + 1}`,
             label: `chatgpt ${index + 1}`,
-            run: async function (/**@type{vscode.TextEditor}*/ed) {
+            run: async function (ed) {
                 editText(ed, { noChange: true }, async (text) => {
                     let selection = ed.selection
                     let pos = selection.end.translate(0, 1)
