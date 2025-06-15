@@ -42,7 +42,7 @@ export async function encodeBase64(text) {
     return Buffer.from(text).toString('base64')
 }
 /**
- * @param {WithImplicitCoercion<string> | { [Symbol.toPrimitive](hint: "string"): string; }} text
+ * @param {string} text
  */
 export async function encodeHex(text) {
     return Buffer.from(text, 'utf-8').toString('hex')
@@ -91,13 +91,13 @@ export async function decodeUri(text) {
     return decodeURIComponent(text)
 }
 /**
- * @param {WithImplicitCoercion<string> | { [Symbol.toPrimitive](hint: "string"): string; }} text
+ * @param {string} text
  */
 export async function decodeBase64(text) {
     return Buffer.from(text, 'base64').toString('utf-8')
 }
 /**
- * @param {WithImplicitCoercion<string> | { [Symbol.toPrimitive](hint: "string"): string; }} text
+ * @param {string} text
  */
 export async function decodeHex(text) {
     return Buffer.from(text, 'hex').toString('utf8')
