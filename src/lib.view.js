@@ -224,7 +224,7 @@ export async function execInTerminal(command) {
  * @param {TextEditor} editor 
  * @returns 
  */
-export async function animationEditInVSCode(editor) {
+export function animationEditInVSCode(editor) {
     let selection = editor.selection
     let pos = selection.end.translate(0, 1)
     return async (/**@type{string}*/text) => {

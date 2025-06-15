@@ -582,7 +582,7 @@ export async function cleanAnsiEscapeCodes(text) {
     return text.replace(/\x1b\[[\d;]+?m/g, '')
 }
 
-const sleep = (/** @type {number} */ timeout) => new Promise((resolve) => setTimeout(resolve, timeout))
+export const sleep = (/** @type {number} */ timeout) => new Promise((resolve) => setTimeout(resolve, timeout))
 
 /**
  * @param {import("crypto").BinaryLike} text
