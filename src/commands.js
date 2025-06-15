@@ -1,7 +1,7 @@
 import { commands, ProgressLocation, window, Selection } from 'vscode'
 import { setupTranslateHoverProvider, getAllText, getInputSeparator, getInputStartNumber, getRegexpText, getSelectText, getTranslateIks, registerDocumentFormattingEditProviderCSS, setupTimeFormatHoverProvider, getInputRepeatCount, previewHTML } from './lib.view.js'
 import { NameGenerate, addLineNumber, addLineNumberFromInput, addLineNumberWithSeparator, cleanAnsiEscapeCodes, commentAlign, currentTime, cursorAlign, decodeBase64, decodeHex, decodeHtml, decodeLess, decodeNative, decodeUnescape, decodeUnicode, decodeUri, encodeBase64, encodeEscape, encodeHex, encodeHtml, encodeNative, encodeUnicode, encodeUri, escapeSimple, escapeWithcrlf, evalPrint, extractTypesFromString, firstLetterLowercase, firstLetterUppercase, formatBytes, formatCSS, formatJS, formatJSON, formatMultiLineComment, formatSQL, formatTime, formatXML, guid, jsonDeepParse, lineGroupDuplicate, lineRemoveDuplicate, lineRemoveEmpty, lineRemoveExcludeSelect, lineRemoveIncludeSelect, lineRemoveMatchRegexp, lineRemoveNotMatchRegexp, lineReverse, lineSortAsc, lineSortDesc, lineSortNumber, lineTrim, lineTrimLeft, lineTrimRight, markdownToHtml, md5, minCSS, minJSON, minSQL, minXML, parseJSON, parseJSONInfo, parseTime, randomHex, randomNumber, rearrangeJsonKey, separatorHumpToUnderline, separatorUnderlineToHump, sha1, sha256, sha512, stringify, todo, translateBaidu } from './lib.js'
-import { extensionContext } from './config.js'
+import { extensionContext } from './aconfig.js'
 import Nzh from 'nzh'
 import { evalParser, extractJsonFromString } from 'extract-json-from-string-y'
 

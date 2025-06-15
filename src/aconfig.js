@@ -4,15 +4,16 @@ import { workspace } from 'vscode'
  * @import {ExtensionContext, Disposable} from 'vscode'
  */
 
-export function configTools() {
+export function appConfig() {
     return workspace.getConfiguration('tools')
 }
 
-export function configTranslateAppId() {
-    return configTools().get('translate_app_id')
+export function appConfigTranslateAppId() {
+    return appConfig().get('translate_app_id')
 }
-export function configTranslateAppKey() {
-    return configTools().get('translate_key')
+
+export function appConfigTranslateAppKey() {
+    return appConfig().get('translate_key')
 }
 
 /** @type{{context:ExtensionContext,translateDisposable:Disposable}} */

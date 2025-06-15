@@ -1,4 +1,4 @@
-import { configTranslateAppId, configTranslateAppKey, extensionContext } from './config.js'
+import { appConfigTranslateAppId, appConfigTranslateAppKey, extensionContext } from './aconfig.js'
 import { formatCSS, formatTime, getWebviewContent, translateBaidu } from './lib.js'
 import { languages, Position, TextEdit, Range, window, Hover, ProgressLocation, ViewColumn, } from 'vscode'
 
@@ -91,8 +91,8 @@ export function setupTimeFormatHoverProvider(context) {
  * @returns {[string,string]}
  */
 export function getTranslateIks() {
-    let appId = configTranslateAppId()
-    let appKey = configTranslateAppKey()
+    let appId = appConfigTranslateAppId()
+    let appKey = appConfigTranslateAppKey()
     if (!appId || !appKey) {
         window.showWarningMessage('需要配置百度翻译 appId、appKey。')
         return null
