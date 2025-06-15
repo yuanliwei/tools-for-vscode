@@ -6,16 +6,17 @@ import { runInNewContext } from 'vm'
 import he from 'he'
 import less from 'less'
 import MarkdownIt from 'markdown-it'
-import fs from 'fs'
-import path from 'path'
-import os from 'os'
-import { ViewColumn, window } from 'vscode'
 import { JSONInfo } from 'json-info'
 import { evalParser } from 'extract-json-from-string-y'
 import { flatten } from 'flat'
 import { table } from 'table'
 import { extractTypesFromSource } from 'extract-types'
 import { escape, unescape } from 'querystring'
+import { readFile, writeFile } from 'fs/promises'
+
+/**
+ * @import {CommandItem, ContributeCommandItem} from './types.js'
+ */
 
 /**
  * @param {string} text
@@ -522,26 +523,6 @@ export function formatByteSize(size) {
 }
 
 /**
- * @param {string | NodeJS.ArrayBufferView<ArrayBufferLike>} code
- */
-export async function runCode(code) {
-    let runFilePath = path.join(os.tmpdir(), `tmp-${Date.now()}.js`)
-    let editor = window.activeTextEditor
-    if (editor && !editor.document.isDirty && code == editor.document.getText()) {
-        runFilePath = editor.document.fileName
-    } else {
-        fs.writeFileSync(runFilePath, code)
-    }
-    let terminal = window.activeTerminal
-    if (!terminal) {
-        terminal = window.createTerminal('Run Code')
-    }
-    terminal.show()
-    terminal.sendText(`node "${runFilePath}"`)
-    return code
-}
-
-/**
  * @param {string} text
  */
 export async function evalPrint(text) {
@@ -858,38 +839,6 @@ export function getWebviewContent(html) {
     </html>`
 }
 
-/**
- * @param {string} text
- */
-export function previewHTML(text) {
-    const panel = window.createWebviewPanel(
-        'webview',
-        'Preview',
-        ViewColumn.Active,
-        {
-            enableCommandUris: true,
-            enableScripts: true,
-            enableFindWidget: true,
-            enableForms: true,
-            localResourceRoots: [],
-        }
-    )
-
-    panel.webview.html = getWebviewContent(text)
-    return null
-}
-
-/**
- * @param {string} command
- */
-export async function execInTerminal(command) {
-    let terminal = window.activeTerminal
-    if (!terminal) {
-        terminal = window.createTerminal('tools')
-    }
-    terminal.sendText(command)
-}
-
 export const Status = {
     INDEX_MODIFIED: 0,
     INDEX_ADDED: 1,
@@ -969,4 +918,112 @@ export function randomNumber() {
 }
 export function randomHex() {
     return randomBytes(4).toString('hex')
+}
+
+
+/**
+ * 百度翻译
+ * 
+ * @param {[string,string]} iks 
+ * @param {string} lang 
+ * @param {string} textString 
+ * @returns 
+ */
+export async function translateBaidu(iks, lang, textString) {
+    let MD5 = (/** @type {import("crypto").BinaryLike} */ text) => {
+        const hash = createHash('md5')
+        hash.update(text)
+        return hash.digest('hex')
+    }
+
+    let appid = iks[0]
+    let key = iks[1]
+    let salt = Date.now()
+    let matches = textString.split('\n').map((item) => {
+        return item.trim()
+    }).filter((item) => {
+        return item.length > 0
+    })
+    if (!matches) {
+        return textString
+    }
+    console.log('translate words:' + matches.length)
+    let query = matches.join('\n')
+    let from = 'auto'
+    let to = lang
+    let str1 = appid + query + salt + key
+    let sign = MD5(str1)
+
+    let params = new URLSearchParams()
+    params.append('q', query)
+    params.append('appid', appid)
+    params.append('salt', salt.toFixed(0))
+    params.append('from', from)
+    params.append('to', to)
+    params.append('sign', sign)
+    /** @type{Object} */
+    let result = await (await fetch(`https://api.fanyi.baidu.com/api/trans/vip/translate`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: params
+    })).json()
+
+    if (result.error_code) {
+        let e = new Error(`${result.error_msg}\n${JSON.stringify(result)}`)
+        return e.message + '\n\n' + e.stack
+    }
+    let map = {}
+    for (const item of result.trans_result) {
+        map[item.src] = await decodeNative(item.dst)
+    }
+    return textString.split('\n').map((item) => {
+        let k = item.trim()
+        let v = map[k]
+        if (v) {
+            return item.replace(k, v)
+        } else {
+            return item
+        }
+    }).join("\n")
+
+}
+
+/**
+ * @param {string} rootPath 
+ * @param {CommandItem[]} commands 
+ */
+export async function updatePackageJsonCommands(rootPath, commands) {
+    let package_json_path = rootPath + '/package.json'
+    let json = JSON.parse(await readFile(package_json_path, 'utf-8'))
+    let items = []
+    for (const command of commands) {
+        /** @type{ContributeCommandItem} */
+        const item = {
+            command: `tools:${command.id}`,
+            title: `${command.label}`,
+        }
+        if (command.icon) {
+            item.icon = command.icon
+        }
+        items.push(item)
+    }
+    let isSame = json.contributes.commands?.length == items.length
+    if (isSame) {
+        for (let index = 0; index < items.length; index++) {
+            const itemNew = items[index]
+            /** @type{ContributeCommandItem} */
+            const itemOld = json.contributes.commands[index]
+            if (itemNew.command != itemOld.command || itemNew.title != itemOld.title || itemNew.icon != itemOld.icon) {
+                isSame = false
+                break
+            }
+        }
+    }
+    if (!isSame) {
+        json.contributes.commands = items
+        await writeFile(package_json_path, JSON.stringify(json, null, 4))
+        console.log('update package.json commands over!')
+    }
 }

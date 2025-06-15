@@ -143,10 +143,6 @@
                 "title": "Format bytes"
             },
             {
-                "command": "tools:y-run-code",
-                "title": "Run Code"
-            },
-            {
                 "command": "tools:y-eval-print",
                 "title": "Eval Print"
             },

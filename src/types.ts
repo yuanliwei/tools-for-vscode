@@ -24,7 +24,7 @@ export type CommandItem = {
     label: string;
     icon?: string;
 };
-export type CommandItem2 = {
+export type ContributeCommandItem = {
     command: string;
     title: string;
     icon?: string;

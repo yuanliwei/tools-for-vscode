@@ -1,5 +1,5 @@
 
-import { setUpCommands } from './command.js'
+import { setupCommands } from './commands.js'
 import { extensionContext } from './config.js'
 
 /**
@@ -7,8 +7,9 @@ import { extensionContext } from './config.js'
  */
 export function activate(context) {
     extensionContext.context = context
-    setUpCommands(context)
+    setupCommands(context)
 }
+
 export function deactivate() {
 
 }

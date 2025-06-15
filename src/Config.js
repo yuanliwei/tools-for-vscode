@@ -1,23 +1,19 @@
 import { workspace } from 'vscode'
 
 /**
- * @import {Disposable, ExtensionContext} from 'vscode'
+ * @import {ExtensionContext, Disposable} from 'vscode'
  */
 
-class Config {
-    constructor() {
-        this.config = workspace.getConfiguration('tools')
-    }
-
-    translateAppId() {
-        return this.config.get('translate_app_id')
-    }
-    translateAppKey() {
-        return this.config.get('translate_key')
-    }
+export function configTools() {
+    return workspace.getConfiguration('tools')
 }
 
-export const config = new Config()
+export function configTranslateAppId() {
+    return configTools().get('translate_app_id')
+}
+export function configTranslateAppKey() {
+    return configTools().get('translate_key')
+}
 
 /** @type{{context:ExtensionContext,translateDisposable:Disposable}} */
 export const extensionContext = {

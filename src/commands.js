@@ -1,7 +1,6 @@
-import { setupTranslateHoverProvider, getAllText, getInputSeparator, getInputStartNumber, getRegexpText, getSelectText, getTranslateIks, registerDocumentFormattingEditProviderCSS, updatePackageJsonCommands, setupTimeFormatHoverProvider, getInputRepeatCount } from './tools.js'
 import { commands, ProgressLocation, window, Selection } from 'vscode'
-import { NameGenerate, addLineNumber, addLineNumberFromInput, addLineNumberWithSeparator, cleanAnsiEscapeCodes, commentAlign, currentTime, cursorAlign, decodeBase64, decodeHex, decodeHtml, decodeLess, decodeNative, decodeUnescape, decodeUnicode, decodeUri, encodeBase64, encodeEscape, encodeHex, encodeHtml, encodeNative, encodeUnicode, encodeUri, escapeSimple, escapeWithcrlf, evalPrint, extractTypesFromString, firstLetterLowercase, firstLetterUppercase, formatBytes, formatCSS, formatJS, formatJSON, formatMultiLineComment, formatSQL, formatTime, formatXML, guid, jsonDeepParse, lineGroupDuplicate, lineRemoveDuplicate, lineRemoveEmpty, lineRemoveExcludeSelect, lineRemoveIncludeSelect, lineRemoveMatchRegexp, lineRemoveNotMatchRegexp, lineReverse, lineSortAsc, lineSortDesc, lineSortNumber, lineTrim, lineTrimLeft, lineTrimRight, markdownToHtml, md5, minCSS, minJSON, minSQL, minXML, parseJSON, parseJSONInfo, parseTime, previewHTML, randomHex, randomNumber, rearrangeJsonKey, runCode, separatorHumpToUnderline, separatorUnderlineToHump, sha1, sha256, sha512, stringify, todo } from './lib.js'
-import { translate } from './translate.js'
+import { setupTranslateHoverProvider, getAllText, getInputSeparator, getInputStartNumber, getRegexpText, getSelectText, getTranslateIks, registerDocumentFormattingEditProviderCSS, setupTimeFormatHoverProvider, getInputRepeatCount, previewHTML } from './lib.view.js'
+import { NameGenerate, addLineNumber, addLineNumberFromInput, addLineNumberWithSeparator, cleanAnsiEscapeCodes, commentAlign, currentTime, cursorAlign, decodeBase64, decodeHex, decodeHtml, decodeLess, decodeNative, decodeUnescape, decodeUnicode, decodeUri, encodeBase64, encodeEscape, encodeHex, encodeHtml, encodeNative, encodeUnicode, encodeUri, escapeSimple, escapeWithcrlf, evalPrint, extractTypesFromString, firstLetterLowercase, firstLetterUppercase, formatBytes, formatCSS, formatJS, formatJSON, formatMultiLineComment, formatSQL, formatTime, formatXML, guid, jsonDeepParse, lineGroupDuplicate, lineRemoveDuplicate, lineRemoveEmpty, lineRemoveExcludeSelect, lineRemoveIncludeSelect, lineRemoveMatchRegexp, lineRemoveNotMatchRegexp, lineReverse, lineSortAsc, lineSortDesc, lineSortNumber, lineTrim, lineTrimLeft, lineTrimRight, markdownToHtml, md5, minCSS, minJSON, minSQL, minXML, parseJSON, parseJSONInfo, parseTime, randomHex, randomNumber, rearrangeJsonKey, separatorHumpToUnderline, separatorUnderlineToHump, sha1, sha256, sha512, stringify, todo, translateBaidu } from './lib.js'
 import { extensionContext } from './config.js'
 import Nzh from 'nzh'
 import { evalParser, extractJsonFromString } from 'extract-json-from-string-y'
@@ -288,15 +287,6 @@ export const tool_commands = [
         async action(ed) {
             editText(ed, {}, async (text) => {
                 return await formatBytes(text)
-            })
-        }
-    },
-    {
-        id: 'y-run-code',
-        label: 'Run Code',
-        async action(ed) {
-            editText(ed, { noChange: true }, async (text) => {
-                await runCode(text)
             })
         }
     },
@@ -718,7 +708,7 @@ export const tool_commands = [
             let iks = getTranslateIks()
             if (!iks) return
             editText(ed, {}, async (text) => {
-                return await translate(iks, 'zh', text)
+                return await translateBaidu(iks, 'zh', text)
             })
         }
     },
@@ -729,7 +719,7 @@ export const tool_commands = [
             let iks = getTranslateIks()
             if (!iks) return
             editText(ed, {}, async (text) => {
-                return await translate(iks, 'en', text)
+                return await translateBaidu(iks, 'en', text)
             })
         }
     },
@@ -930,7 +920,7 @@ function buildSequenceNum(char, start) {
 /**
  * @param {ExtensionContext} context 
  */
-export function setUpCommands(context) {
+export function setupCommands(context) {
     for (const command of tool_commands) {
         context.subscriptions.push(
             commands.registerCommand('tools:' + command.id, (...args) => {
@@ -939,8 +929,6 @@ export function setUpCommands(context) {
             })
         )
     }
-
-    updatePackageJsonCommands(context.extensionPath, tool_commands)
 
     registerDocumentFormattingEditProviderCSS(context, 'css')
 
