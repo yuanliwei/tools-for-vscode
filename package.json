@@ -483,37 +483,8 @@
                 "title": "numbers average 求平均值"
             },
             {
-                "command": "tools:y-show-change",
-                "title": "git show change"
-            },
-            {
-                "command": "tools:y-show-blame",
-                "title": "git show blame"
-            },
-            {
-                "command": "tools:y-show-graph",
-                "title": "git show log graph"
-            },
-            {
-                "command": "tools:y-show-graph-all",
-                "title": "git show log graph all"
-            },
-            {
-                "command": "tools:y-show-graph-oneline",
-                "title": "git show log graph oneline"
-            },
-            {
-                "command": "tools:y-git-fetch-all",
-                "title": "git fetch all"
-            },
-            {
                 "command": "tools:y-preview-html",
                 "title": "preview html"
-            },
-            {
-                "command": "tools:y-clear-diff",
-                "title": "clear diff",
-                "icon": "$(clear-all)"
             },
             {
                 "command": "tools:y-todo",

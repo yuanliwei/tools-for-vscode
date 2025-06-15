@@ -3,7 +3,7 @@ import { View } from "./view.js"
 import { readFile, writeFile } from "fs/promises"
 import { config, extensionContext } from './config.js'
 import { translate } from './translate.js'
-import { formatCSS, formatTime, getGitApi } from './lib.js'
+import { formatCSS, formatTime } from './lib.js'
 
 /**
  * @typedef {{
@@ -214,52 +214,4 @@ export async function getInputSeparator() {
         prompt: '自定义分隔符'
     })
     return separator
-}
-
-/**
- * @param {vscode.ExtensionContext} context
- */
-export function setupGitCommitHoverProvider(context) {
-    context.subscriptions.push(vscode.languages.registerHoverProvider({ scheme: '*', language: '*' }, {
-        async provideHover(document, position) {
-            const range = document.getWordRangeAtPosition(position, /[\d|a-f]{6,40}/)
-            if (range) {
-                const word = document.getText(range)
-                try {
-                    let git = getGitApi()
-                    let repository = git.repositories.at(0)
-                    let commit = await repository.getCommit(word)
-                    let commitChangeUri = vscode.Uri.parse(`command:tools:y-show-change?${encodeURIComponent(JSON.stringify([commit.hash]))}`)
-
-                    vscode.commands.executeCommand('tools:y-show-change', commit.hash)
-
-                    //#region 
-                    const mdString = new vscode.MarkdownString(`
-**commit** ${commit.hash}
-
-**authorDate** ${commit.authorDate?.toLocaleString()}
-
-**commitDate** ${commit.commitDate?.toLocaleString()}
-
-${commit.shortStat ? `**shortStat** *${commit.shortStat?.files} ${commit.shortStat?.deletions} ${commit.shortStat?.insertions}*\n` : ''}
-**${commit.authorName}** ${commit.authorEmail || ''} ([changes](${commitChangeUri}))
-
-
-${commit.message}
-
-
-**parents**
-
-${commit.parents.map(o => `- ${o}`).join('\n')}
-                    `.trim())
-                    //#endregion
-                    mdString.isTrusted = true
-
-                    return new vscode.Hover(mdString)
-                } catch (ignore) {
-                    console.error(ignore)
-                }
-            }
-        }
-    }))
 }

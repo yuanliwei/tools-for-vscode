@@ -1,7 +1,7 @@
-import { setupGitCommitHoverProvider, setupTranslateHoverProvider, getAllText, getInputSeparator, getInputStartNumber, getRegexpText, getSelectText, getTranslateIks, registerDocumentFormattingEditProviderCSS, updatePackageJsonCommands, setupTimeFormatHoverProvider, getInputRepeatCount } from './tools.js'
+import { setupTranslateHoverProvider, getAllText, getInputSeparator, getInputStartNumber, getRegexpText, getSelectText, getTranslateIks, registerDocumentFormattingEditProviderCSS, updatePackageJsonCommands, setupTimeFormatHoverProvider, getInputRepeatCount } from './tools.js'
 import { pasteImage } from './ocr.js'
 import vscode from 'vscode'
-import { NameGenerate, addLineNumber, addLineNumberFromInput, addLineNumberWithSeparator, chatgpt, cleanAnsiEscapeCodes, clearDiffChanges, commentAlign, currentTime, cursorAlign, decodeBase64, decodeCoffee, decodeHex, decodeHtml, decodeLess, decodeNative, decodeUnescape, decodeUnicode, decodeUri, encodeBase64, encodeEscape, encodeHex, encodeHtml, encodeNative, encodeUnicode, encodeUri, escapeSimple, escapeWithcrlf, evalPrint, extractTypesFromString, firstLetterLowercase, firstLetterUppercase, formatBytes, formatCSS, formatJS, formatJSON, formatMultiLineComment, formatSQL, formatTime, formatXML, getGitApi, gitFetchAll, guid, jsonDeepParse, lineGroupDuplicate, lineRemoveDuplicate, lineRemoveEmpty, lineRemoveExcludeSelect, lineRemoveIncludeSelect, lineRemoveMatchRegexp, lineRemoveNotMatchRegexp, lineReverse, lineSortAsc, lineSortDesc, lineSortNumber, lineTrim, lineTrimLeft, lineTrimRight, markdownToHtml, md5, minCSS, minJSON, minSQL, minXML, parseJSON, parseJSONInfo, parseTime, previewHTML, randomHex, randomNumber, rearrangeJsonKey, runCode, separatorHumpToUnderline, separatorUnderlineToHump, sha1, sha256, sha512, showChange, showGitBlame, showGitLogGraph, showGitLogGraphAll, showGitLogGraphOneline, stringify, todo } from './lib.js'
+import { NameGenerate, addLineNumber, addLineNumberFromInput, addLineNumberWithSeparator, chatgpt, cleanAnsiEscapeCodes, commentAlign, currentTime, cursorAlign, decodeBase64, decodeCoffee, decodeHex, decodeHtml, decodeLess, decodeNative, decodeUnescape, decodeUnicode, decodeUri, encodeBase64, encodeEscape, encodeHex, encodeHtml, encodeNative, encodeUnicode, encodeUri, escapeSimple, escapeWithcrlf, evalPrint, extractTypesFromString, firstLetterLowercase, firstLetterUppercase, formatBytes, formatCSS, formatJS, formatJSON, formatMultiLineComment, formatSQL, formatTime, formatXML, guid, jsonDeepParse, lineGroupDuplicate, lineRemoveDuplicate, lineRemoveEmpty, lineRemoveExcludeSelect, lineRemoveIncludeSelect, lineRemoveMatchRegexp, lineRemoveNotMatchRegexp, lineReverse, lineSortAsc, lineSortDesc, lineSortNumber, lineTrim, lineTrimLeft, lineTrimRight, markdownToHtml, md5, minCSS, minJSON, minSQL, minXML, parseJSON, parseJSONInfo, parseTime, previewHTML, randomHex, randomNumber, rearrangeJsonKey, runCode, separatorHumpToUnderline, separatorUnderlineToHump, sha1, sha256, sha512, stringify, todo } from './lib.js'
 import { translate } from './translate.js'
 import { config, extensionContext } from './config.js'
 import Nzh from 'nzh'
@@ -917,63 +917,12 @@ export const commands = [
         },
     },
     {
-        id: "y-show-change",
-        label: "git show change",
-        run: async function (/**@type{vscode.TextEditor}*/ed, args) {
-            console.log('show change', args)
-            return showChange(args)
-        },
-    },
-    {
-        id: "y-show-blame",
-        label: "git show blame",
-        run: async function (/**@type{vscode.TextEditor}*/ed, args) {
-            return showGitBlame()
-        },
-    },
-    {
-        id: "y-show-graph",
-        label: "git show log graph",
-        run: async function (/**@type{vscode.TextEditor}*/ed, args) {
-            return showGitLogGraph()
-        },
-    },
-    {
-        id: "y-show-graph-all",
-        label: "git show log graph all",
-        run: async function (/**@type{vscode.TextEditor}*/ed, args) {
-            return showGitLogGraphAll()
-        },
-    },
-    {
-        id: "y-show-graph-oneline",
-        label: "git show log graph oneline",
-        run: async function (/**@type{vscode.TextEditor}*/ed, args) {
-            return showGitLogGraphOneline()
-        },
-    },
-    {
-        id: "y-git-fetch-all",
-        label: "git fetch all",
-        run: async function (/**@type{vscode.TextEditor}*/ed, args) {
-            return gitFetchAll()
-        },
-    },
-    {
         id: "y-preview-html",
         label: "preview html",
         run: async function (/**@type{vscode.TextEditor}*/ed, args) {
             editText(ed, { noChange: true }, async (text) => {
                 return previewHTML(text)
             })
-        },
-    },
-    {
-        id: "y-clear-diff",
-        label: "clear diff",
-        icon: '$(clear-all)',
-        run: async function (/**@type{vscode.TextEditor}*/ed, args) {
-            clearDiffChanges()
         },
     },
     {
@@ -1028,10 +977,6 @@ export function setUpCommands(context) {
 
     setupTranslateHoverProvider(context)
     setupTimeFormatHoverProvider(context)
-
-    // addGitBlameContentProvider(context)
-
-    setupGitCommitHoverProvider(context)
 }
 
 /**
@@ -1138,20 +1083,4 @@ function buildChatGPTCommands() {
             }
         }
     })
-}
-
-/**
- * @param {vscode.ExtensionContext} context
- */
-function addGitBlameContentProvider(context) {
-    context.subscriptions.push(vscode.workspace.registerTextDocumentContentProvider('git-blame', {
-        async provideTextDocumentContent(uri, token) {
-            let git = getGitApi()
-            const repository = git.repositories.at(0)
-            let blame = await repository.blame(uri.fsPath)
-            if (!token.isCancellationRequested) {
-                return blame
-            }
-        }
-    }))
 }
