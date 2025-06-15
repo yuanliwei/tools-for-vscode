@@ -1,6 +1,4 @@
 import { createHash } from 'crypto'
-import fetch from 'node-fetch'
-import { URLSearchParams } from 'url'
 import { decodeNative } from './lib.js'
 
 export async function translate(iks, lang, text) {

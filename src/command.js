@@ -1,46 +1,20 @@
 import { setupTranslateHoverProvider, getAllText, getInputSeparator, getInputStartNumber, getRegexpText, getSelectText, getTranslateIks, registerDocumentFormattingEditProviderCSS, updatePackageJsonCommands, setupTimeFormatHoverProvider, getInputRepeatCount } from './tools.js'
-import { pasteImage } from './ocr.js'
-import vscode from 'vscode'
-import { NameGenerate, addLineNumber, addLineNumberFromInput, addLineNumberWithSeparator, chatgpt, cleanAnsiEscapeCodes, commentAlign, currentTime, cursorAlign, decodeBase64, decodeCoffee, decodeHex, decodeHtml, decodeLess, decodeNative, decodeUnescape, decodeUnicode, decodeUri, encodeBase64, encodeEscape, encodeHex, encodeHtml, encodeNative, encodeUnicode, encodeUri, escapeSimple, escapeWithcrlf, evalPrint, extractTypesFromString, firstLetterLowercase, firstLetterUppercase, formatBytes, formatCSS, formatJS, formatJSON, formatMultiLineComment, formatSQL, formatTime, formatXML, guid, jsonDeepParse, lineGroupDuplicate, lineRemoveDuplicate, lineRemoveEmpty, lineRemoveExcludeSelect, lineRemoveIncludeSelect, lineRemoveMatchRegexp, lineRemoveNotMatchRegexp, lineReverse, lineSortAsc, lineSortDesc, lineSortNumber, lineTrim, lineTrimLeft, lineTrimRight, markdownToHtml, md5, minCSS, minJSON, minSQL, minXML, parseJSON, parseJSONInfo, parseTime, previewHTML, randomHex, randomNumber, rearrangeJsonKey, runCode, separatorHumpToUnderline, separatorUnderlineToHump, sha1, sha256, sha512, stringify, todo } from './lib.js'
+import { commands, ProgressLocation, window, Selection } from 'vscode'
+import { NameGenerate, addLineNumber, addLineNumberFromInput, addLineNumberWithSeparator, cleanAnsiEscapeCodes, commentAlign, currentTime, cursorAlign, decodeBase64, decodeHex, decodeHtml, decodeLess, decodeNative, decodeUnescape, decodeUnicode, decodeUri, encodeBase64, encodeEscape, encodeHex, encodeHtml, encodeNative, encodeUnicode, encodeUri, escapeSimple, escapeWithcrlf, evalPrint, extractTypesFromString, firstLetterLowercase, firstLetterUppercase, formatBytes, formatCSS, formatJS, formatJSON, formatMultiLineComment, formatSQL, formatTime, formatXML, guid, jsonDeepParse, lineGroupDuplicate, lineRemoveDuplicate, lineRemoveEmpty, lineRemoveExcludeSelect, lineRemoveIncludeSelect, lineRemoveMatchRegexp, lineRemoveNotMatchRegexp, lineReverse, lineSortAsc, lineSortDesc, lineSortNumber, lineTrim, lineTrimLeft, lineTrimRight, markdownToHtml, md5, minCSS, minJSON, minSQL, minXML, parseJSON, parseJSONInfo, parseTime, previewHTML, randomHex, randomNumber, rearrangeJsonKey, runCode, separatorHumpToUnderline, separatorUnderlineToHump, sha1, sha256, sha512, stringify, todo } from './lib.js'
 import { translate } from './translate.js'
-import { config, extensionContext } from './config.js'
+import { extensionContext } from './config.js'
 import Nzh from 'nzh'
 import { evalParser, extractJsonFromString } from 'extract-json-from-string-y'
 
 /**
- * @typedef {Object} EditOptions 命令选项
- * @property {boolean} [append] 在当前光标位置之后插入内容
- * @property {boolean} [insert] 替换当前光标选中的内容 
- * @property {boolean} [noChange] 不修改文档内容
- * @property {boolean} [replace] 替换整篇文档内容
- * @property {boolean} [handleEmptySelection] 处理空的光标选中位置
- * @property {number} [insertNewLines] 在当前光标位置之后插入多个新行
- * @property {boolean} [noEditor] 不需要打开的文档
+ * @import { ExtensionContext, TextEditor } from 'vscode'
+ * @import { CommandInfo, EditCallback, EditOptions } from './types.js'
  */
 
 /**
- * @typedef {(text:String)=>(Promise<String>|string)} EditCallback
+ * @type {CommandInfo[]} 
  */
-
-/**
- * @type {{
- *   id: string;
- *   label: string;
- *   icon?: string;
- *   run: (ed: vscode.TextEditor, args:any[]|any) => Promise<void>;
- * }[]} 
- */
-export const commands = [
-    {
-        id: 'y-ocr',
-        label: 'OCR',
-        run: async function (ed) {
-            let text = await pasteImage()
-            editText(ed, { insert: true }, () => {
-                return text
-            })
-        }
-    },
+export const tool_commands = [
     {
         id: 'y-remove-empty',
         label: 'Line Remove Empty',
@@ -321,8 +295,8 @@ export const commands = [
         id: 'y-run-code',
         label: 'Run Code',
         run: async function (ed) {
-            editText(ed, {}, async (text) => {
-                return await runCode(text)
+            editText(ed, { noChange: true }, async (text) => {
+                await runCode(text)
             })
         }
     },
@@ -480,12 +454,12 @@ export const commands = [
         label: 'JSON Info',
         run: async (ed) => {
             editText(ed, { append: true }, async (text) => {
-                return vscode.window.withProgress({ location: vscode.ProgressLocation.Window, title: "..." }, async () => {
+                return window.withProgress({ location: ProgressLocation.Window, title: "..." }, async () => {
                     try {
                         return await parseJSONInfo(text)
                     } catch (error) {
                         console.error(error)
-                        vscode.window.showErrorMessage(error.stack)
+                        window.showErrorMessage(error.stack)
                         return error.stack
                     }
                 })
@@ -720,15 +694,6 @@ export const commands = [
         }
     },
     {
-        id: "y-translate-coffeescript-to-javascript",
-        label: "Translate coffeescript to javascript",
-        run: async function (ed) {
-            editText(ed, {}, async (text) => {
-                return await decodeCoffee(text)
-            })
-        }
-    },
-    {
         id: "y-translate-less-to-css",
         label: "Translate less to css",
         run: async function (ed) {
@@ -777,13 +742,12 @@ export const commands = [
                     extensionContext.translateDisposable.dispose()
                     extensionContext.translateDisposable = null
                 } else {
-                    extensionContext.translateDisposable = vscode.window.setStatusBarMessage(`Baidu Translate is enable!`)
+                    extensionContext.translateDisposable = window.setStatusBarMessage(`Baidu Translate is enable!`)
                 }
                 return null
             })
         }
     },
-    ...buildChatGPTCommands(),
     {
         id: "y-lorem",
         label: "lorem",
@@ -919,7 +883,7 @@ export const commands = [
     {
         id: "y-preview-html",
         label: "preview html",
-        run: async function (/**@type{vscode.TextEditor}*/ed, args) {
+        run: async function (ed, args) {
             editText(ed, { noChange: true }, async (text) => {
                 return previewHTML(text)
             })
@@ -929,7 +893,7 @@ export const commands = [
         id: "y-todo",
         label: "y-todo",
         icon: '$(checklist)',
-        run: async function (/**@type{vscode.TextEditor}*/ed, args) {
+        run: async function (ed, args) {
             editText(ed, { append: true }, async (text) => {
                 return todo(text, args)
             })
@@ -959,19 +923,19 @@ function buildSequenceNum(char, start) {
 }
 
 /**
- * @param {vscode.ExtensionContext} context 
+ * @param {ExtensionContext} context 
  */
 export function setUpCommands(context) {
-    for (const command of commands) {
+    for (const command of tool_commands) {
         context.subscriptions.push(
-            vscode.commands.registerCommand('tools:' + command.id, (...args) => {
-                let editor = vscode.window.activeTextEditor
+            commands.registerCommand('tools:' + command.id, (...args) => {
+                let editor = window.activeTextEditor
                 command.run(editor, args)
             })
         )
     }
 
-    updatePackageJsonCommands(context.extensionPath, commands)
+    updatePackageJsonCommands(context.extensionPath, tool_commands)
 
     registerDocumentFormattingEditProviderCSS(context, 'css')
 
@@ -980,7 +944,7 @@ export function setUpCommands(context) {
 }
 
 /**
-* @param {vscode.TextEditor} editor 
+* @param {TextEditor} editor 
 * @param {EditOptions} option 
 * @param {EditCallback} func 
 */
@@ -992,11 +956,11 @@ async function editText(editor, option, func) {
     }
 
     if (!editor) {
-        vscode.window.showInformationMessage('No open text editor!')
+        window.showInformationMessage('No open text editor!')
         return
     }
 
-    /** @type{vscode.Selection[]} */
+    /** @type{Selection[]} */
     let selections = []
     /** @type{string[]} */
     let texts = []
@@ -1008,7 +972,7 @@ async function editText(editor, option, func) {
         if (i == 0 && selection.isEmpty && !option.handleEmptySelection && !option.insert) {
             let lastLine = editor.document.lineCount - 1
             let lastCharacter = editor.document.lineAt(lastLine).range.end.character
-            selection = new vscode.Selection(0, 0, lastLine, lastCharacter)
+            selection = new Selection(0, 0, lastLine, lastCharacter)
             selections.push(selection)
             texts.push(editor.document.getText(selection))
             break
@@ -1017,7 +981,7 @@ async function editText(editor, option, func) {
             texts.push(editor.document.getText(selection))
             let lastLine = editor.document.lineCount - 1
             let lastCharacter = editor.document.lineAt(lastLine).range.end.character
-            selection = new vscode.Selection(0, 0, lastLine, lastCharacter)
+            selection = new Selection(0, 0, lastLine, lastCharacter)
             selections.push(selection)
             break
         }
@@ -1027,12 +991,15 @@ async function editText(editor, option, func) {
 
     try {
         for (let index = 0; index < texts.length; index++) {
-            results[index] = await func(texts[index])
+            let ret = await func(texts[index])
+            if (typeof ret == 'string') {
+                results[index] = ret
+            }
         }
         if (option.noChange) { return }
     } catch (error) {
         console.error(error)
-        vscode.window.showErrorMessage(error.message, error)
+        window.showErrorMessage(error.message, error)
         return
     }
     await editor.edit((editorBuilder) => {
@@ -1053,33 +1020,6 @@ async function editText(editor, option, func) {
                 const selection = selections[index - 1]
                 const result = results[index - 1]
                 editorBuilder.replace(selection, result)
-            }
-        }
-    })
-}
-
-function buildChatGPTCommands() {
-    const apis = config.chatgptHttpAPI() || []
-    return apis.map((api, index) => {
-        return {
-            id: `y-chatgpt-${index + 1}`,
-            label: `chatgpt ${index + 1}`,
-            run: async function (ed) {
-                editText(ed, { noChange: true }, async (text) => {
-                    let selection = ed.selection
-                    let pos = selection.end.translate(0, 1)
-                    await chatgpt(api, text, async (str) => {
-                        let insertPos = pos
-                        ed.selection = new vscode.Selection(pos, pos)
-                        const lineDelta = str.split(/\r?\n/).length - 1
-                        const characterDelta = str.split(/\r?\n/).at(-1).length
-                        pos = pos.translate(lineDelta, characterDelta)
-                        return await ed.edit((builder) => {
-                            builder.insert(insertPos, str)
-                        })
-                    })
-                    return null
-                })
             }
         }
     })

@@ -4,81 +4,136 @@ import dayjs from 'dayjs'
 import { createHash, randomBytes } from 'crypto'
 import { runInNewContext } from 'vm'
 import he from 'he'
-import fetch from 'node-fetch'
-import coffee from 'coffeescript'
 import less from 'less'
 import MarkdownIt from 'markdown-it'
 import fs from 'fs'
-import path, { sep } from 'path'
+import path from 'path'
 import os from 'os'
-import vscode from 'vscode'
+import { ViewColumn, window } from 'vscode'
 import { JSONInfo } from 'json-info'
 import { evalParser } from 'extract-json-from-string-y'
 import { flatten } from 'flat'
 import { table } from 'table'
-import { runWithLoading } from './view.js'
 import { extractTypesFromSource } from 'extract-types'
 
+/**
+ * @param {string} text
+ */
 export async function parseJSON(text) {
     return JSON.parse(text)
 }
+/**
+ * @param {string} text
+ */
 export async function stringify(text) {
     return JSON.stringify(text)
 }
+/**
+ * @param {string | number | boolean} text
+ */
 export async function encodeUri(text) {
     return encodeURIComponent(text)
 }
+/**
+ * @param {string} text
+ */
 export async function encodeBase64(text) {
     return Buffer.from(text).toString('base64')
 }
+/**
+ * @param {WithImplicitCoercion<string> | { [Symbol.toPrimitive](hint: "string"): string; }} text
+ */
 export async function encodeHex(text) {
     return Buffer.from(text, 'utf-8').toString('hex')
 }
+/**
+ * @param {string} text
+ */
 export async function encodeHtml(text) {
     return he.encode(text)
 }
+/**
+ * @param {string} text
+ */
 export async function escapeSimple(text) {
     return he.escape(text)
 }
+/**
+ * @param {string} text
+ */
 export async function escapeWithcrlf(text) {
     return he.escape(text).replace(/\r/g, '&#13;').replace(/\n/g, '&#10;')
 }
+/**
+ * @param {string} text
+ */
 export async function encodeNative(text) {
     return native2ascii(text)
 }
+/**
+ * @param {string} text
+ */
 export async function encodeUnicode(text) {
     return toUnicode(text)
 }
+/**
+ * @param {string} text
+ */
 export async function encodeEscape(text) {
-    return escape(text)
+    // return escape(text)
+    return text.replace(/[!'()*]/g, (char) => {
+        return '%' + char.charCodeAt(0).toString(16).toUpperCase()
+    })
 }
 
+/**
+ * @param {string} text
+ */
 export async function decodeUri(text) {
     return decodeURIComponent(text)
 }
+/**
+ * @param {WithImplicitCoercion<string> | { [Symbol.toPrimitive](hint: "string"): string; }} text
+ */
 export async function decodeBase64(text) {
     return Buffer.from(text, 'base64').toString('utf-8')
 }
+/**
+ * @param {WithImplicitCoercion<string> | { [Symbol.toPrimitive](hint: "string"): string; }} text
+ */
 export async function decodeHex(text) {
     return Buffer.from(text, 'hex').toString('utf8')
 }
+/**
+ * @param {string} text
+ */
 export async function decodeHtml(text) {
     return he.decode(text)
 }
+/**
+ * @param {string} text
+ */
 export async function decodeNative(text) {
     return ascii2native(text)
 }
+/**
+ * @param {string} text
+ */
 export async function decodeUnicode(text) {
     return fromUnicode(text)
 }
+/**
+ * @param {string} text
+ */
 export async function decodeUnescape(text) {
-    return unescape(text)
+    text = text.replace(/\\u([\dA-F]{4})/gi, (_, hex) => String.fromCharCode(parseInt(hex, 16)))
+    return text
+    // return unescape(text)
 }
 
-export async function decodeCoffee(text) {
-    return coffee.compile(text, { bare: true })
-}
-
+/**
+ * @param {string} text
+ */
 export async function decodeLess(text) {
     return new Promise((resolve, reject) => {
         less.render(text, (err, output) => {
@@ -92,6 +147,9 @@ export async function decodeLess(text) {
     })
 }
 
+/**
+ * @param {string} text
+ */
 export async function markdownToHtml(text) {
     return MarkdownIt({
         html: true,
@@ -163,17 +221,31 @@ function fromUnicode(str) {
     return unescape(str.replace(/\\/g, "%"))
 }
 
+/**
+ * @param {string} text
+ */
 export async function lineRemoveDuplicate(text) {
     return [...new Set(text.split('\n'))].join('\n')
 }
+/**
+ * @param {string} selText
+ * @param {string} text
+ */
 export async function lineRemoveIncludeSelect(selText, text) {
-    return text.split('\n').filter(o => !o.includes(selText)).join('\n')
+    return text.split('\n').filter((/** @type {string | any[]} */ o) => !o.includes(selText)).join('\n')
 }
+/**
+ * @param {string} selText
+ * @param {string} text
+ */
 export async function lineRemoveExcludeSelect(selText, text) {
-    return text.split('\n').filter(o => o.includes(selText)).join('\n')
+    return text.split('\n').filter((/** @type {string | any[]} */ o) => o.includes(selText)).join('\n')
 }
+/**
+ * @param {string} text
+ */
 export async function lineRemoveEmpty(text) {
-    return text.split('\n').filter(o => o.trim()).join('\n')
+    return text.split('\n').filter((/** @type {string} */ o) => o.trim()).join('\n')
 }
 
 /**
@@ -197,24 +269,42 @@ export async function lineRemoveNotMatchRegexp(text, regexp) {
     let reg = new RegExp(regexp)
     return text.split('\n').filter(o => o.match(reg)).join('\n')
 }
+/**
+ * @param {string} text
+ */
 export async function lineSortAsc(text) {
     return text.split('\n').sort().join('\n')
 }
+/**
+ * @param {string} text
+ */
 export async function lineSortDesc(text) {
     return text.split('\n').sort().reverse().join('\n')
 }
+/**
+ * @param {string} text
+ */
 export async function lineTrim(text) {
-    return text.split('\n').map(o => o.trim()).join('\n')
+    return text.split('\n').map((/** @type {string} */ o) => o.trim()).join('\n')
 }
+/**
+ * @param {string} text
+ */
 export async function lineTrimLeft(text) {
-    return text.split('\n').map(o => o.trimLeft()).join('\n')
+    return text.split('\n').map((/** @type {string} */ o) => o.trimLeft()).join('\n')
 }
+/**
+ * @param {string} text
+ */
 export async function lineTrimRight(text) {
-    return text.split('\n').map(o => o.trimRight()).join('\n')
+    return text.split('\n').map((/** @type {string} */ o) => o.trimRight()).join('\n')
 }
+/**
+ * @param {string} text
+ */
 export async function addLineNumber(text) {
     let num = 1
-    return text.split('\n').map(o => `${(num++).toString().padStart(4, ' ')} ${o}`).join('\n')
+    return text.split('\n').map((/** @type {any} */ o) => `${(num++).toString().padStart(4, ' ')} ${o}`).join('\n')
 }
 
 /**
@@ -295,9 +385,12 @@ export async function lineGroupDuplicate(text) {
  * @param {string} text 
  */
 export async function lineSortNumber(text) {
+    /**
+     * @param {string} value
+     */
     function toNum(value) {
         let match = value.match(/(\d+\.?\d*e-\d+)|(\d+\.?\d*e\d+)|(\d*\.\d+)|(\d+)/g) || []
-        let nums = match.map((o) => parseFloat(o))
+        let nums = match.map((/** @type {string} */ o) => parseFloat(o))
         return nums[0] ?? Infinity
     }
     let lines = text.split('\n')
@@ -314,32 +407,59 @@ export async function lineReverse(text) {
     return lines.reverse().join('\n')
 }
 
+/**
+ * @param {string} text
+ */
 export async function formatJSON(text) {
     return vkbeautify.json(text)
 }
+/**
+ * @param {string} text
+ */
 export async function formatXML(text) {
     return vkbeautify.xml(text)
 }
+/**
+ * @param {string} text
+ */
 export async function formatCSS(text) {
     return js_beautify.css(text, {
         selector_separator_newline: false
     })
 }
+/**
+ * @param {string} text
+ */
 export async function formatSQL(text) {
     return vkbeautify.sql(text)
 }
+/**
+ * @param {string} text
+ */
 export async function formatJS(text) {
     return js_beautify(text)
 }
+/**
+ * @param {string} text
+ */
 export async function minJSON(text) {
     return vkbeautify.jsonmin(text)
 }
+/**
+ * @param {string} text
+ */
 export async function minXML(text) {
     return vkbeautify.xmlmin(text)
 }
+/**
+ * @param {string} text
+ */
 export async function minCSS(text) {
     return vkbeautify.cssmin(text)
 }
+/**
+ * @param {string} text
+ */
 export async function minSQL(text) {
     return vkbeautify.sqlmin(text)
 }
@@ -405,17 +525,20 @@ export function formatByteSize(size) {
     return Number(cur.toFixed(2)) + companys[0]
 }
 
+/**
+ * @param {string | NodeJS.ArrayBufferView<ArrayBufferLike>} code
+ */
 export async function runCode(code) {
     let runFilePath = path.join(os.tmpdir(), `tmp-${Date.now()}.js`)
-    let editor = vscode.window.activeTextEditor
+    let editor = window.activeTextEditor
     if (editor && !editor.document.isDirty && code == editor.document.getText()) {
         runFilePath = editor.document.fileName
     } else {
         fs.writeFileSync(runFilePath, code)
     }
-    let terminal = vscode.window.activeTerminal
+    let terminal = window.activeTerminal
     if (!terminal) {
-        terminal = vscode.window.createTerminal('Run Code')
+        terminal = window.createTerminal('Run Code')
     }
     terminal.show()
     terminal.sendText(`node "${runFilePath}"`)
@@ -495,106 +618,38 @@ export async function cursorAlign(editor) {
  * @param {String} text 
  */
 export async function cleanAnsiEscapeCodes(text) {
-    // eslint-disable-next-line no-control-regex
     return text.replace(/\x1b\[[\d;]+?m/g, '')
 }
 
 const sleep = (/** @type {number} */ timeout) => new Promise((resolve) => setTimeout(resolve, timeout))
 
 /**
- * @param {string} chatgptHttpAPI 
- * @param {string} text 
- * @param {(char:string)=>Promise<boolean>} appender 
+ * @param {import("crypto").BinaryLike} text
  */
-export async function chatgpt(chatgptHttpAPI, text, appender) {
-    await appender(' ')
-    await sendMessage(chatgptHttpAPI, text, async (text) => {
-        let ret = await appender(text)
-        if (!ret) {
-            await sleep(1000)
-        }
-    })
-    await appender(' ')
-}
-
-/**
-* @param {string} chatgptHttpAPI 
-* @param {string} message 
-* @param {(text:string)=>Promise<void>} cb 
-* @returns {Promise<string>} 
-*/
-async function sendMessage(chatgptHttpAPI, message, cb) {
-    if (!message) {
-        return ''
-    }
-    let response = await fetch(chatgptHttpAPI, {
-        method: 'POST',
-        body: message
-    })
-    const decoder = new TextDecoder()
-    let reader = response.body
-    let done = false
-    /** @type{string[]} */
-    const queue = []
-
-    const promiseReader = new Promise((resolve, reject) => {
-        reader.on('data', (chunk) => {
-            queue.push(...decoder.decode(chunk, { stream: true }))
-        })
-        reader.on('end', () => {
-            done = true
-            resolve(null)
-        })
-        reader.on('close', () => {
-            done = true
-            resolve(null)
-        })
-        reader.on('error', (e) => {
-            console.log('on error ', e)
-            done = true
-            reject(e)
-        })
-    })
-    const promiseOutput = (async () => {
-        while (!done) {
-            await sleep(100)
-            while (queue.length > 0) {
-                const maxStepTime = 50
-                let time = Math.floor(Math.min(maxStepTime, 1000 / queue.length))
-                if (done) {
-                    time = 1
-                }
-                await sleep(time)
-                let c = queue.shift()
-                await cb(c)
-            }
-        }
-        await cb('\n')
-    })()
-    try {
-        await promiseReader
-        await promiseOutput
-    } catch (error) {
-        console.error(error)
-        await cb('\n' + error.stack)
-    }
-}
-
 export async function md5(text) {
     const hash = createHash('md5')
     hash.update(text)
     return hash.digest('hex')
 }
+/**
+ * @param {import("crypto").BinaryLike} text
+ */
 export async function sha1(text) {
     const hash = createHash('sha1')
     hash.update(text)
     return hash.digest('hex')
 }
+/**
+ * @param {import("crypto").BinaryLike} text
+ */
 export async function sha256(text) {
     const hash = createHash('sha256')
     hash.update(text)
     return hash.digest('hex')
 }
+/**
+ * @param {import("crypto").BinaryLike} text
+ */
 export async function sha512(text) {
     const hash = createHash('sha512')
     hash.update(text)
@@ -682,7 +737,7 @@ export async function parseJSONInfo(text) {
         o[key] = value
         array.push(o)
     }
-    let info = new JSONInfo(o => o, maxLines)
+    let info = new JSONInfo((/** @type {any} */ o) => o, maxLines)
     info.parse(array)
     // info.print()
     let time = Date.now()
@@ -811,10 +866,10 @@ export function getWebviewContent(html) {
  * @param {string} text
  */
 export function previewHTML(text) {
-    const panel = vscode.window.createWebviewPanel(
+    const panel = window.createWebviewPanel(
         'webview',
         'Preview',
-        vscode.ViewColumn.Active,
+        ViewColumn.Active,
         {
             enableCommandUris: true,
             enableScripts: true,
@@ -832,9 +887,9 @@ export function previewHTML(text) {
  * @param {string} command
  */
 export async function execInTerminal(command) {
-    let terminal = vscode.window.activeTerminal
+    let terminal = window.activeTerminal
     if (!terminal) {
-        terminal = vscode.window.createTerminal('tools')
+        terminal = window.createTerminal('tools')
     }
     terminal.sendText(command)
 }
@@ -862,6 +917,9 @@ export const Status = {
     BOTH_DELETED: 17,
     BOTH_MODIFIED: 18,
 }
+/**
+ * @param {string} text
+ */
 export async function todo(text, [ref1 = 'HEAD~4', ref2 = 'HEAD']) {
     return '>>> ' + text
 }

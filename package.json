@@ -8,7 +8,7 @@
     "icon": "res/icon-256.png",
     "type": "module",
     "engines": {
-        "vscode": "^1.50.0"
+        "vscode": "^1.101.0"
     },
     "categories": [
         "Other"
@@ -23,13 +23,9 @@
     "capabilities": {
         "virtualWorkspaces": true
     },
-    "main": "./dest/extension.cjs",
+    "main": "src/index.js",
     "contributes": {
         "commands": [
-            {
-                "command": "tools:y-ocr",
-                "title": "OCR"
-            },
             {
                 "command": "tools:y-remove-empty",
                 "title": "Line Remove Empty"
@@ -319,10 +315,6 @@
                 "title": "Decode unescape"
             },
             {
-                "command": "tools:y-translate-coffeescript-to-javascript",
-                "title": "Translate coffeescript to javascript"
-            },
-            {
                 "command": "tools:y-translate-less-to-css",
                 "title": "Translate less to css"
             },
@@ -341,18 +333,6 @@
             {
                 "command": "tools:y-translate-toggle-translate",
                 "title": "Translate toggle translate"
-            },
-            {
-                "command": "tools:y-chatgpt-1",
-                "title": "chatgpt 1"
-            },
-            {
-                "command": "tools:y-chatgpt-2",
-                "title": "chatgpt 2"
-            },
-            {
-                "command": "tools:y-chatgpt-3",
-                "title": "chatgpt 3"
             },
             {
                 "command": "tools:y-lorem",
@@ -505,55 +485,19 @@
                     "type": "string",
                     "default": "",
                     "description": "百度翻译密钥"
-                },
-                "tools.qq_ocr_app_id": {
-                    "type": "string",
-                    "default": "",
-                    "description": "QQ OCR APP_ID"
-                },
-                "tools.qq_ocr_app_key": {
-                    "type": "string",
-                    "default": "",
-                    "description": "QQ OCR APP_KEY"
-                },
-                "tools.chatgpt_http_api": {
-                    "type": "array",
-                    "default": [],
-                    "description": "chatGPT Proxy URL list. Test URL : `curl -X POST -d 'hello' https://chat.example.com/api/chat`"
                 }
             }
-        },
-        "menus": {
-            "scm/resourceGroup/context": [
-                {
-                    "command": "tools:y-clear-diff",
-                    "group": "inline@1",
-                    "when": "scmResourceGroup == y-diff-changes"
-                }
-            ]
         }
     },
     "scripts": {
-        "dev": "rollup -c src/rollup.config.js -w",
-        "build": "rollup -c src/rollup.config.js",
-        "postinstall": "npm run build",
+        "dev": "node --watch-path=src src/dev.js",
         "test": "node ./test/runTest.js"
     },
     "devDependencies": {
-        "@rollup/plugin-commonjs": "^25.0.7",
-        "@rollup/plugin-node-resolve": "^15.2.3",
         "@types/node": "^20.11.16",
-        "@types/vscode": "^1.86.0",
-        "@vscode/test-electron": "^2.3.9",
-        "eslint": "^8.56.0",
-        "glob": "^10.3.10",
-        "mocha": "^10.2.0",
-        "node-fetch": "^3.3.2",
-        "rollup": "^4.9.6",
-        "rollup-plugin-node-polyfills": "^0.2.1"
+        "@types/vscode": "^1.101.0"
     },
     "dependencies": {
-        "coffeescript": "^2.7.0",
         "dayjs": "^1.11.10",
         "extract-json-from-string-y": "^1.0.2",
         "extract-types": "^1.0.1",

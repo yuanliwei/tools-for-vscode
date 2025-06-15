@@ -1,22 +1,5 @@
 import { statSync } from 'node:fs'
 
-export default {
-    workspace: {
-        getConfiguration() {
-            return {
-                /**
-                 * @param {string | number} key
-                 */
-                get(key) {
-                    return {
-                        chatgpt_http_api: ['1', '2', '3']
-                    }[key]
-                }
-            }
-        }
-    }
-}
-
 /** @type{import('node:module').ResolveHook} */
 export const resolve = async (specifier, context, nextResolve) => {
     if ('vscode' == specifier) {
@@ -31,3 +14,19 @@ export const resolve = async (specifier, context, nextResolve) => {
     }
     return nextResolve(specifier, context)
 }
+
+// mock
+export const Hover = {}
+export const Position = {}
+export const Range = {}
+export const TextEdit = {}
+export const languages = {}
+export const window = {}
+export const workspace = {
+    getConfiguration() {
+    },
+}
+export const ProgressLocation = {}
+export const ViewColumn = {}
+export const Selection = {}
+export const commands = {}

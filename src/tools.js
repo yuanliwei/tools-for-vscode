@@ -1,21 +1,13 @@
-import vscode from 'vscode'
 import { View } from "./view.js"
 import { readFile, writeFile } from "fs/promises"
 import { config, extensionContext } from './config.js'
 import { translate } from './translate.js'
 import { formatCSS, formatTime } from './lib.js'
+import { languages, Position, TextEdit, Range, window, Hover, } from 'vscode'
 
 /**
- * @typedef {{
- *     id: string;
- *     label: string;
- *     icon?: string;
- * }} CommandItem
- * @typedef {{
- *     command: string;
- *     title: string;
- *     icon?: string;
- * }} CommandItem2
+ * @import { CommandItem, CommandItem2 } from './types.js'
+ * @import { DocumentSelector, ExtensionContext,  TextDocument, TextEditor } from 'vscode'
  */
 
 /**
@@ -58,24 +50,24 @@ export async function updatePackageJsonCommands(rootPath, commands) {
 
 
 /**
- * @param {vscode.ExtensionContext} context
- * @param {vscode.DocumentSelector} type
+ * @param {ExtensionContext} context
+ * @param {DocumentSelector} type
  */
 export function registerDocumentFormattingEditProviderCSS(context, type) {
-    const formatCSS_ = async (/** @type {vscode.TextDocument} */ document, /** @type {vscode.Range} */ range) => {
+    const formatCSS_ = async (/** @type {TextDocument} */ document, /** @type {Range} */ range) => {
         let content = document.getText(range)
         let formatted = await formatCSS(content)
-        return [new vscode.TextEdit(range, formatted)]
+        return [new TextEdit(range, formatted)]
     }
-    context.subscriptions.push(vscode.languages.registerDocumentFormattingEditProvider(type, {
+    context.subscriptions.push(languages.registerDocumentFormattingEditProvider(type, {
         provideDocumentFormattingEdits: async (document) => {
-            let start = new vscode.Position(0, 0)
-            let end = new vscode.Position(document.lineCount - 1, document.lineAt(document.lineCount - 1).text.length)
-            let range = new vscode.Range(start, end)
+            let start = new Position(0, 0)
+            let end = new Position(document.lineCount - 1, document.lineAt(document.lineCount - 1).text.length)
+            let range = new Range(start, end)
             return formatCSS_(document, range)
         }
     }))
-    context.subscriptions.push(vscode.languages.registerDocumentRangeFormattingEditProvider(type, {
+    context.subscriptions.push(languages.registerDocumentRangeFormattingEditProvider(type, {
         provideDocumentRangeFormattingEdits: formatCSS_
     }))
 }
@@ -84,13 +76,13 @@ const lastSelection = {}
 const tanslateCacheMap = new Map()
 
 /**
- * @param {vscode.ExtensionContext} context
+ * @param {ExtensionContext} context
  */
 export function setupTranslateHoverProvider(context) {
-    context.subscriptions.push(vscode.languages.registerHoverProvider({ scheme: '*', language: '*' }, {
+    context.subscriptions.push(languages.registerHoverProvider({ scheme: '*', language: '*' }, {
         async provideHover(document, position) {
             if (!extensionContext.translateDisposable) { return }
-            let editor = vscode.window.activeTextEditor
+            let editor = window.activeTextEditor
             if (!editor) { return }
             let selection = editor.selection
             if (selection.isEmpty) {
@@ -104,32 +96,32 @@ export function setupTranslateHoverProvider(context) {
                     tanslateCacheMap.set(word, cache)
                 }
                 if (!cache) { return }
-                return new vscode.Hover(cache)
+                return new Hover(cache)
             }
             if (selection.start == lastSelection.start && selection.end == lastSelection.end) {
-                return new vscode.Hover(lastSelection.lastResult)
+                return new Hover(lastSelection.lastResult)
             }
             lastSelection.start = selection.start
             lastSelection.end = selection.end
             let text = editor.document.getText(selection)
             let result = await translate(getTranslateIks(), 'zh', text)
             lastSelection.lastResult = result
-            return new vscode.Hover(result)
+            return new Hover(result)
         }
     }))
 }
 
 /**
- * @param {vscode.ExtensionContext} context
+ * @param {ExtensionContext} context
  */
 export function setupTimeFormatHoverProvider(context) {
-    context.subscriptions.push(vscode.languages.registerHoverProvider({ scheme: '*', language: '*' }, {
+    context.subscriptions.push(languages.registerHoverProvider({ scheme: '*', language: '*' }, {
         async provideHover(document, position) {
             const range = document.getWordRangeAtPosition(position, /(\d{13})|(\d{10})/)
             if (range) {
                 const word = document.getText(range)
                 let time = await formatTime(word)
-                return new vscode.Hover(time)
+                return new Hover(time)
             }
         }
     }))
@@ -148,11 +140,11 @@ export function getTranslateIks() {
 
 
 /**
- * @param {vscode.TextEditor} editor 
+ * @param {TextEditor} editor 
  */
 export function getSelectText(editor) {
     if (!editor) {
-        vscode.window.showInformationMessage('No open text editor!')
+        window.showInformationMessage('No open text editor!')
         return null
     }
     for (let i = 0; i < editor.selections.length; i++) {
@@ -162,11 +154,11 @@ export function getSelectText(editor) {
     return null
 }
 /**
- * @param {vscode.TextEditor} editor 
+ * @param {TextEditor} editor 
  */
 export function getAllText(editor) {
     if (!editor) {
-        vscode.window.showInformationMessage('No open text editor!')
+        window.showInformationMessage('No open text editor!')
         return null
     }
     return editor.document.getText()
