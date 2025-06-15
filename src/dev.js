@@ -8,7 +8,7 @@ async function start() {
     const { tool_commands } = await import('./commands.js')
     let rootPath = fileURLToPath(new URL('../', import.meta.url))
     updatePackageJsonCommands(rootPath, tool_commands)
-    console.info('over!')
+    console.info(new Date().toLocaleString(), 'over!')
 }
 
 

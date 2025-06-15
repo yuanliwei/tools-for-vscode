@@ -1,9 +1,10 @@
 import { appConfigTranslateAppId, appConfigTranslateAppKey, extensionContext } from './config.js'
 import { formatCSS, formatTime, getWebviewContent, translateBaidu } from './lib.js'
-import { languages, Position, TextEdit, Range, window, Hover, ProgressLocation, ViewColumn, } from 'vscode'
+import { languages, Position, TextEdit, Range, window, Hover, ProgressLocation, ViewColumn, Selection, } from 'vscode'
 
 /**
  * @import { DocumentSelector, ExtensionContext,  TextDocument, TextEditor } from 'vscode'
+ * @import {EditCallback, EditOptions} from './types.js'
  */
 
 
@@ -12,7 +13,7 @@ import { languages, Position, TextEdit, Range, window, Hover, ProgressLocation, 
  * @param {DocumentSelector} type
  */
 export function registerDocumentFormattingEditProviderCSS(context, type) {
-    const formatCSS_ = async (/** @type {TextDocument} */ document, /** @type {Range} */ range) => {
+    const formatCSSWrapper = async (/** @type {TextDocument} */ document, /** @type {Range} */ range) => {
         let content = document.getText(range)
         let formatted = await formatCSS(content)
         return [new TextEdit(range, formatted)]
@@ -22,11 +23,11 @@ export function registerDocumentFormattingEditProviderCSS(context, type) {
             let start = new Position(0, 0)
             let end = new Position(document.lineCount - 1, document.lineAt(document.lineCount - 1).text.length)
             let range = new Range(start, end)
-            return formatCSS_(document, range)
+            return formatCSSWrapper(document, range)
         }
     }))
     context.subscriptions.push(languages.registerDocumentRangeFormattingEditProvider(type, {
-        provideDocumentRangeFormattingEdits: formatCSS_
+        provideDocumentRangeFormattingEdits: formatCSSWrapper
     }))
 }
 
@@ -115,6 +116,7 @@ export function getSelectText(editor) {
     }
     return null
 }
+
 /**
  * @param {TextEditor} editor 
  */
@@ -181,7 +183,7 @@ export async function runWithLoading(title, func) {
             return await func()
         } catch (error) {
             console.error(error)
-            window.showErrorMessage(`${error.message || ''}\n${error.stack || ''}`)
+            window.showErrorMessage(`${error.message ?? ''}\n${error.stack ?? ''}`)
         }
     })
 }
@@ -216,4 +218,107 @@ export async function execInTerminal(command) {
         terminal = window.createTerminal('tools')
     }
     terminal.sendText(command)
+}
+
+/**
+ * @param {TextEditor} editor 
+ * @returns 
+ */
+export async function animationEditInVSCode(editor) {
+    let selection = editor.selection
+    let pos = selection.end.translate(0, 1)
+    return async (/**@type{string}*/text) => {
+        let insertPos = pos
+        editor.selection = new Selection(pos, pos)
+        const lineDelta = text.split(/\r?\n/).length - 1
+        const characterDelta = text.split(/\r?\n/).at(-1).length
+        pos = pos.translate(lineDelta, characterDelta)
+        await editor.edit((builder) => {
+            builder.insert(insertPos, text)
+        })
+    }
+}
+
+
+/**
+* @param {TextEditor} editor 
+* @param {EditOptions} option 
+* @param {EditCallback} func 
+*/
+export async function editText(editor, option, func) {
+
+    if (option.noEditor) {
+        await func(null)
+        return
+    }
+
+    if (!editor) {
+        window.showInformationMessage('No open text editor!')
+        return
+    }
+
+    /** @type{Selection[]} */
+    let selections = []
+    /** @type{string[]} */
+    let texts = []
+    /** @type{string[]} */
+    let results = []
+
+    for (let i = 0; i < editor.selections.length; i++) {
+        let selection = editor.selections[i]
+        if (i == 0 && selection.isEmpty && !option.handleEmptySelection && !option.insert) {
+            let lastLine = editor.document.lineCount - 1
+            let lastCharacter = editor.document.lineAt(lastLine).range.end.character
+            selection = new Selection(0, 0, lastLine, lastCharacter)
+            selections.push(selection)
+            texts.push(editor.document.getText(selection))
+            break
+        }
+        if (option.replace) {
+            texts.push(editor.document.getText(selection))
+            let lastLine = editor.document.lineCount - 1
+            let lastCharacter = editor.document.lineAt(lastLine).range.end.character
+            selection = new Selection(0, 0, lastLine, lastCharacter)
+            selections.push(selection)
+            break
+        }
+        selections.push(selection)
+        texts.push(editor.document.getText(selection))
+    }
+
+    try {
+        for (let index = 0; index < texts.length; index++) {
+            let ret = await func(texts[index])
+            if (typeof ret == 'string') {
+                results[index] = ret
+            }
+        }
+        if (option.noChange) { return }
+    } catch (error) {
+        console.error(error)
+        window.showErrorMessage(error.message, error)
+        return
+    }
+
+    await editor.edit((editorBuilder) => {
+        if (option.append) {
+            for (let index = selections.length; index > 0; index--) {
+                const selection = selections[index - 1]
+                const result = results[index - 1]
+                editorBuilder.replace(selection.end, result)
+            }
+        } else if (option.insertNewLines) {
+            for (let index = selections.length; index > 0; index--) {
+                const selection = selections[index - 1]
+                const result = results[index - 1]
+                editorBuilder.replace(selection.end, '\n'.repeat(option.insertNewLines) + result)
+            }
+        } else { // insert
+            for (let index = selections.length; index > 0; index--) {
+                const selection = selections[index - 1]
+                const result = results[index - 1]
+                editorBuilder.replace(selection, result)
+            }
+        }
+    })
 }

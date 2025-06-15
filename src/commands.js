@@ -1,13 +1,12 @@
-import { commands, ProgressLocation, window, Selection } from 'vscode'
-import { setupTranslateHoverProvider, getAllText, getInputSeparator, getInputStartNumber, getRegexpText, getSelectText, getTranslateIks, registerDocumentFormattingEditProviderCSS, setupTimeFormatHoverProvider, getInputRepeatCount, previewHTML } from './lib.view.js'
-import { NameGenerate, addLineNumber, addLineNumberFromInput, addLineNumberWithSeparator, cleanAnsiEscapeCodes, commentAlign, currentTime, cursorAlign, decodeBase64, decodeHex, decodeHtml, decodeLess, decodeNative, decodeUnescape, decodeUnicode, decodeUri, encodeBase64, encodeEscape, encodeHex, encodeHtml, encodeNative, encodeUnicode, encodeUri, escapeSimple, escapeWithcrlf, evalPrint, extractTypesFromString, firstLetterLowercase, firstLetterUppercase, formatBytes, formatCSS, formatJS, formatJSON, formatMultiLineComment, formatSQL, formatTime, formatXML, guid, jsonDeepParse, lineGroupDuplicate, lineRemoveDuplicate, lineRemoveEmpty, lineRemoveExcludeSelect, lineRemoveIncludeSelect, lineRemoveMatchRegexp, lineRemoveNotMatchRegexp, lineReverse, lineSortAsc, lineSortDesc, lineSortNumber, lineTrim, lineTrimLeft, lineTrimRight, markdownToHtml, md5, minCSS, minJSON, minSQL, minXML, parseJSON, parseJSONInfo, parseTime, randomHex, randomNumber, rearrangeJsonKey, separatorHumpToUnderline, separatorUnderlineToHump, sha1, sha256, sha512, stringify, todo, translateBaidu } from './lib.js'
+import { commands, ProgressLocation, window } from 'vscode'
+import { setupTranslateHoverProvider, getAllText, getInputSeparator, getInputStartNumber, getRegexpText, getSelectText, getTranslateIks, registerDocumentFormattingEditProviderCSS, setupTimeFormatHoverProvider, getInputRepeatCount, previewHTML, editText } from './lib.view.js'
+import { addLineNumber, addLineNumberFromInput, addLineNumberWithSeparator, cleanAnsiEscapeCodes, commentAlign, currentTime, cursorAlign, decodeBase64, decodeHex, decodeHtml, decodeNative, decodeUnescape, decodeUnicode, decodeUri, encodeBase64, encodeEscape, encodeHex, encodeHtml, encodeNative, encodeUnicode, encodeUri, escapeSimple, escapeWithcrlf, evalPrint, extractTypesFromString, firstLetterLowercase, firstLetterUppercase, formatBytes, formatCSS, formatJS, formatJSON, formatMultiLineComment, formatSQL, formatTime, formatXML, guid, jsonDeepParse, lineGroupDuplicate, lineRemoveDuplicate, lineRemoveEmpty, lineRemoveExcludeSelect, lineRemoveIncludeSelect, lineRemoveMatchRegexp, lineRemoveNotMatchRegexp, lineReverse, lineSortAsc, lineSortDesc, lineSortNumber, lineTrim, lineTrimLeft, lineTrimRight, markdownToHtml, md5, minCSS, minJSON, minSQL, minXML, nameGenerateGet, nzhCnEncodeB, nzhCnEncodeS, parseJSON, parseJSONInfo, parseTime, randomHex, randomNumber, rearrangeJsonKey, separatorHumpToUnderline, separatorUnderlineToHump, sha1, sha256, sha512, stringify, todo, translateBaidu } from './lib.js'
 import { extensionContext } from './config.js'
-import Nzh from 'nzh'
 import { evalParser, extractJsonFromString } from 'extract-json-from-string-y'
 
 /**
- * @import { ExtensionContext, TextEditor } from 'vscode'
- * @import { CommandInfo, EditCallback, EditOptions } from './types.js'
+ * @import { ExtensionContext } from 'vscode'
+ * @import { CommandInfo } from './types.js'
  */
 
 /**
@@ -222,7 +221,10 @@ export const tool_commands = [
         label: 'Line Group Duplicate Sort Number Reverse',
         async action(ed) {
             editText(ed, {}, async (text) => {
-                return await lineReverse(await lineSortNumber(await lineGroupDuplicate(text)))
+                text = await lineGroupDuplicate(text)
+                text = await lineSortNumber(text)
+                text = await lineReverse(text)
+                return text
             })
         }
     },
@@ -684,15 +686,6 @@ export const tool_commands = [
         }
     },
     {
-        id: "y-translate-less-to-css",
-        label: "Translate less to css",
-        async action(ed) {
-            editText(ed, {}, async (text) => {
-                return await decodeLess(text)
-            })
-        }
-    },
-    {
         id: "y-translate-markdown-to-html",
         label: "Translate markdown to html",
         async action(ed) {
@@ -781,7 +774,7 @@ export const tool_commands = [
         async action(ed) {
             let seq = 1
             editText(ed, { insert: true }, async () => {
-                return Nzh.cn.encodeS(seq++)
+                return nzhCnEncodeS(seq++)
             })
         },
     },
@@ -791,7 +784,7 @@ export const tool_commands = [
         async action(ed) {
             let seq = 1
             editText(ed, { insert: true }, async () => {
-                return Nzh.cn.encodeB(seq++)
+                return nzhCnEncodeB(seq++)
             })
         },
     },
@@ -799,9 +792,8 @@ export const tool_commands = [
         id: "y-xing-ming",
         label: "xing ming",
         async action(ed) {
-            let g = new NameGenerate()
             editText(ed, { insert: true }, async () => {
-                return g.get()
+                return nameGenerateGet()
             })
         },
     },
@@ -934,86 +926,4 @@ export function setupCommands(context) {
 
     setupTranslateHoverProvider(context)
     setupTimeFormatHoverProvider(context)
-}
-
-/**
-* @param {TextEditor} editor 
-* @param {EditOptions} option 
-* @param {EditCallback} func 
-*/
-async function editText(editor, option, func) {
-
-    if (option.noEditor) {
-        await func(null)
-        return
-    }
-
-    if (!editor) {
-        window.showInformationMessage('No open text editor!')
-        return
-    }
-
-    /** @type{Selection[]} */
-    let selections = []
-    /** @type{string[]} */
-    let texts = []
-    /** @type{string[]} */
-    let results = []
-
-    for (let i = 0; i < editor.selections.length; i++) {
-        let selection = editor.selections[i]
-        if (i == 0 && selection.isEmpty && !option.handleEmptySelection && !option.insert) {
-            let lastLine = editor.document.lineCount - 1
-            let lastCharacter = editor.document.lineAt(lastLine).range.end.character
-            selection = new Selection(0, 0, lastLine, lastCharacter)
-            selections.push(selection)
-            texts.push(editor.document.getText(selection))
-            break
-        }
-        if (option.replace) {
-            texts.push(editor.document.getText(selection))
-            let lastLine = editor.document.lineCount - 1
-            let lastCharacter = editor.document.lineAt(lastLine).range.end.character
-            selection = new Selection(0, 0, lastLine, lastCharacter)
-            selections.push(selection)
-            break
-        }
-        selections.push(selection)
-        texts.push(editor.document.getText(selection))
-    }
-
-    try {
-        for (let index = 0; index < texts.length; index++) {
-            let ret = await func(texts[index])
-            if (typeof ret == 'string') {
-                results[index] = ret
-            }
-        }
-        if (option.noChange) { return }
-    } catch (error) {
-        console.error(error)
-        window.showErrorMessage(error.message, error)
-        return
-    }
-    await editor.edit((editorBuilder) => {
-        if (option.append) {
-            for (let index = selections.length; index > 0; index--) {
-                const selection = selections[index - 1]
-                const result = results[index - 1]
-                editorBuilder.replace(selection.end, result)
-            }
-        } else if (option.insertNewLines) {
-            for (let index = selections.length; index > 0; index--) {
-                const selection = selections[index - 1]
-                const result = results[index - 1]
-                editorBuilder.replace(selection.end, '\n'.repeat(option.insertNewLines) + result)
-            }
-        } else { // insert
-            for (let index = selections.length; index > 0; index--) {
-                const selection = selections[index - 1]
-                const result = results[index - 1]
-                editorBuilder.replace(selection, result)
-            }
-        }
-    })
 }

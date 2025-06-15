@@ -311,10 +311,6 @@
                 "title": "Decode unescape"
             },
             {
-                "command": "tools:y-translate-less-to-css",
-                "title": "Translate less to css"
-            },
-            {
                 "command": "tools:y-translate-markdown-to-html",
                 "title": "Translate markdown to html"
             },
@@ -501,7 +497,6 @@
         "he": "^1.2.0",
         "js-beautify": "^1.15.4",
         "json-info": "^1.1.2",
-        "less": "^4.3.0",
         "markdown-it": "^14.1.0",
         "nzh": "^1.0.14",
         "table": "^6.9.0",
