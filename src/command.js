@@ -18,7 +18,7 @@ export const tool_commands = [
     {
         id: 'y-remove-empty',
         label: 'Line Remove Empty',
-        run: async function (ed) {
+        async action(ed) {
             editText(ed, {}, (text) => {
                 return lineRemoveEmpty(text)
             })
@@ -27,7 +27,7 @@ export const tool_commands = [
     {
         id: 'y-remove-duplicate',
         label: 'Line Remove Duplicate',
-        run: async function (ed) {
+        async action(ed) {
             editText(ed, {}, (text) => {
                 return lineRemoveDuplicate(text)
             })
@@ -36,7 +36,7 @@ export const tool_commands = [
     {
         id: 'y-remove-include-select',
         label: 'Line Remove Include Select',
-        run: async function (ed) {
+        async action(ed) {
             let selection = getSelectText(ed)
             let doc = getAllText(ed)
             if (!selection) return
@@ -48,7 +48,7 @@ export const tool_commands = [
     {
         id: 'y-remove-exclude-select',
         label: 'Line Remove Exclude Select',
-        run: async function (ed) {
+        async action(ed) {
             let selection = getSelectText(ed)
             let doc = getAllText(ed)
             if (!selection) return
@@ -60,7 +60,7 @@ export const tool_commands = [
     {
         id: 'y-remove-match-regexp',
         label: 'Line Remove Match Regexp',
-        run: async function (ed) {
+        async action(ed) {
             let regexp = await getRegexpText()
             let doc = getAllText(ed)
             if (!regexp) return
@@ -72,7 +72,7 @@ export const tool_commands = [
     {
         id: 'y-remove-not-match-regexp',
         label: 'Line Remove Not Match Regexp',
-        run: async function (ed) {
+        async action(ed) {
             let regexp = await getRegexpText()
             let doc = getAllText(ed)
             if (!regexp) return
@@ -84,7 +84,7 @@ export const tool_commands = [
     {
         id: 'y-line-sort-asc',
         label: 'Line Sort Asc',
-        run: async function (ed) {
+        async action(ed) {
             editText(ed, {}, (text) => {
                 return lineSortAsc(text)
             })
@@ -93,7 +93,7 @@ export const tool_commands = [
     {
         id: 'y-line-sort-desc',
         label: 'Line Sort Desc',
-        run: async function (ed) {
+        async action(ed) {
             editText(ed, {}, (text) => {
                 return lineSortDesc(text)
             })
@@ -102,7 +102,7 @@ export const tool_commands = [
     {
         id: 'y-line-trim',
         label: 'Line Trim',
-        run: async function (ed) {
+        async action(ed) {
             editText(ed, {}, (text) => {
                 return lineTrim(text)
             })
@@ -111,7 +111,7 @@ export const tool_commands = [
     {
         id: 'y-line-trim-left',
         label: 'Line Trim Left',
-        run: async function (ed) {
+        async action(ed) {
             editText(ed, {}, (text) => {
                 return lineTrimLeft(text)
             })
@@ -120,7 +120,7 @@ export const tool_commands = [
     {
         id: 'y-line-trim-right',
         label: 'Line Trim Right',
-        run: async function (ed) {
+        async action(ed) {
             editText(ed, {}, (text) => {
                 return lineTrimRight(text)
             })
@@ -129,7 +129,7 @@ export const tool_commands = [
     {
         id: 'y-line-add-line-number',
         label: 'Line Add Line Number',
-        run: async function (ed) {
+        async action(ed) {
             editText(ed, {}, (text) => {
                 return addLineNumber(text)
             })
@@ -138,7 +138,7 @@ export const tool_commands = [
     {
         id: 'y-line-add-line-number-from-input',
         label: 'Line Add Line Number From Input',
-        run: async function (ed) {
+        async action(ed) {
             let startNumber = await getInputStartNumber()
             editText(ed, {}, (text) => {
                 return addLineNumberFromInput(text, startNumber)
@@ -148,7 +148,7 @@ export const tool_commands = [
     {
         id: 'y-line-add-line-number-with-separator',
         label: 'Line Add Line Number With Separator',
-        run: async function (ed) {
+        async action(ed) {
             let separator = await getInputSeparator()
             editText(ed, {}, (text) => {
                 return addLineNumberWithSeparator(text, separator)
@@ -158,7 +158,7 @@ export const tool_commands = [
     {
         id: 'y-line-separator-underline-to-hump',
         label: 'Line Separator Underline To Hump',
-        run: async function (ed) {
+        async action(ed) {
             editText(ed, {}, (text) => {
                 return separatorUnderlineToHump(text)
             })
@@ -167,7 +167,7 @@ export const tool_commands = [
     {
         id: 'y-line-separator-hump-to-underline',
         label: 'Line Separator Hump To Underline',
-        run: async function (ed) {
+        async action(ed) {
             editText(ed, {}, (text) => {
                 return separatorHumpToUnderline(text)
             })
@@ -176,7 +176,7 @@ export const tool_commands = [
     {
         id: 'y-line-first-letter-lowercase',
         label: 'Line First Letter Lowercase',
-        run: async function (ed) {
+        async action(ed) {
             editText(ed, {}, (text) => {
                 return firstLetterLowercase(text)
             })
@@ -185,7 +185,7 @@ export const tool_commands = [
     {
         id: 'y-line-first-letter-uppercase',
         label: 'Line First Letter Uppercase',
-        run: async function (ed) {
+        async action(ed) {
             editText(ed, {}, (text) => {
                 return firstLetterUppercase(text)
             })
@@ -194,7 +194,7 @@ export const tool_commands = [
     {
         id: 'y-line-group-duplicate',
         label: 'Line Group Duplicate',
-        run: async function (ed) {
+        async action(ed) {
             editText(ed, {}, (text) => {
                 return lineGroupDuplicate(text)
             })
@@ -203,7 +203,7 @@ export const tool_commands = [
     {
         id: 'y-line-sort-number',
         label: 'Line Sort Number',
-        run: async function (ed) {
+        async action(ed) {
             editText(ed, {}, (text) => {
                 return lineSortNumber(text)
             })
@@ -212,7 +212,7 @@ export const tool_commands = [
     {
         id: 'y-line-reverse',
         label: 'Line Reverse',
-        run: async function (ed) {
+        async action(ed) {
             editText(ed, {}, (text) => {
                 return lineReverse(text)
             })
@@ -221,7 +221,7 @@ export const tool_commands = [
     {
         id: 'y-line-group-duplicate-sort-number-reverse',
         label: 'Line Group Duplicate Sort Number Reverse',
-        run: async function (ed) {
+        async action(ed) {
             editText(ed, {}, async (text) => {
                 return await lineReverse(await lineSortNumber(await lineGroupDuplicate(text)))
             })
@@ -230,7 +230,7 @@ export const tool_commands = [
     {
         id: 'y-line-replace-backslash-to-slash',
         label: 'Line Replace Backslash(\\) To Slash(/)',
-        run: async function (ed) {
+        async action(ed) {
             editText(ed, {}, async (text) => {
                 return text.replaceAll('\\', '/')
             })
@@ -239,7 +239,7 @@ export const tool_commands = [
     {
         id: 'y-line-repeat',
         label: 'Line Repeat',
-        run: async function (ed) {
+        async action(ed) {
             editText(ed, {}, async (text) => {
                 let count = await getInputRepeatCount()
                 return text.repeat(count)
@@ -249,7 +249,7 @@ export const tool_commands = [
     {
         id: 'y-guid',
         label: 'guid',
-        run: async function (ed) {
+        async action(ed) {
             editText(ed, { insert: true }, async () => {
                 return await guid()
             })
@@ -258,7 +258,7 @@ export const tool_commands = [
     {
         id: 'y-current-time',
         label: 'Current Time',
-        run: async function (ed) {
+        async action(ed) {
             editText(ed, { insert: true }, async () => {
                 return await currentTime()
             })
@@ -267,7 +267,7 @@ export const tool_commands = [
     {
         id: 'y-format-time',
         label: 'Format Time',
-        run: async function (ed) {
+        async action(ed) {
             editText(ed, {}, async (text) => {
                 return await formatTime(text)
             })
@@ -276,7 +276,7 @@ export const tool_commands = [
     {
         id: 'y-parse-time',
         label: 'Parse Time',
-        run: async function (ed) {
+        async action(ed) {
             editText(ed, {}, async (text) => {
                 return await parseTime(text)
             })
@@ -285,7 +285,7 @@ export const tool_commands = [
     {
         id: 'y-format-bytes',
         label: 'Format bytes',
-        run: async function (ed) {
+        async action(ed) {
             editText(ed, {}, async (text) => {
                 return await formatBytes(text)
             })
@@ -294,7 +294,7 @@ export const tool_commands = [
     {
         id: 'y-run-code',
         label: 'Run Code',
-        run: async function (ed) {
+        async action(ed) {
             editText(ed, { noChange: true }, async (text) => {
                 await runCode(text)
             })
@@ -303,7 +303,7 @@ export const tool_commands = [
     {
         id: 'y-eval-print',
         label: 'Eval Print',
-        run: async function (ed) {
+        async action(ed) {
             editText(ed, { append: true }, async (text) => {
                 return await evalPrint(text)
             })
@@ -312,7 +312,7 @@ export const tool_commands = [
     {
         id: 'y-comment-align',
         label: 'Comment Align',
-        run: async function (ed) {
+        async action(ed) {
             editText(ed, {}, async (text) => {
                 return await commentAlign(text)
             })
@@ -321,7 +321,7 @@ export const tool_commands = [
     {
         id: "y-cursor-align",
         label: "Cursor Align",
-        run: async function (ed) {
+        async action(ed) {
             const func = await cursorAlign(ed)
             editText(ed, { insert: true }, async () => {
                 return func()
@@ -331,7 +331,7 @@ export const tool_commands = [
     {
         id: 'y-format-multi-line-comment',
         label: 'Format Multi Line Comment',
-        run: async function (ed) {
+        async action(ed) {
             editText(ed, {}, (text) => {
                 return formatMultiLineComment(text)
             })
@@ -340,7 +340,7 @@ export const tool_commands = [
     {
         id: "y-clean-ansi-escape-codes",
         label: "Clean ANSI Escape Codes",
-        run: async function (ed) {
+        async action(ed) {
             editText(ed, {}, async (text) => {
                 return await cleanAnsiEscapeCodes(text)
             })
@@ -349,7 +349,7 @@ export const tool_commands = [
     {
         id: "y-js-format",
         label: "JS format",
-        run: async function (ed) {
+        async action(ed) {
             editText(ed, {}, async (text) => {
                 return await formatJS(text)
             })
@@ -358,7 +358,7 @@ export const tool_commands = [
     {
         id: "y-css-format",
         label: "CSS format",
-        run: async function (ed) {
+        async action(ed) {
             editText(ed, {}, async (text) => {
                 return await formatCSS(text)
             })
@@ -367,7 +367,7 @@ export const tool_commands = [
     {
         id: "y-sql-format",
         label: "SQL format",
-        run: async function (ed) {
+        async action(ed) {
             editText(ed, {}, async (text) => {
                 return await formatSQL(text)
             })
@@ -376,7 +376,7 @@ export const tool_commands = [
     {
         id: "y-xml-format",
         label: "XML format",
-        run: async function (ed) {
+        async action(ed) {
             editText(ed, {}, async (text) => {
                 return await formatXML(text)
             })
@@ -385,7 +385,7 @@ export const tool_commands = [
     {
         id: "y-json-format",
         label: "JSON format",
-        run: async function (ed) {
+        async action(ed) {
             editText(ed, {}, async (text) => {
                 return await formatJSON(text)
             })
@@ -394,7 +394,7 @@ export const tool_commands = [
     {
         id: "y-sql-min",
         label: "SQL min",
-        run: async function (ed) {
+        async action(ed) {
             editText(ed, {}, async (text) => {
                 return await minSQL(text)
             })
@@ -403,7 +403,7 @@ export const tool_commands = [
     {
         id: "y-xml-min",
         label: "XML min",
-        run: async function (ed) {
+        async action(ed) {
             editText(ed, {}, async (text) => {
                 return await minXML(text)
             })
@@ -412,7 +412,7 @@ export const tool_commands = [
     {
         id: "y-css-min",
         label: "CSS min",
-        run: async function (ed) {
+        async action(ed) {
             editText(ed, {}, async (text) => {
                 return await minCSS(text)
             })
@@ -421,7 +421,7 @@ export const tool_commands = [
     {
         id: "y-json-min",
         label: "JSON min",
-        run: async function (ed) {
+        async action(ed) {
             editText(ed, {}, async (text) => {
                 return await minJSON(text)
             })
@@ -430,7 +430,7 @@ export const tool_commands = [
     {
         id: 'y-codec-deep-parse-json',
         label: 'deep parse JSON',
-        run: async function (ed) {
+        async action(ed) {
             editText(ed, {}, (text) => {
                 let o = jsonDeepParse(text)
                 if (typeof o !== "string") {
@@ -443,7 +443,7 @@ export const tool_commands = [
     {
         id: 'y-codec-rearrange-json-key',
         label: 'rearrange JSON key',
-        run: async function (ed) {
+        async action(ed) {
             editText(ed, {}, (text) => {
                 return formatJSON(rearrangeJsonKey(JSON.parse(text)))
             })
@@ -452,7 +452,7 @@ export const tool_commands = [
     {
         id: 'y-json-info',
         label: 'JSON Info',
-        run: async (ed) => {
+        async action(ed) {
             editText(ed, { append: true }, async (text) => {
                 return window.withProgress({ location: ProgressLocation.Window, title: "..." }, async () => {
                     try {
@@ -469,7 +469,7 @@ export const tool_commands = [
     {
         id: 'y-codec-normalize-json',
         label: 'normalize JSON',
-        run: async function (ed) {
+        async action(ed) {
             editText(ed, {}, (text) => {
                 return JSON.stringify(evalParser(text), null, 4)
             })
@@ -478,7 +478,7 @@ export const tool_commands = [
     {
         id: 'y-extract-json',
         label: 'extract JSON',
-        run: async function (ed) {
+        async action(ed) {
             editText(ed, {}, (text) => {
                 let json = extractJsonFromString(text)
                 return formatJSON(JSON.stringify(json))
@@ -488,7 +488,7 @@ export const tool_commands = [
     {
         id: 'y-extract-types',
         label: 'extract js|json types',
-        run: async function (ed) {
+        async action(ed) {
             editText(ed, {}, (text) => {
                 let types = extractTypesFromString(text)
                 return types
@@ -498,7 +498,7 @@ export const tool_commands = [
     {
         id: "y-crypto-md5",
         label: "Crypto md5",
-        run: async function (ed) {
+        async action(ed) {
             editText(ed, {}, async (text) => {
                 return await md5(text)
             })
@@ -507,7 +507,7 @@ export const tool_commands = [
     {
         id: "y-crypto-sha1",
         label: "Crypto sha1",
-        run: async function (ed) {
+        async action(ed) {
             editText(ed, {}, async (text) => {
                 return await sha1(text)
             })
@@ -516,7 +516,7 @@ export const tool_commands = [
     {
         id: "y-crypto-sha256",
         label: "Crypto sha256",
-        run: async function (ed) {
+        async action(ed) {
             editText(ed, {}, async (text) => {
                 return await sha256(text)
             })
@@ -525,7 +525,7 @@ export const tool_commands = [
     {
         id: "y-crypto-sha512",
         label: "Crypto sha512",
-        run: async function (ed) {
+        async action(ed) {
             editText(ed, {}, async (text) => {
                 return await sha512(text)
             })
@@ -534,7 +534,7 @@ export const tool_commands = [
     {
         id: "y-decode-json-parse",
         label: "Decode json parse",
-        run: async function (ed) {
+        async action(ed) {
             editText(ed, {}, async (text) => {
                 return await parseJSON(text)
             })
@@ -543,7 +543,7 @@ export const tool_commands = [
     {
         id: "y-encode-json-stringify",
         label: "Encode json stringify",
-        run: async function (ed) {
+        async action(ed) {
             editText(ed, {}, async (text) => {
                 return await stringify(text)
             })
@@ -552,7 +552,7 @@ export const tool_commands = [
     {
         id: "y-encode-uri",
         label: "Encode uri",
-        run: async function (ed) {
+        async action(ed) {
             editText(ed, {}, async (text) => {
                 return await encodeUri(text)
             })
@@ -561,7 +561,7 @@ export const tool_commands = [
     {
         id: "y-decode-uri",
         label: "Decode uri",
-        run: async function (ed) {
+        async action(ed) {
             editText(ed, {}, async (text) => {
                 return await decodeUri(text)
             })
@@ -570,7 +570,7 @@ export const tool_commands = [
     {
         id: "y-encode-base64",
         label: "Encode base64",
-        run: async function (ed) {
+        async action(ed) {
             editText(ed, {}, async (text) => {
                 return await encodeBase64(text)
             })
@@ -579,7 +579,7 @@ export const tool_commands = [
     {
         id: "y-decode-base64",
         label: "Decode base64",
-        run: async function (ed) {
+        async action(ed) {
             editText(ed, {}, async (text) => {
                 return await decodeBase64(text)
             })
@@ -588,7 +588,7 @@ export const tool_commands = [
     {
         id: "y-encode-hex",
         label: "Encode hex",
-        run: async function (ed) {
+        async action(ed) {
             editText(ed, {}, async (text) => {
                 return await encodeHex(text)
             })
@@ -597,7 +597,7 @@ export const tool_commands = [
     {
         id: "y-decode-hex",
         label: "Decode hex",
-        run: async function (ed) {
+        async action(ed) {
             editText(ed, {}, async (text) => {
                 return await decodeHex(text)
             })
@@ -606,7 +606,7 @@ export const tool_commands = [
     {
         id: "y-encode-html",
         label: "Encode html",
-        run: async function (ed) {
+        async action(ed) {
             editText(ed, {}, async (text) => {
                 return await encodeHtml(text)
             })
@@ -615,7 +615,7 @@ export const tool_commands = [
     {
         id: "y-decode-html",
         label: "Decode html",
-        run: async function (ed) {
+        async action(ed) {
             editText(ed, {}, async (text) => {
                 return await decodeHtml(text)
             })
@@ -624,7 +624,7 @@ export const tool_commands = [
     {
         id: "y-encode-native",
         label: "Encode native",
-        run: async function (ed) {
+        async action(ed) {
             editText(ed, {}, async (text) => {
                 return await encodeNative(text)
             })
@@ -633,7 +633,7 @@ export const tool_commands = [
     {
         id: "y-decode-native",
         label: "Decode native",
-        run: async function (ed) {
+        async action(ed) {
             editText(ed, {}, async (text) => {
                 return await decodeNative(text)
             })
@@ -642,7 +642,7 @@ export const tool_commands = [
     {
         id: "y-encode-unicode",
         label: "Encode unicode",
-        run: async function (ed) {
+        async action(ed) {
             editText(ed, {}, async (text) => {
                 return await encodeUnicode(text)
             })
@@ -651,7 +651,7 @@ export const tool_commands = [
     {
         id: "y-decode-unicode",
         label: "Decode unicode",
-        run: async function (ed) {
+        async action(ed) {
             editText(ed, {}, async (text) => {
                 return await decodeUnicode(text)
             })
@@ -660,7 +660,7 @@ export const tool_commands = [
     {
         id: "y-encode-escape",
         label: "Encode escape",
-        run: async function (ed) {
+        async action(ed) {
             editText(ed, {}, async (text) => {
                 return await encodeEscape(text)
             })
@@ -669,7 +669,7 @@ export const tool_commands = [
     {
         id: "y-encode-escape-simple",
         label: "Encode escape simple",
-        run: async function (ed) {
+        async action(ed) {
             editText(ed, {}, async (text) => {
                 return await escapeSimple(text)
             })
@@ -678,7 +678,7 @@ export const tool_commands = [
     {
         id: "y-encode-escape-with-crlf",
         label: "Encode escape with crlf",
-        run: async function (ed) {
+        async action(ed) {
             editText(ed, {}, async (text) => {
                 return await escapeWithcrlf(text)
             })
@@ -687,7 +687,7 @@ export const tool_commands = [
     {
         id: "y-decode-unescape",
         label: "Decode unescape",
-        run: async function (ed) {
+        async action(ed) {
             editText(ed, {}, async (text) => {
                 return await decodeUnescape(text)
             })
@@ -696,7 +696,7 @@ export const tool_commands = [
     {
         id: "y-translate-less-to-css",
         label: "Translate less to css",
-        run: async function (ed) {
+        async action(ed) {
             editText(ed, {}, async (text) => {
                 return await decodeLess(text)
             })
@@ -705,7 +705,7 @@ export const tool_commands = [
     {
         id: "y-translate-markdown-to-html",
         label: "Translate markdown to html",
-        run: async function (ed) {
+        async action(ed) {
             editText(ed, {}, async (text) => {
                 return await markdownToHtml(text)
             })
@@ -714,7 +714,7 @@ export const tool_commands = [
     {
         id: "y-translate-translate-to-zh",
         label: "Translate translate to zh",
-        run: async function (ed) {
+        async action(ed) {
             let iks = getTranslateIks()
             if (!iks) return
             editText(ed, {}, async (text) => {
@@ -725,7 +725,7 @@ export const tool_commands = [
     {
         id: "y-translate-translate-to-en",
         label: "Translate translate to en",
-        run: async function (ed) {
+        async action(ed) {
             let iks = getTranslateIks()
             if (!iks) return
             editText(ed, {}, async (text) => {
@@ -736,7 +736,7 @@ export const tool_commands = [
     {
         id: "y-translate-toggle-translate",
         label: "Translate toggle translate",
-        run: async function (ed) {
+        async action(ed) {
             editText(ed, { noChange: true }, async () => {
                 if (extensionContext.translateDisposable) {
                     extensionContext.translateDisposable.dispose()
@@ -751,7 +751,7 @@ export const tool_commands = [
     {
         id: "y-lorem",
         label: "lorem",
-        run: async function (ed) {
+        async action(ed) {
             editText(ed, { insert: true }, async () => {
                 return `Lorem ipsum dolor sit amet consectetur adipisicing elit. Deserunt nulla quisquam blanditiis fugit quia beatae, ducimus in provident commodi similique, necessitatibus quae exercitationem doloribus hic impedit maxime voluptate velit consequuntur?`
             })
@@ -760,7 +760,7 @@ export const tool_commands = [
     {
         id: "y-random-number",
         label: "random number",
-        run: async function (ed) {
+        async action(ed) {
             editText(ed, { insert: true, handleEmptySelection: true, }, async () => {
                 return randomNumber()
             })
@@ -769,7 +769,7 @@ export const tool_commands = [
     {
         id: "y-random-hex",
         label: "random hex",
-        run: async function (ed) {
+        async action(ed) {
             editText(ed, { insert: true, handleEmptySelection: true, }, async () => {
                 return randomHex()
             })
@@ -778,7 +778,7 @@ export const tool_commands = [
     {
         id: "y-sequence-number-1",
         label: "sequence number 1",
-        run: async function (ed) {
+        async action(ed) {
             let seq = 1
             editText(ed, { insert: true }, async () => {
                 return `${seq++}`
@@ -788,7 +788,7 @@ export const tool_commands = [
     {
         id: "y-sequence-number-一",
         label: "sequence number 一",
-        run: async function (ed) {
+        async action(ed) {
             let seq = 1
             editText(ed, { insert: true }, async () => {
                 return Nzh.cn.encodeS(seq++)
@@ -798,7 +798,7 @@ export const tool_commands = [
     {
         id: "y-sequence-number-壹",
         label: "sequence number 壹",
-        run: async function (ed) {
+        async action(ed) {
             let seq = 1
             editText(ed, { insert: true }, async () => {
                 return Nzh.cn.encodeB(seq++)
@@ -808,7 +808,7 @@ export const tool_commands = [
     {
         id: "y-xing-ming",
         label: "xing ming",
-        run: async function (ed) {
+        async action(ed) {
             let g = new NameGenerate()
             editText(ed, { insert: true }, async () => {
                 return g.get()
@@ -839,7 +839,7 @@ export const tool_commands = [
     {
         id: "y-full-space",
         label: "full space",
-        run: async function (ed) {
+        async action(ed) {
             editText(ed, {}, async (text) => {
                 return ' '.repeat(text.length)
             })
@@ -848,7 +848,7 @@ export const tool_commands = [
     {
         id: "y-cursors-drop",
         label: "cursors drop",
-        run: async function (ed) {
+        async action(ed) {
             let selections = ed.selections
             let tmp = []
             for (let i = 0; i < selections.length; i += 2) {
@@ -861,7 +861,7 @@ export const tool_commands = [
     {
         id: "y-numbers-summation",
         label: "numbers summation 求和",
-        run: async function (ed) {
+        async action(ed) {
             editText(ed, { append: true }, async (text) => {
                 let match = text.split(/[ ,;\r\n\t"]/) || []
                 let numbers = match.map((o) => parseFloat(o)).filter((o) => !isNaN(o))
@@ -872,7 +872,7 @@ export const tool_commands = [
     {
         id: "y-numbers-average",
         label: "numbers average 求平均值",
-        run: async function (ed) {
+        async action(ed) {
             editText(ed, { append: true }, async (text) => {
                 let match = text.split(/[ ,;\r\n\t"]/) || []
                 let numbers = match.map((o) => parseFloat(o)).filter((o) => !isNaN(o))
@@ -883,7 +883,7 @@ export const tool_commands = [
     {
         id: "y-preview-html",
         label: "preview html",
-        run: async function (ed, args) {
+        async action(ed, args) {
             editText(ed, { noChange: true }, async (text) => {
                 return previewHTML(text)
             })
@@ -893,7 +893,7 @@ export const tool_commands = [
         id: "y-todo",
         label: "y-todo",
         icon: '$(checklist)',
-        run: async function (ed, args) {
+        async action(ed, args) {
             editText(ed, { append: true }, async (text) => {
                 return todo(text, args)
             })
@@ -901,11 +901,16 @@ export const tool_commands = [
     },
 ]
 
+/**
+ * @param {string} char
+ * @param {number} start
+ * @returns {CommandInfo}
+ */
 function buildSequenceNum(char, start) {
     return {
         id: `y-sequence-number-${char}`,
         label: `sequence number ${char}`,
-        run: async function (ed) {
+        async action(ed) {
             let seq = start
             let codes = []
             let endCode = char.charCodeAt(0)
@@ -930,7 +935,7 @@ export function setUpCommands(context) {
         context.subscriptions.push(
             commands.registerCommand('tools:' + command.id, (...args) => {
                 let editor = window.activeTextEditor
-                command.run(editor, args)
+                command.action(editor, args)
             })
         )
     }

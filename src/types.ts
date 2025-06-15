@@ -16,7 +16,7 @@ export type CommandInfo = {
     id: string;
     label: string;
     icon?: string;
-    run: (ed: TextEditor, args: any[] | any) => Promise<void>;
+    action: (ed: TextEditor, args: any[] | any) => Promise<void>;
 };
 
 export type CommandItem = {
