@@ -15,6 +15,7 @@ import { evalParser } from 'extract-json-from-string-y'
 import { flatten } from 'flat'
 import { table } from 'table'
 import { extractTypesFromSource } from 'extract-types'
+import { escape, unescape } from 'querystring'
 
 /**
  * @param {string} text
@@ -80,10 +81,7 @@ export async function encodeUnicode(text) {
  * @param {string} text
  */
 export async function encodeEscape(text) {
-    // return escape(text)
-    return text.replace(/[!'()*]/g, (char) => {
-        return '%' + char.charCodeAt(0).toString(16).toUpperCase()
-    })
+    return escape(text)
 }
 
 /**
@@ -126,9 +124,7 @@ export async function decodeUnicode(text) {
  * @param {string} text
  */
 export async function decodeUnescape(text) {
-    text = text.replace(/\\u([\dA-F]{4})/gi, (_, hex) => String.fromCharCode(parseInt(hex, 16)))
-    return text
-    // return unescape(text)
+    return unescape(text)
 }
 
 /**
