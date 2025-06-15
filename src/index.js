@@ -1,6 +1,6 @@
 
 import { setupCommands } from './commands.js'
-import { extensionContext } from './aconfig.js'
+import { extensionContext } from './config.js'
 
 /**
  * @param {import('vscode').ExtensionContext} context 

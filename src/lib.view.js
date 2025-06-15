@@ -1,4 +1,4 @@
-import { appConfigTranslateAppId, appConfigTranslateAppKey, extensionContext } from './aconfig.js'
+import { appConfigTranslateAppId, appConfigTranslateAppKey, extensionContext } from './config.js'
 import { formatCSS, formatTime, getWebviewContent, translateBaidu } from './lib.js'
 import { languages, Position, TextEdit, Range, window, Hover, ProgressLocation, ViewColumn, } from 'vscode'
 
