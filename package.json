@@ -211,6 +211,10 @@
                 "title": "JSON Info"
             },
             {
+                "command": "tools:y-json-ascii-table",
+                "title": "JSON Ascii Table"
+            },
+            {
                 "command": "tools:y-codec-normalize-json",
                 "title": "normalize JSON"
             },
@@ -499,6 +503,7 @@
         "json-info": "^1.1.2",
         "markdown-it": "^14.1.0",
         "nzh": "^1.0.14",
+        "string-width": "^7.2.0",
         "table": "^6.9.0",
         "vkbeautify": "^0.99.3"
     }

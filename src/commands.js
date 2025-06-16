@@ -1,6 +1,6 @@
 import { commands, ProgressLocation, window } from 'vscode'
 import { setupTranslateHoverProvider, getAllText, getInputSeparator, getInputStartNumber, getRegexpText, getSelectText, getTranslateIks, registerDocumentFormattingEditProviderCSS, setupTimeFormatHoverProvider, getInputRepeatCount, previewHTML, editText, animationEditInVSCode } from './lib.view.js'
-import { addLineNumber, addLineNumberFromInput, addLineNumberWithSeparator, cleanAnsiEscapeCodes, commentAlign, currentTime, cursorAlign, decodeBase64, decodeHex, decodeHtml, decodeNative, decodeUnescape, decodeUnicode, decodeUri, encodeBase64, encodeEscape, encodeHex, encodeHtml, encodeNative, encodeUnicode, encodeUri, escapeSimple, escapeWithcrlf, evalPrint, extractTypesFromString, firstLetterLowercase, firstLetterUppercase, formatBytes, formatCSS, formatJS, formatJSON, formatMultiLineComment, formatSQL, formatTime, formatXML, guid, jsonDeepParse, lineGroupDuplicate, lineRemoveDuplicate, lineRemoveEmpty, lineRemoveExcludeSelect, lineRemoveIncludeSelect, lineRemoveMatchRegexp, lineRemoveNotMatchRegexp, lineReverse, lineSortAsc, lineSortDesc, lineSortNumber, lineTrim, lineTrimLeft, lineTrimRight, markdownToHtml, md5, minCSS, minJSON, minSQL, minXML, nameGenerateGet, nzhCnEncodeB, nzhCnEncodeS, parseJSON, parseJSONInfo, parseTime, randomHex, randomNumber, rearrangeJsonKey, separatorHumpToUnderline, separatorUnderlineToHump, sha1, sha256, sha512, sleep, stringify, todo, translateBaidu } from './lib.js'
+import { addLineNumber, addLineNumberFromInput, addLineNumberWithSeparator, asciitable, cleanAnsiEscapeCodes, commentAlign, currentTime, cursorAlign, decodeBase64, decodeHex, decodeHtml, decodeNative, decodeUnescape, decodeUnicode, decodeUri, encodeBase64, encodeEscape, encodeHex, encodeHtml, encodeNative, encodeUnicode, encodeUri, escapeSimple, escapeWithcrlf, evalPrint, extractTypesFromString, firstLetterLowercase, firstLetterUppercase, formatBytes, formatCSS, formatJS, formatJSON, formatMultiLineComment, formatSQL, formatTime, formatXML, guid, jsonDeepParse, lineGroupDuplicate, lineRemoveDuplicate, lineRemoveEmpty, lineRemoveExcludeSelect, lineRemoveIncludeSelect, lineRemoveMatchRegexp, lineRemoveNotMatchRegexp, lineReverse, lineSortAsc, lineSortDesc, lineSortNumber, lineTrim, lineTrimLeft, lineTrimRight, markdownToHtml, md5, minCSS, minJSON, minSQL, minXML, nameGenerateGet, nzhCnEncodeB, nzhCnEncodeS, parseJSON, parseJSONInfo, parseTime, randomHex, randomNumber, rearrangeJsonKey, separatorHumpToUnderline, separatorUnderlineToHump, sha1, sha256, sha512, sleep, stringify, todo, translateBaidu } from './lib.js'
 import { extensionContext } from './config.js'
 import { evalParser, extractJsonFromString } from 'extract-json-from-string-y'
 
@@ -449,6 +449,24 @@ export const tool_commands = [
                 return window.withProgress({ location: ProgressLocation.Window, title: "..." }, async () => {
                     try {
                         return await parseJSONInfo(text)
+                    } catch (error) {
+                        console.error(error)
+                        window.showErrorMessage(error.stack)
+                        return error.stack
+                    }
+                })
+            })
+        }
+    },
+    {
+        id: 'y-json-ascii-table',
+        label: 'JSON Ascii Table',
+        async action(ed) {
+            editText(ed, { append: true }, async (text) => {
+                return window.withProgress({ location: ProgressLocation.Window, title: "..." }, async () => {
+                    try {
+                        let list = await evalParser(text)
+                        return asciitable(list)
                     } catch (error) {
                         console.error(error)
                         window.showErrorMessage(error.stack)

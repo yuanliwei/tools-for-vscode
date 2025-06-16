@@ -13,6 +13,7 @@ import { extractTypesFromSource } from 'extract-types'
 import { escape, unescape } from 'querystring'
 import { readFile, writeFile } from 'fs/promises'
 import nzh from 'nzh'
+import stringWidth from 'string-width'
 
 /**
  * @import {CommandItem, ContributeCommandItem} from './types.js'
@@ -558,17 +559,19 @@ export async function cursorAlign(editor) {
     let selections = editor.selections
 
     console.log(selections)
-    let maxColumn = 0
+    let maxStringWidth = 0
     let insertSpaces = []
     for (let i = 0; i < selections.length; i++) {
         const selection = selections[i]
-        maxColumn = Math.max(maxColumn, selection.end.character)
-        insertSpaces[i] = selection.end.character
+        let text = editor.document.getText(selection.with(selection.start.with(undefined, 0)))
+        let width = stringWidth(text)
+        insertSpaces[i] = width
+        maxStringWidth = Math.max(maxStringWidth, width)
     }
-    maxColumn++
+    maxStringWidth++
     for (let i = 0; i < insertSpaces.length; i++) {
         const insertSpace = insertSpaces[i]
-        insertSpaces[i] = maxColumn - insertSpace
+        insertSpaces[i] = maxStringWidth - insertSpace
     }
     let index = 0
     return () => {
@@ -768,6 +771,55 @@ const tableConfig = {
         {},
         { width: 100 },
     ],
+}
+
+/**
+ * @param {object[]} list
+ */
+export function asciitable(list) {
+    // 处理空值情况
+    if (!list || list.length === 0) return ""
+
+    let cleanlist = list.map(o => {
+        let a = { ...o }
+        let keys = Object.keys(a)
+        for (const k of keys) {
+            let v = a[k]
+            if (typeof v == 'string') {
+                a[k] = v.replace(/[\x00-\x1F\x7F]/g, ' ')
+            }
+        }
+        return a
+    })
+    list = cleanlist
+
+    // 自动检测数据结构
+    const isObjectArray = list.every(item =>
+        typeof item === "object" && !Array.isArray(item)
+    )
+
+    // 构建表头和行数据
+    let headers, rows
+    if (isObjectArray) {
+        headers = Object.keys(list[0])
+        rows = list.map(obj => headers.map(header => obj[header]))
+    } else {
+        headers = Array.from({ length: list[0].length }, (_, i) => i.toString())
+        rows = list
+    }
+
+    // 生成表格配置
+    const config = {
+        border: tableConfig.border,
+        columns: headers.reduce((acc, _) => {
+            acc.push({ alignment: "left" })
+            return acc
+        }, []),
+        drawHorizontalLine: (/** @type {number} */ lineIndex, /** @type {number} */ rowCount) =>
+            lineIndex <= 1 || lineIndex === rowCount
+    }
+
+    return table([headers, ...rows], config)
 }
 
 /**
