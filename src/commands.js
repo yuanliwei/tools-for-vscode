@@ -463,16 +463,8 @@ export const tool_commands = [
         label: 'JSON Ascii Table',
         async action(ed) {
             editText(ed, { append: true }, async (text) => {
-                return window.withProgress({ location: ProgressLocation.Window, title: "..." }, async () => {
-                    try {
-                        let list = await evalParser(text)
-                        return asciitable(list)
-                    } catch (error) {
-                        console.error(error)
-                        window.showErrorMessage(error.stack)
-                        return error.stack
-                    }
-                })
+                let list = await evalParser(text)
+                return asciitable(list)
             })
         }
     },
