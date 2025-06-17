@@ -266,6 +266,13 @@ export async function editText(editor, option, func) {
 
     for (let i = 0; i < editor.selections.length; i++) {
         let selection = editor.selections[i]
+        if (selection.isEmpty && option.preferCurrentLine) {
+            let range = editor.document.lineAt(selection.start.line).range
+            selection = new Selection(range.start, range.end)
+            selections.push(selection)
+            texts.push(editor.document.getText(selection))
+            break
+        }
         if (i == 0 && selection.isEmpty && !option.handleEmptySelection && !option.insert) {
             let lastLine = editor.document.lineCount - 1
             let lastCharacter = editor.document.lineAt(lastLine).range.end.character
@@ -334,9 +341,7 @@ export async function runCommandInTerminal(text) {
     if (!terminal) {
         terminal = window.createTerminal()
     }
-    if (!terminal.state.isInteractedWith) {
-        terminal.show()
-    }
+    terminal.show()
     let commands = command.split('\n').map(o => o.trim()).filter(o => o)
     if (commands.length > 1) {
         const confirm = await window.showInformationMessage(
@@ -351,6 +356,5 @@ export async function runCommandInTerminal(text) {
             return
         }
     }
-    terminal.sendText('\x03', false)
     terminal.sendText(`${command}`, true)
 }

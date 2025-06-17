@@ -8,6 +8,7 @@ export type EditOptions = {
     handleEmptySelection?: boolean;
     insertNewLines?: number;
     noEditor?: boolean;
+    preferCurrentLine?: boolean; // 没有选择文本时 使用当前光标位置整行文本， 默认是整个文档
 }
 
 export type EditCallback = (text: string) => (Promise<string | void> | string);

@@ -885,7 +885,7 @@ export const tool_commands = [
         id: "y-run-command-in-terminal",
         label: "Run Command In Terimnal",
         async action(ed, args) {
-            editText(ed, { noChange: true }, async (text) => {
+            editText(ed, { noChange: true, preferCurrentLine: true }, async (text) => {
                 await runCommandInTerminal(text)
                 return null
             })
