@@ -322,3 +322,35 @@ export async function editText(editor, option, func) {
         }
     })
 }
+
+/**
+ * @param {string} text
+ */
+export async function runCommandInTerminal(text) {
+    let command = text.trim()
+    command = command.replace(/^\/\/\s*/, '')
+    command = command.replace(/^[#\$>]\s*/, '')
+    let terminal = window.activeTerminal
+    if (!terminal) {
+        terminal = window.createTerminal()
+    }
+    if (!terminal.state.isInteractedWith) {
+        terminal.show()
+    }
+    let commands = command.split('\n').map(o => o.trim()).filter(o => o)
+    if (commands.length > 1) {
+        const confirm = await window.showInformationMessage(
+            `确定要执行以下 ${commands.length} 条命令吗？`,
+            {
+                modal: true,
+                detail: command,
+            },
+            "是", "否"
+        )
+        if (confirm !== "是") {
+            return
+        }
+    }
+    terminal.sendText('\x03', false)
+    terminal.sendText(`${command}`, true)
+}

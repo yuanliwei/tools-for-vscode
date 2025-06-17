@@ -463,6 +463,10 @@
                 "title": "preview html"
             },
             {
+                "command": "tools:y-run-command-in-terminal",
+                "title": "Run Command In Terimnal"
+            },
+            {
                 "command": "tools:y-todo",
                 "title": "y-todo",
                 "icon": "$(checklist)"
