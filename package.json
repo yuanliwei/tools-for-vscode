@@ -455,8 +455,8 @@
                 "title": "sequence number 🕐"
             },
             {
-                "command": "tools:y-full-space",
-                "title": "full space"
+                "command": "tools:y-fill-space",
+                "title": "fill space"
             },
             {
                 "command": "tools:y-cursors-drop",

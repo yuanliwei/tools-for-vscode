@@ -856,8 +856,8 @@ export const tool_commands = [
     buildSequenceNum("🔶", 0),
     buildSequenceNum("🕐", 0),
     {
-        id: "y-full-space",
-        label: "full space",
+        id: "y-fill-space",
+        label: "fill space",
         async action(ed) {
             editText(ed, {}, async (text) => {
                 return ' '.repeat(text.length)
