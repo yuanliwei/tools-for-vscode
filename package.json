@@ -163,6 +163,10 @@
                 "title": "Clean ANSI Escape Codes"
             },
             {
+                "command": "tools:y-clean-diff-change",
+                "title": "Clean Diff Change"
+            },
+            {
                 "command": "tools:y-js-format",
                 "title": "JS format"
             },

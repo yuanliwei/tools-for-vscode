@@ -585,6 +585,13 @@ export async function cleanAnsiEscapeCodes(text) {
     return text.replace(/\x1b\[[\d;]+?m/g, '')
 }
 
+/**
+ * @param {String} text 
+ */
+export async function cleanDiffChange(text) {
+    return text.split('\n').filter(o => !o.match(/^\s+\-/)).map(o => o.replace(/^(\s+)\+/, '$1 ')).join('\n')
+}
+
 export const sleep = (/** @type {number} */ timeout) => new Promise((resolve) => setTimeout(resolve, timeout))
 
 /**
