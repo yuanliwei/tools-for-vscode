@@ -131,6 +131,14 @@
                 "title": "Current Time"
             },
             {
+                "command": "tools:y-current-time-short",
+                "title": "Current Time Short"
+            },
+            {
+                "command": "tools:y-timestamp",
+                "title": "timestamp"
+            },
+            {
                 "command": "tools:y-format-time",
                 "title": "Format Time"
             },

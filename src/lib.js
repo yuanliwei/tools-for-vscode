@@ -448,6 +448,9 @@ export async function minSQL(text) {
 export async function currentTime() {
     return dayjs().format('YYYY/MM/DD HH:mm:ss')
 }
+export async function currentTimeShort() {
+    return dayjs().format('YYYYMMDDHHmmss')
+}
 export async function guid() {
     return randomBytes(16).toString('hex')
 }
