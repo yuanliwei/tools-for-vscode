@@ -1,4 +1,4 @@
-import { workspace } from 'vscode'
+import { window, workspace } from 'vscode'
 
 /**
  * @import {ExtensionContext, Disposable} from 'vscode'
@@ -8,12 +8,20 @@ export function appConfig() {
     return workspace.getConfiguration('tools')
 }
 
-export function appConfigTranslateAppId() {
-    return appConfig().get('translate_app_id')
+export function appConfigTranslateUrl() {
+    let url = appConfig().get('translate_url')
+    if (!url) {
+        window.showInformationMessage("没有配置 translate_url")
+    }
+    return url
 }
 
-export function appConfigTranslateAppKey() {
-    return appConfig().get('translate_key')
+export function appConfigChatUrl() {
+    let url = appConfig().get('chat_url')
+    if (!url) {
+        window.showInformationMessage("没有配置 chat_url")
+    }
+    return url
 }
 
 /** @type{{context:ExtensionContext,translateDisposable:Disposable}} */

@@ -1,10 +1,10 @@
-import { appConfigTranslateAppId, appConfigTranslateAppKey, extensionContext } from './config.js'
-import { formatCSS, formatTime, getWebviewContent, translateBaidu } from './lib.js'
-import { languages, Position, TextEdit, Range, window, Hover, ProgressLocation, ViewColumn, Selection, } from 'vscode'
+import { appConfigTranslateUrl, extensionContext } from './config.js'
+import { formatCSS, formatTime, getWebviewContent, translate } from './lib.js'
+import { languages, Position, TextEdit, Range, window, Hover, ProgressLocation, ViewColumn, Selection, workspace, } from 'vscode'
 
 /**
- * @import { DocumentSelector, ExtensionContext,  TextDocument, TextEditor } from 'vscode'
- * @import {EditCallback, EditOptions} from './types.js'
+ * @import { DocumentSelector, ExtensionContext,  TextDocument, TextEditor, QuickPickItem } from 'vscode'
+ * @import {CHAT_PROMPT, EditCallback, EditOptions} from './types.js'
  */
 
 
@@ -43,8 +43,8 @@ export function setupTranslateHoverProvider(context) {
             if (!extensionContext.translateDisposable) { return }
             let editor = window.activeTextEditor
             if (!editor) { return }
-            let iks = getTranslateIks()
-            if (!iks) { return }
+            let url = appConfigTranslateUrl()
+            if (!url) { return }
             let selection = editor.selection
             if (selection.isEmpty) {
                 const range = document.getWordRangeAtPosition(position, /\w+/)
@@ -53,7 +53,7 @@ export function setupTranslateHoverProvider(context) {
                 if (!word) { return }
                 let cache = tanslateCacheMap.get(word)
                 if (!cache) {
-                    cache = await translateBaidu(iks, 'zh', word)
+                    cache = await translate(url, 'zh', word)
                     tanslateCacheMap.set(word, cache)
                 }
                 if (!cache) { return }
@@ -65,7 +65,7 @@ export function setupTranslateHoverProvider(context) {
             lastSelection.start = selection.start
             lastSelection.end = selection.end
             let text = editor.document.getText(selection)
-            let result = await translateBaidu(iks, 'zh', text)
+            let result = await translate(url, 'zh', text)
             lastSelection.lastResult = result
             return new Hover(result)
         }
@@ -87,20 +87,6 @@ export function setupTimeFormatHoverProvider(context) {
         }
     }))
 }
-
-/**
- * @returns {[string,string]}
- */
-export function getTranslateIks() {
-    let appId = appConfigTranslateAppId()
-    let appKey = appConfigTranslateAppKey()
-    if (!appId || !appKey) {
-        window.showWarningMessage('需要配置百度翻译 appId、appKey。')
-        return null
-    }
-    return [appId, appKey]
-}
-
 
 /**
  * @param {TextEditor} editor 
@@ -225,11 +211,18 @@ export async function execInTerminal(command) {
  * @returns 
  */
 export function animationEditInVSCode(editor) {
-    let selection = editor.selection
+    return animationEditInVSCodeWithSelection(editor, editor.selection)
+}
+
+/**
+ * @param {TextEditor} editor 
+ * @param {Selection} selection 
+ * @returns 
+ */
+export function animationEditInVSCodeWithSelection(editor, selection) {
     let pos = selection.end.translate(0, 1)
     return async (/**@type{string}*/text) => {
         let insertPos = pos
-        editor.selection = new Selection(pos, pos)
         const lineDelta = text.split(/\r?\n/).length - 1
         const characterDelta = text.split(/\r?\n/).at(-1).length
         pos = pos.translate(lineDelta, characterDelta)

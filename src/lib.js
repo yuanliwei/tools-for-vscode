@@ -207,27 +207,31 @@ function fromUnicode(str) {
  * @param {string} text
  */
 export async function lineRemoveDuplicate(text) {
-    return [...new Set(text.split(/\r?\n/))].join('\n')
+    let s = splitText(text)
+    return [...new Set(s.lines)].join('\n') + s.end
 }
 /**
  * @param {string} selText
  * @param {string} text
  */
 export async function lineRemoveIncludeSelect(selText, text) {
-    return text.split(/\r?\n/).filter((/** @type {string | any[]} */ o) => !o.includes(selText)).join('\n')
+    let s = splitText(text)
+    return s.lines.filter((/** @type {string | any[]} */ o) => !o.includes(selText)).join('\n') + s.end
 }
 /**
  * @param {string} selText
  * @param {string} text
  */
 export async function lineRemoveExcludeSelect(selText, text) {
-    return text.split(/\r?\n/).filter((/** @type {string | any[]} */ o) => o.includes(selText)).join('\n')
+    let s = splitText(text)
+    return s.lines.filter((/** @type {string | any[]} */ o) => o.includes(selText)).join('\n') + s.end
 }
 /**
  * @param {string} text
  */
 export async function lineRemoveEmpty(text) {
-    return text.split(/\r?\n/).filter((/** @type {string} */ o) => o.trim()).join('\n')
+    let s = splitText(text)
+    return s.lines.filter((/** @type {string} */ o) => o.trim()).join('\n') + s.end
 }
 
 /**
@@ -238,7 +242,8 @@ export async function lineRemoveEmpty(text) {
 export async function lineRemoveMatchRegexp(text, regexp) {
     if (!regexp) return text
     let reg = new RegExp(regexp)
-    return text.split(/\r?\n/).filter(o => !o.match(reg)).join('\n')
+    let s = splitText(text)
+    return s.lines.filter(o => !o.match(reg)).join('\n') + s.end
 }
 
 /**
@@ -249,55 +254,71 @@ export async function lineRemoveMatchRegexp(text, regexp) {
 export async function lineRemoveNotMatchRegexp(text, regexp) {
     if (!regexp) return text
     let reg = new RegExp(regexp)
-    return text.split(/\r?\n/).filter(o => o.match(reg)).join('\n')
+    let s = splitText(text)
+    return s.lines.filter(o => o.match(reg)).join('\n') + s.end
 }
 /**
  * @param {string} text
  */
 export async function lineSortAsc(text) {
-    return text.split(/\r?\n/).sort().join('\n')
+    let s = splitText(text)
+    return s.lines.sort().join('\n') + s.end
 }
 /**
  * @param {string} text
  */
 export async function lineSortDesc(text) {
-    return text.split(/\r?\n/).sort().reverse().join('\n')
+    let s = splitText(text)
+    return s.lines.sort().reverse().join('\n') + s.end
 }
 /**
  * @param {string} text
  */
 export async function lineSortRandom(text) {
+    let s = splitText(text)
+    return shuffle(s.lines).join('\n') + s.end
+}
+/**
+ * @param {string} text
+ */
+export function splitText(text) {
+    const match = text.match(/\r?\n\s*$/)
     let end = ''
-    text = text.replace(/\r?\n\s*$/, (a) => {
-        end = a
-        return ''
-    })
-    return shuffle(text.split(/\r?\n/)).join('\n') + end
+    if (match) {
+        end = match[0]
+        text = text.slice(0, -end.length)
+    }
+    let lines = text.split(/\r?\n/)
+    return { lines, end }
 }
 /**
  * @param {string} text
  */
 export async function lineTrim(text) {
-    return text.split(/\r?\n/).map((/** @type {string} */ o) => o.trim()).join('\n')
+    let s = splitText(text)
+    return s.lines.map((/** @type {string} */ o) => o.trim()).join('\n') + s.end
 }
 /**
  * @param {string} text
  */
 export async function lineTrimLeft(text) {
-    return text.split(/\r?\n/).map((/** @type {string} */ o) => o.trimLeft()).join('\n')
+    let s = splitText(text)
+    return s.lines.map((/** @type {string} */ o) => o.trimStart()).join('\n') + s.end
 }
 /**
  * @param {string} text
  */
 export async function lineTrimRight(text) {
-    return text.split(/\r?\n/).map((/** @type {string} */ o) => o.trimRight()).join('\n')
+    let s = splitText(text)
+    return s.lines.map((/** @type {string} */ o) => o.trimEnd()).join('\n') + s.end
 }
 /**
  * @param {string} text
  */
 export async function addLineNumber(text) {
     let num = 1
-    return text.split(/\r?\n/).map((/** @type {any} */ o) => `${(num++).toString().padStart(4, ' ')} ${o}`).join('\n')
+    let s = splitText(text)
+    return s.lines.map((/** @type {any} */ o) => `${(num++).toString().padStart(4, ' ')} ${o}`).join('\n') + s.end
 }
 
 /**
@@ -307,7 +328,8 @@ export async function addLineNumber(text) {
  */
 export async function addLineNumberWithSeparator(text, separator) {
     let num = 1
-    return text.split(/\r?\n/).map(o => `${(num++).toString().padStart(4, ' ')}${separator}${o}`).join('\n')
+    let s = splitText(text)
+    return s.lines.map(o => `${(num++).toString().padStart(4, ' ')}${separator}${o}`).join('\n') + s.end
 }
 
 /**
@@ -318,7 +340,8 @@ export async function addLineNumberWithSeparator(text, separator) {
  */
 export async function addLineNumberFromInput(text, startNum) {
     let num = startNum
-    return text.split(/\r?\n/).map(o => `${(num++).toString().padStart(4, ' ')} ${o}`).join('\n')
+    let s = splitText(text)
+    return s.lines.map(o => `${(num++).toString().padStart(4, ' ')} ${o}`).join('\n') + s.end
 }
 /**
  * 下划线转驼峰
@@ -603,7 +626,8 @@ export async function cleanAnsiEscapeCodes(text) {
  * @param {String} text 
  */
 export async function cleanDiffChange(text) {
-    return text.split(/\r?\n/).filter(o => !o.match(/^\s+\-/)).map(o => o.replace(/^(\s+)\+/, '$1 ')).join('\n')
+    let s = splitText(text)
+    return s.lines.filter(o => !o.match(/^\s+\-/)).map(o => o.replace(/^(\s+)\+/, '$1 ')).join('\n')
 }
 
 export const sleep = (/** @type {number} */ timeout) => new Promise((resolve) => setTimeout(resolve, timeout))
@@ -975,72 +999,19 @@ export function randomHex() {
 
 
 /**
- * 百度翻译
+ * 翻译
  * 
- * @param {[string,string]} iks 
+ * @param {string} url 
  * @param {string} lang 
- * @param {string} textString 
+ * @param {string} text 
  * @returns 
  */
-export async function translateBaidu(iks, lang, textString) {
-    let MD5 = (/** @type {import("crypto").BinaryLike} */ text) => {
-        const hash = createHash('md5')
-        hash.update(text)
-        return hash.digest('hex')
-    }
-
-    let appid = iks[0]
-    let key = iks[1]
-    let salt = Date.now()
-    let matches = textString.split(/\r?\n/).map((item) => {
-        return item.trim()
-    }).filter((item) => {
-        return item.length > 0
-    })
-    if (!matches) {
-        return textString
-    }
-    console.log('translate words:' + matches.length)
-    let query = matches.join('\n')
-    let from = 'auto'
-    let to = lang
-    let str1 = appid + query + salt + key
-    let sign = MD5(str1)
-
-    let params = new URLSearchParams()
-    params.append('q', query)
-    params.append('appid', appid)
-    params.append('salt', salt.toFixed(0))
-    params.append('from', from)
-    params.append('to', to)
-    params.append('sign', sign)
-    /** @type{Object} */
-    let result = await (await fetch(`https://api.fanyi.baidu.com/api/trans/vip/translate`, {
+export async function translate(url, lang, text) {
+    return await (await fetch(url, {
         method: 'POST',
-        headers: {
-            'Content-Type': 'application/x-www-form-urlencoded',
-        },
-        body: params
-    })).json()
-
-    if (result.error_code) {
-        let e = new Error(`${result.error_msg}\n${JSON.stringify(result)}`)
-        return e.message + '\n\n' + e.stack
-    }
-    let map = {}
-    for (const item of result.trans_result) {
-        map[item.src] = await decodeNative(item.dst)
-    }
-    return textString.split(/\r?\n/).map((item) => {
-        let k = item.trim()
-        let v = map[k]
-        if (v) {
-            return item.replace(k, v)
-        } else {
-            return item
-        }
-    }).join("\n")
-
+        headers: { 'content-type': 'application/json', },
+        body: JSON.stringify({ lang, text, })
+    })).text()
 }
 
 /**
@@ -1108,4 +1079,16 @@ export function shuffle(datas) {
         [datas[i], datas[j]] = [datas[j], datas[i]]
     }
     return datas
+}
+
+/**
+ * @param {string} url 
+ * @param {string} message 
+ */
+export async function chatgpt(url, message) {
+    return await (await fetch(url, {
+        method: 'POST',
+        headers: { 'content-type': 'application/json', },
+        body: message
+    })).text()
 }

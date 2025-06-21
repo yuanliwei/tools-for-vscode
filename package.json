@@ -483,6 +483,10 @@
                 "title": "Run Command In Terimnal"
             },
             {
+                "command": "tools:y-chat-edit",
+                "title": "Chat Edit"
+            },
+            {
                 "command": "tools:y-todo",
                 "title": "y-todo",
                 "icon": "$(checklist)"
@@ -492,15 +496,15 @@
             "type": "object",
             "title": "Tools",
             "properties": {
-                "tools.translate_app_id": {
+                "tools.translate_url": {
                     "type": "string",
                     "default": "",
-                    "description": "百度翻译 APP_ID"
+                    "description": "翻译 url"
                 },
-                "tools.translate_key": {
+                "tools.chat_url": {
                     "type": "string",
                     "default": "",
-                    "description": "百度翻译密钥"
+                    "description": "chat url"
                 }
             }
         }
