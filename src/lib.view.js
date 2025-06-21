@@ -384,9 +384,9 @@ export async function getChatPrompt() {
     if (prompts.length == 0) return
     /** @type{({value:CHAT_PROMPT; } & QuickPickItem)[]} */
     const items = []
-    for (const p of prompts) {
-        items.push({ label: p.title, description: p.prompt, value: p, picked: currentChatPrompt == JSON.stringify(p) })
-    }
+    prompts.forEach((p, idx) => {
+        items.push({ label: `${idx + 1}: ${p.title}`, description: p.prompt, value: p, picked: currentChatPrompt == JSON.stringify(p) })
+    })
     const selected = await window.showQuickPick(items, {
         placeHolder: '请选择一个选项',
         matchOnDescription: true,

@@ -937,6 +937,9 @@ export const tool_commands = [
             if (!prompt) return
             await runWithLoading('chat-prompts', async () => {
                 await editText(ed, { insert: true }, async (text) => {
+                    if (!text.trim()) {
+                        return text
+                    }
                     let message = prompt.prompt.replaceAll(CHAT_PLACEHOLDER_SELECTION, text)
                     let response = await chatgpt(url, message)
                     return response
