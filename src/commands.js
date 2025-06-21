@@ -1,5 +1,5 @@
 import { commands, ProgressLocation, window } from 'vscode'
-import { setupTranslateHoverProvider, getAllText, getInputSeparator, getInputStartNumber, getRegexpText, getSelectText, registerDocumentFormattingEditProviderCSS, setupTimeFormatHoverProvider, getInputRepeatCount, previewHTML, editText, animationEditInVSCode, runCommandInTerminal, getChatPrompt } from './lib.view.js'
+import { setupTranslateHoverProvider, getAllText, getInputSeparator, getInputStartNumber, getRegexpText, getSelectText, registerDocumentFormattingEditProviderCSS, setupTimeFormatHoverProvider, getInputRepeatCount, previewHTML, editText, animationEditInVSCode, runCommandInTerminal, getChatPrompt, runWithLoading } from './lib.view.js'
 import { addLineNumber, addLineNumberFromInput, addLineNumberWithSeparator, asciitable, CHAT_PLACEHOLDER_SELECTION, chatgpt, cleanAnsiEscapeCodes, cleanDiffChange, commentAlign, currentTime, currentTimeShort, cursorAlign, decodeBase64, decodeHex, decodeHtml, decodeNative, decodeUnescape, decodeUnicode, decodeUri, encodeBase64, encodeEscape, encodeHex, encodeHtml, encodeNative, encodeUnicode, encodeUri, escapeSimple, escapeWithcrlf, evalPrint, extractTypesFromString, firstLetterLowercase, firstLetterUppercase, formatBytes, formatCSS, formatJS, formatJSON, formatMultiLineComment, formatSQL, formatTime, formatXML, guid, jsonDeepParse, lineGroupDuplicate, lineRemoveDuplicate, lineRemoveEmpty, lineRemoveExcludeSelect, lineRemoveIncludeSelect, lineRemoveMatchRegexp, lineRemoveNotMatchRegexp, lineReverse, lineSortAsc, lineSortDesc, lineSortNumber, lineSortRandom, lineTrim, lineTrimLeft, lineTrimRight, markdownToHtml, md5, minCSS, minJSON, minSQL, minXML, nameGenerateGet, nzhCnEncodeB, nzhCnEncodeS, parseJSON, parseJSONInfo, parseTime, randomHex, randomNumber, rearrangeJsonKey, separatorHumpToUnderline, separatorUnderlineToHump, sha1, sha256, sha512, sleep, stringify, todo, translate } from './lib.js'
 import { appConfigChatUrl, appConfigTranslateUrl, extensionContext } from './config.js'
 import { evalParser, extractJsonFromString } from 'extract-json-from-string-y'
@@ -935,11 +935,12 @@ export const tool_commands = [
             if (!url) return
             let prompt = await getChatPrompt()
             if (!prompt) return
-
-            editText(ed, { insert: true }, async (text) => {
-                let message = prompt.prompt.replaceAll(CHAT_PLACEHOLDER_SELECTION, text)
-                let response = await chatgpt(url, message)
-                return response
+            await runWithLoading('chat-prompts', async () => {
+                await editText(ed, { insert: true }, async (text) => {
+                    let message = prompt.prompt.replaceAll(CHAT_PLACEHOLDER_SELECTION, text)
+                    let response = await chatgpt(url, message)
+                    return response
+                })
             })
         },
     },

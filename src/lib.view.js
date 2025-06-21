@@ -164,7 +164,7 @@ export async function getInputSeparator() {
  * @param {Function} func 
  */
 export async function runWithLoading(title, func) {
-    return window.withProgress({ location: ProgressLocation.Window, title }, async () => {
+    return window.withProgress({ location: ProgressLocation.Notification, title }, async () => {
         try {
             return await func()
         } catch (error) {
