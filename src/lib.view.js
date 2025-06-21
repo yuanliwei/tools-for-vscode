@@ -43,7 +43,7 @@ export function setupTranslateHoverProvider(context) {
             if (!extensionContext.translateDisposable) { return }
             let editor = window.activeTextEditor
             if (!editor) { return }
-            let url = appConfigTranslateUrl()
+            let url = await appConfigTranslateUrl()
             if (!url) { return }
             let selection = editor.selection
             if (selection.isEmpty) {

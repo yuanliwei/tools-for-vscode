@@ -744,7 +744,7 @@ export const tool_commands = [
         id: "y-translate-translate-to-zh",
         label: "Translate translate to zh",
         async action(ed) {
-            let url = appConfigTranslateUrl()
+            let url = await appConfigTranslateUrl()
             if (!url) return
             editText(ed, {}, async (text) => {
                 return await translate(url, 'zh', text)
@@ -755,7 +755,7 @@ export const tool_commands = [
         id: "y-translate-translate-to-en",
         label: "Translate translate to en",
         async action(ed) {
-            let url = appConfigTranslateUrl()
+            let url = await appConfigTranslateUrl()
             if (!url) return
             editText(ed, {}, async (text) => {
                 return await translate(url, 'en', text)
@@ -931,7 +931,7 @@ export const tool_commands = [
         id: "y-chat-edit",
         label: "Chat Edit",
         async action(ed, args) {
-            let url = appConfigChatUrl()
+            let url = await appConfigChatUrl()
             if (!url) return
             editText(ed, { replace: true }, async (text) => {
                 let response = await chatgpt(url, text)
