@@ -59,6 +59,10 @@
                 "title": "Line Sort Desc"
             },
             {
+                "command": "tools:y-line-sort-random",
+                "title": "Line Sort Random"
+            },
+            {
                 "command": "tools:y-line-trim",
                 "title": "Line Trim"
             },

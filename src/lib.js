@@ -207,27 +207,27 @@ function fromUnicode(str) {
  * @param {string} text
  */
 export async function lineRemoveDuplicate(text) {
-    return [...new Set(text.split('\n'))].join('\n')
+    return [...new Set(text.split(/\r?\n/))].join('\n')
 }
 /**
  * @param {string} selText
  * @param {string} text
  */
 export async function lineRemoveIncludeSelect(selText, text) {
-    return text.split('\n').filter((/** @type {string | any[]} */ o) => !o.includes(selText)).join('\n')
+    return text.split(/\r?\n/).filter((/** @type {string | any[]} */ o) => !o.includes(selText)).join('\n')
 }
 /**
  * @param {string} selText
  * @param {string} text
  */
 export async function lineRemoveExcludeSelect(selText, text) {
-    return text.split('\n').filter((/** @type {string | any[]} */ o) => o.includes(selText)).join('\n')
+    return text.split(/\r?\n/).filter((/** @type {string | any[]} */ o) => o.includes(selText)).join('\n')
 }
 /**
  * @param {string} text
  */
 export async function lineRemoveEmpty(text) {
-    return text.split('\n').filter((/** @type {string} */ o) => o.trim()).join('\n')
+    return text.split(/\r?\n/).filter((/** @type {string} */ o) => o.trim()).join('\n')
 }
 
 /**
@@ -238,7 +238,7 @@ export async function lineRemoveEmpty(text) {
 export async function lineRemoveMatchRegexp(text, regexp) {
     if (!regexp) return text
     let reg = new RegExp(regexp)
-    return text.split('\n').filter(o => !o.match(reg)).join('\n')
+    return text.split(/\r?\n/).filter(o => !o.match(reg)).join('\n')
 }
 
 /**
@@ -249,44 +249,55 @@ export async function lineRemoveMatchRegexp(text, regexp) {
 export async function lineRemoveNotMatchRegexp(text, regexp) {
     if (!regexp) return text
     let reg = new RegExp(regexp)
-    return text.split('\n').filter(o => o.match(reg)).join('\n')
+    return text.split(/\r?\n/).filter(o => o.match(reg)).join('\n')
 }
 /**
  * @param {string} text
  */
 export async function lineSortAsc(text) {
-    return text.split('\n').sort().join('\n')
+    return text.split(/\r?\n/).sort().join('\n')
 }
 /**
  * @param {string} text
  */
 export async function lineSortDesc(text) {
-    return text.split('\n').sort().reverse().join('\n')
+    return text.split(/\r?\n/).sort().reverse().join('\n')
+}
+/**
+ * @param {string} text
+ */
+export async function lineSortRandom(text) {
+    let end = ''
+    text = text.replace(/\r?\n\s*$/, (a) => {
+        end = a
+        return ''
+    })
+    return shuffle(text.split(/\r?\n/)).join('\n') + end
 }
 /**
  * @param {string} text
  */
 export async function lineTrim(text) {
-    return text.split('\n').map((/** @type {string} */ o) => o.trim()).join('\n')
+    return text.split(/\r?\n/).map((/** @type {string} */ o) => o.trim()).join('\n')
 }
 /**
  * @param {string} text
  */
 export async function lineTrimLeft(text) {
-    return text.split('\n').map((/** @type {string} */ o) => o.trimLeft()).join('\n')
+    return text.split(/\r?\n/).map((/** @type {string} */ o) => o.trimLeft()).join('\n')
 }
 /**
  * @param {string} text
  */
 export async function lineTrimRight(text) {
-    return text.split('\n').map((/** @type {string} */ o) => o.trimRight()).join('\n')
+    return text.split(/\r?\n/).map((/** @type {string} */ o) => o.trimRight()).join('\n')
 }
 /**
  * @param {string} text
  */
 export async function addLineNumber(text) {
     let num = 1
-    return text.split('\n').map((/** @type {any} */ o) => `${(num++).toString().padStart(4, ' ')} ${o}`).join('\n')
+    return text.split(/\r?\n/).map((/** @type {any} */ o) => `${(num++).toString().padStart(4, ' ')} ${o}`).join('\n')
 }
 
 /**
@@ -296,7 +307,7 @@ export async function addLineNumber(text) {
  */
 export async function addLineNumberWithSeparator(text, separator) {
     let num = 1
-    return text.split('\n').map(o => `${(num++).toString().padStart(4, ' ')}${separator}${o}`).join('\n')
+    return text.split(/\r?\n/).map(o => `${(num++).toString().padStart(4, ' ')}${separator}${o}`).join('\n')
 }
 
 /**
@@ -307,7 +318,7 @@ export async function addLineNumberWithSeparator(text, separator) {
  */
 export async function addLineNumberFromInput(text, startNum) {
     let num = startNum
-    return text.split('\n').map(o => `${(num++).toString().padStart(4, ' ')} ${o}`).join('\n')
+    return text.split(/\r?\n/).map(o => `${(num++).toString().padStart(4, ' ')} ${o}`).join('\n')
 }
 /**
  * 下划线转驼峰
@@ -349,7 +360,7 @@ export async function firstLetterUppercase(text) {
  */
 export async function lineGroupDuplicate(text) {
     let map = {}
-    let lines = text.split('\n')
+    let lines = text.split(/\r?\n/)
     let arr = []
     for (const line of lines) {
         if (map[line]) {
@@ -375,7 +386,7 @@ export async function lineSortNumber(text) {
         let nums = match.map((/** @type {string} */ o) => parseFloat(o))
         return nums[0] ?? Infinity
     }
-    let lines = text.split('\n')
+    let lines = text.split(/\r?\n/)
     lines.sort((l, h) => toNum(l) - toNum(h))
     return lines.join('\n')
 }
@@ -385,7 +396,7 @@ export async function lineSortNumber(text) {
  * @param {string} text 
  */
 export async function lineReverse(text) {
-    let lines = text.split('\n')
+    let lines = text.split(/\r?\n/)
     return lines.reverse().join('\n')
 }
 
@@ -524,7 +535,7 @@ export async function evalPrint(text) {
  */
 export async function commentAlign(text) {
     var maxLength = 0
-    var lines = text.split('\n')
+    var lines = text.split(/\r?\n/)
     lines.forEach(function (item) {
         item = item.replace('//', '#sp#//')
         var items = item.split('#sp#')
@@ -592,7 +603,7 @@ export async function cleanAnsiEscapeCodes(text) {
  * @param {String} text 
  */
 export async function cleanDiffChange(text) {
-    return text.split('\n').filter(o => !o.match(/^\s+\-/)).map(o => o.replace(/^(\s+)\+/, '$1 ')).join('\n')
+    return text.split(/\r?\n/).filter(o => !o.match(/^\s+\-/)).map(o => o.replace(/^(\s+)\+/, '$1 ')).join('\n')
 }
 
 export const sleep = (/** @type {number} */ timeout) => new Promise((resolve) => setTimeout(resolve, timeout))
@@ -932,7 +943,7 @@ export function extractTypesFromString(text) {
 export function formatMultiLineComment(text) {
     return text.replace(/(^|\n)(.*?\/\*[\s\S]*?\*\/)/g, (a, b, c) => {
         /** @type{string[]} */
-        let lines = c.split('\n')
+        let lines = c.split(/\r?\n/)
         if (lines.length < 2) {
             return a
         }
@@ -981,7 +992,7 @@ export async function translateBaidu(iks, lang, textString) {
     let appid = iks[0]
     let key = iks[1]
     let salt = Date.now()
-    let matches = textString.split('\n').map((item) => {
+    let matches = textString.split(/\r?\n/).map((item) => {
         return item.trim()
     }).filter((item) => {
         return item.length > 0
@@ -1020,7 +1031,7 @@ export async function translateBaidu(iks, lang, textString) {
     for (const item of result.trans_result) {
         map[item.src] = await decodeNative(item.dst)
     }
-    return textString.split('\n').map((item) => {
+    return textString.split(/\r?\n/).map((item) => {
         let k = item.trim()
         let v = map[k]
         if (v) {
@@ -1082,4 +1093,19 @@ export function nzhCnEncodeS(num) {
  */
 export function nzhCnEncodeB(num) {
     return nzh.cn.encodeB(num)
+}
+
+/**
+ * 随机排序
+ * @template T
+ * @param {T[]} datas 
+ * @returns {T[]} 返回随机排序后的新数组
+ */
+export function shuffle(datas) {
+    let loopCount = datas.length
+    for (let i = loopCount - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [datas[i], datas[j]] = [datas[j], datas[i]]
+    }
+    return datas
 }
