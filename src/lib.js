@@ -1088,7 +1088,7 @@ export function shuffle(datas) {
 export async function chatgpt(url, message) {
     return await (await fetch(url, {
         method: 'POST',
-        headers: { 'content-type': 'application/json', },
+        headers: { 'content-type': 'application/text', },
         body: message
     })).text()
 }

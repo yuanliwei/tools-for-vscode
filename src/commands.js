@@ -933,7 +933,7 @@ export const tool_commands = [
         async action(ed, args) {
             let url = await appConfigChatUrl()
             if (!url) return
-            editText(ed, { replace: true }, async (text) => {
+            editText(ed, { insert: true }, async (text) => {
                 let response = await chatgpt(url, text)
                 return response
             })
