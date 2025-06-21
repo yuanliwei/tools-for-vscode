@@ -483,8 +483,8 @@
                 "title": "Run Command In Terimnal"
             },
             {
-                "command": "tools:y-chat-edit",
-                "title": "Chat Edit"
+                "command": "tools:y-chat-edit-prompts",
+                "title": "Chat Edit Prompts"
             },
             {
                 "command": "tools:y-todo",

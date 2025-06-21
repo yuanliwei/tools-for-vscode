@@ -1,6 +1,6 @@
 import { appConfigTranslateUrl, extensionContext } from './config.js'
-import { formatCSS, formatTime, getWebviewContent, translate } from './lib.js'
-import { languages, Position, TextEdit, Range, window, Hover, ProgressLocation, ViewColumn, Selection, workspace, } from 'vscode'
+import { formatCSS, formatTime, getWebviewContent, parseChatPrompts, translate } from './lib.js'
+import { languages, Position, TextEdit, Range, window, Hover, ProgressLocation, ViewColumn, Selection, workspace, commands, Uri, } from 'vscode'
 
 /**
  * @import { DocumentSelector, ExtensionContext,  TextDocument, TextEditor, QuickPickItem } from 'vscode'
@@ -351,4 +351,50 @@ export async function runCommandInTerminal(text) {
         }
     }
     terminal.sendText(`${commands.join('\n')}`, true)
+}
+
+
+let currentChatPrompt = null
+
+export async function getChatPrompt() {
+    /** @type{CHAT_PROMPT[]} */
+    let prompts = []
+    if (!workspace.workspaceFolders) {
+        window.showErrorMessage(`没有打开的工作目录`)
+        return undefined
+    }
+    let uris = await workspace.findFiles('.vscode/prompts*.md')
+    if (uris.length == 0) {
+        let button = await window.showErrorMessage(`找不到 .vscode/prompts*.md 文件`, "创建文件")
+        if (button == "创建文件") {
+            const workspaceFolder = workspace.workspaceFolders[0]
+            const fileUri = Uri.joinPath(workspaceFolder.uri, '.vscode', 'prompts.md')
+            commands.executeCommand('vscode.open', fileUri)
+        }
+        return undefined
+    }
+
+    for (const uri of uris) {
+        let doc = await workspace.openTextDocument(uri)
+        let content = doc.getText()
+        let p = parseChatPrompts(content)
+        prompts.push(...p)
+    }
+
+    if (prompts.length == 0) return
+    /** @type{({value:CHAT_PROMPT; } & QuickPickItem)[]} */
+    const items = []
+    for (const p of prompts) {
+        items.push({ label: p.title, description: p.prompt, value: p, picked: currentChatPrompt == JSON.stringify(p) })
+    }
+    const selected = await window.showQuickPick(items, {
+        placeHolder: '请选择一个选项',
+        matchOnDescription: true,
+        ignoreFocusOut: true,
+        canPickMany: false
+    })
+    if (selected) {
+        currentChatPrompt = JSON.stringify(selected.value)
+    }
+    return selected?.value
 }

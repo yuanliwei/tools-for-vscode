@@ -16,7 +16,7 @@ import nzh from 'nzh'
 import stringWidth from 'string-width'
 
 /**
- * @import {CommandItem, ContributeCommandItem} from './types.js'
+ * @import {CHAT_PROMPT, CommandItem, ContributeCommandItem} from './types.js'
  */
 
 /**
@@ -1092,3 +1092,33 @@ export async function chatgpt(url, message) {
         body: message
     })).text()
 }
+
+
+/**
+ * @param {string} content 
+ */
+export function parseChatPrompts(content) {
+    let lines = content.split('\n')
+    /** @type{CHAT_PROMPT[]} */
+    let prompts = []
+    let title = ''
+    let texts = []
+    for (const line of lines) {
+        if (line.startsWith('## ')) {
+            if (title && texts.length > 0) {
+                prompts.push({ title, prompt: texts.join('\n').trim() })
+            }
+            title = line.trim()
+            texts = []
+        } else {
+            texts.push(line)
+        }
+    }
+    if (title && texts.length > 0) {
+        prompts.push({ title, prompt: texts.join('\n').trim() })
+    }
+    return prompts
+}
+
+export const CHAT_PLACEHOLDER_SELECTION = '{SELECTION}'
+

@@ -30,3 +30,10 @@ export type ContributeCommandItem = {
     title: string;
     icon?: string;
 };
+
+export type CHAT_PROMPT = { title: string; prompt: string; }
+
+export type ChangeInfo = {
+    header: '3c734333' // 不会变的常量字符串
+    content: string; // 修改后的代码
+}
