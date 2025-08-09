@@ -627,7 +627,7 @@ export async function cleanAnsiEscapeCodes(text) {
  */
 export async function cleanDiffChange(text) {
     let s = splitText(text)
-    return s.lines.filter(o => !o.match(/^\s+\-/)).map(o => o.replace(/^(\s+)\+/, '$1 ')).join('\n')
+    return s.lines.filter(o => !o.match(/^\s+\-/)).map(o => o.replace(/^(\s+)\+/, '$1 ')).join('\n') + s.end
 }
 
 export const sleep = (/** @type {number} */ timeout) => new Promise((resolve) => setTimeout(resolve, timeout))
