@@ -1,6 +1,6 @@
 import { appConfigTranslateUrl, extensionContext } from './config.js'
 import { formatCSS, formatTime, getWebviewContent, parseChatPrompts, translate } from './lib.js'
-import { languages, Position, TextEdit, Range, window, Hover, ProgressLocation, ViewColumn, Selection, workspace, commands, Uri, } from 'vscode'
+import { languages, Position, TextEdit, Range, window, Hover, ProgressLocation, ViewColumn, Selection, workspace, commands, Uri, WorkspaceEdit, } from 'vscode'
 
 /**
  * @import { DocumentSelector, ExtensionContext,  TextDocument, TextEditor, QuickPickItem } from 'vscode'
@@ -397,4 +397,37 @@ export async function getChatPrompt() {
         currentChatPrompt = JSON.stringify(selected.value)
     }
     return selected?.value
+}
+
+const URI_SCHEMA_MARKDOWN = 'y-tool-markdown'
+const markdownPreviewUri = Uri.parse(`${URI_SCHEMA_MARKDOWN}:preview.md`)
+
+/**
+ * @param {ExtensionContext} context
+ */
+export function registerMarkdownPreviewTextDocumentContentProvider(context) {
+    context.subscriptions.push(
+        workspace.registerTextDocumentContentProvider(URI_SCHEMA_MARKDOWN, {
+            provideTextDocumentContent() {
+                return ''
+            }
+        })
+    )
+}
+
+/** @type{TextDocument} */
+let markdownPreviewDoc = null
+
+/**
+ * @param {string} text
+ */
+export async function previewMarkdownText(text) {
+    if (!markdownPreviewDoc || markdownPreviewDoc.isClosed) {
+        markdownPreviewDoc = await workspace.openTextDocument(markdownPreviewUri)
+    }
+    const edit = new WorkspaceEdit()
+    edit.replace(markdownPreviewUri, new Range(0, 0, markdownPreviewDoc.lineCount, 0), text)
+    await workspace.applyEdit(edit)
+    // await commands.executeCommand('markdown.showPreview', markdownPreviewUri)
+    await commands.executeCommand('markdown.showPreviewToSide', markdownPreviewUri)
 }

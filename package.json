@@ -487,6 +487,10 @@
                 "title": "Chat Edit Prompts"
             },
             {
+                "command": "tools:y-markdown-preview",
+                "title": "Markdown Preview"
+            },
+            {
                 "command": "tools:y-todo",
                 "title": "y-todo",
                 "icon": "$(checklist)"

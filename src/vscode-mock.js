@@ -30,3 +30,7 @@ export const ProgressLocation = {}
 export const ViewColumn = {}
 export const Selection = {}
 export const commands = {}
+export const Uri = {
+    parse() { }
+}
+export const WorkspaceEdit = {}
