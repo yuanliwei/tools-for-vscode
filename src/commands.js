@@ -962,6 +962,17 @@ export const tool_commands = [
         },
     },
     {
+        id: "y-latex-to-markdown-math",
+        label: "LaTeX → Markdown Math",
+        async action(ed, args) {
+            editText(ed, {}, async (text) => {
+                text = text.replaceAll(/\\\((.+?)\\\)/g, '$$$1$')
+                text = text.replaceAll(/\\\[(.+?)\\\]/gs, '$$$$$1$$$$')
+                return text
+            })
+        },
+    },
+    {
         id: "y-todo",
         label: "y-todo",
         icon: '$(checklist)',

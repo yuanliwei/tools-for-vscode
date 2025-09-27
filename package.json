@@ -491,6 +491,10 @@
                 "title": "Markdown Preview"
             },
             {
+                "command": "tools:y-latex-to-markdown-math",
+                "title": "LaTeX → Markdown Math"
+            },
+            {
                 "command": "tools:y-todo",
                 "title": "y-todo",
                 "icon": "$(checklist)"
