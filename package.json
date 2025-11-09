@@ -131,6 +131,10 @@
                 "title": "guid"
             },
             {
+                "command": "tools:y-guid-same",
+                "title": "guid same"
+            },
+            {
                 "command": "tools:y-current-time",
                 "title": "Current Time"
             },
@@ -357,6 +361,10 @@
             {
                 "command": "tools:y-random-hex",
                 "title": "random hex"
+            },
+            {
+                "command": "tools:y-random-hex-same",
+                "title": "random hex same"
             },
             {
                 "command": "tools:y-sequence-number-1",

@@ -266,6 +266,16 @@ export const tool_commands = [
         }
     },
     {
+        id: 'y-guid-same',
+        label: 'guid same',
+        async action(ed) {
+            const value = await guid()
+            editText(ed, { insert: true }, async () => {
+                return value
+            })
+        }
+    },
+    {
         id: 'y-current-time',
         label: 'Current Time',
         async action(ed) {
@@ -801,6 +811,16 @@ export const tool_commands = [
         async action(ed) {
             editText(ed, { insert: true, handleEmptySelection: true, }, async () => {
                 return randomHex()
+            })
+        },
+    },
+    {
+        id: "y-random-hex-same",
+        label: "random hex same",
+        async action(ed) {
+            const value = randomHex()
+            editText(ed, { insert: true, handleEmptySelection: true, }, async () => {
+                return value
             })
         },
     },
