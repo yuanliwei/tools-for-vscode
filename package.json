@@ -530,20 +530,20 @@
         "test": "node ./test/runTest.js"
     },
     "devDependencies": {
-        "@types/node": "^24.0.1",
-        "@types/vscode": "^1.101.0"
+        "@types/node": "^25.0.3",
+        "@types/vscode": "^1.107.0"
     },
     "dependencies": {
-        "dayjs": "^1.11.13",
+        "dayjs": "^1.11.19",
         "extract-json-from-string-y": "^1.0.3",
-        "extract-types": "^1.0.1",
+        "extract-types": "^1.1.0",
         "flat": "^6.0.1",
         "he": "^1.2.0",
         "js-beautify": "^1.15.4",
         "json-info": "^1.1.2",
         "markdown-it": "^14.1.0",
         "nzh": "^1.0.14",
-        "string-width": "^7.2.0",
+        "string-width": "^8.1.0",
         "table": "^6.9.0",
         "vkbeautify": "^0.99.3"
     }
