@@ -235,6 +235,10 @@
                 "title": "JSON Ascii Table"
             },
             {
+                "command": "tools:y-json-limit-depth",
+                "title": "JSON Limit Depth"
+            },
+            {
                 "command": "tools:y-codec-normalize-json",
                 "title": "normalize JSON"
             },
