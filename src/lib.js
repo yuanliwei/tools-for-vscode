@@ -1122,3 +1122,66 @@ export function parseChatPrompts(content) {
 
 export const CHAT_PLACEHOLDER_SELECTION = '{SELECTION}'
 
+/**
+ * @param {any} o
+ * @param {number} maxDepth
+ */
+export function stringifyWithDepth(o, maxDepth = 3) {
+    let s = JSON.stringify(o)
+    let i = 0
+    let deep = 0
+    let format = ''
+    while (i < s.length) {
+        let c = s[i]
+
+        if (['{', '['].includes(c)) {
+            deep++
+            format += c
+            i++
+
+            // 只在深度限制内进行格式化
+            if (deep < maxDepth) {
+                format += '\n' + ' '.repeat(deep * 4)
+            }
+            continue
+        }
+
+        if (['}', ']'].includes(c)) {
+            // 只在深度限制内添加换行和缩进
+            if (deep < maxDepth && deep > 0) {
+                format += '\n' + ' '.repeat((deep - 1) * 4)
+            }
+            deep = Math.max(0, deep - 1) // 防止负数
+            format += c
+            i++
+            continue
+        }
+
+        if ('\\' == c) {
+            format += c
+            i++
+            if (i < s.length) { // 边界检查
+                c = s[i]
+                format += c
+                i++
+            }
+            continue
+        }
+
+        // 处理逗号
+        if (',' === c) {
+            format += c
+            i++
+            // 只在深度限制内添加换行和缩进
+            if (deep < maxDepth) {
+                format += '\n' + ' '.repeat(deep * 4)
+            }
+            continue
+        }
+
+        // 普通字符
+        format += c
+        i++
+    }
+    return format
+}

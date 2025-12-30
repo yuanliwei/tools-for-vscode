@@ -150,6 +150,15 @@ export async function getInputRepeatCount() {
     return num
 }
 
+export async function getInputParseJsonDepth() {
+    let depth = await window.showInputBox({
+        placeHolder: 'depth number',
+        prompt: '输入JSON解析深度',
+        value: '2',
+    })
+    return depth
+}
+
 export async function getInputSeparator() {
     let separator = await window.showInputBox({
         placeHolder: '.: ,></?][{}-=_+',

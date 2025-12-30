@@ -1,6 +1,6 @@
 import { commands, ProgressLocation, window } from 'vscode'
-import { setupTranslateHoverProvider, getAllText, getInputSeparator, getInputStartNumber, getRegexpText, getSelectText, registerDocumentFormattingEditProviderCSS, setupTimeFormatHoverProvider, getInputRepeatCount, previewHTML, editText, animationEditInVSCode, runCommandInTerminal, getChatPrompt, runWithLoading, previewMarkdownText, registerMarkdownPreviewTextDocumentContentProvider } from './lib.view.js'
-import { addLineNumber, addLineNumberFromInput, addLineNumberWithSeparator, asciitable, CHAT_PLACEHOLDER_SELECTION, chatgpt, cleanAnsiEscapeCodes, cleanDiffChange, commentAlign, currentTime, currentTimeShort, cursorAlign, decodeBase64, decodeHex, decodeHtml, decodeNative, decodeUnescape, decodeUnicode, decodeUri, encodeBase64, encodeEscape, encodeHex, encodeHtml, encodeNative, encodeUnicode, encodeUri, escapeSimple, escapeWithcrlf, evalPrint, extractTypesFromString, firstLetterLowercase, firstLetterUppercase, formatBytes, formatCSS, formatJS, formatJSON, formatMultiLineComment, formatSQL, formatTime, formatXML, guid, jsonDeepParse, lineGroupDuplicate, lineRemoveDuplicate, lineRemoveEmpty, lineRemoveExcludeSelect, lineRemoveIncludeSelect, lineRemoveMatchRegexp, lineRemoveNotMatchRegexp, lineReverse, lineSortAsc, lineSortDesc, lineSortNumber, lineSortRandom, lineTrim, lineTrimLeft, lineTrimRight, markdownToHtml, md5, minCSS, minJSON, minSQL, minXML, nameGenerateGet, nzhCnEncodeB, nzhCnEncodeS, parseJSON, parseJSONInfo, parseTime, randomHex, randomNumber, rearrangeJsonKey, separatorHumpToUnderline, separatorUnderlineToHump, sha1, sha256, sha512, sleep, stringify, todo, translate } from './lib.js'
+import { setupTranslateHoverProvider, getAllText, getInputSeparator, getInputStartNumber, getRegexpText, getSelectText, registerDocumentFormattingEditProviderCSS, setupTimeFormatHoverProvider, getInputRepeatCount, previewHTML, editText, animationEditInVSCode, runCommandInTerminal, getChatPrompt, runWithLoading, previewMarkdownText, registerMarkdownPreviewTextDocumentContentProvider, getInputParseJsonDepth } from './lib.view.js'
+import { addLineNumber, addLineNumberFromInput, addLineNumberWithSeparator, asciitable, CHAT_PLACEHOLDER_SELECTION, chatgpt, cleanAnsiEscapeCodes, cleanDiffChange, commentAlign, currentTime, currentTimeShort, cursorAlign, decodeBase64, decodeHex, decodeHtml, decodeNative, decodeUnescape, decodeUnicode, decodeUri, encodeBase64, encodeEscape, encodeHex, encodeHtml, encodeNative, encodeUnicode, encodeUri, escapeSimple, escapeWithcrlf, evalPrint, extractTypesFromString, firstLetterLowercase, firstLetterUppercase, formatBytes, formatCSS, formatJS, formatJSON, formatMultiLineComment, formatSQL, formatTime, formatXML, guid, jsonDeepParse, lineGroupDuplicate, lineRemoveDuplicate, lineRemoveEmpty, lineRemoveExcludeSelect, lineRemoveIncludeSelect, lineRemoveMatchRegexp, lineRemoveNotMatchRegexp, lineReverse, lineSortAsc, lineSortDesc, lineSortNumber, lineSortRandom, lineTrim, lineTrimLeft, lineTrimRight, markdownToHtml, md5, minCSS, minJSON, minSQL, minXML, nameGenerateGet, nzhCnEncodeB, nzhCnEncodeS, parseJSON, parseJSONInfo, parseTime, randomHex, randomNumber, rearrangeJsonKey, separatorHumpToUnderline, separatorUnderlineToHump, sha1, sha256, sha512, sleep, stringify, stringifyWithDepth, todo, translate } from './lib.js'
 import { appConfigChatUrl, appConfigTranslateUrl, extensionContext } from './config.js'
 import { evalParser, extractJsonFromString } from 'extract-json-from-string-y'
 
@@ -511,6 +511,21 @@ export const tool_commands = [
             editText(ed, { append: true }, async (text) => {
                 let list = await evalParser(text)
                 return asciitable(list)
+            })
+        }
+    },
+    {
+        id: 'y-json-limit-depth',
+        label: 'JSON Limit Depth',
+        async action(ed) {
+            editText(ed, {}, async (text) => {
+                let list = await evalParser(text)
+                let value = await getInputParseJsonDepth()
+                if (!value) {
+                    return
+                }
+                let deep = parseInt(value)
+                return stringifyWithDepth(list, deep)
             })
         }
     },
