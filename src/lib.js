@@ -509,13 +509,33 @@ export async function formatTime(text) {
 /**
  * @param {string} text
  */
-export async function parseTime(text) {
+export async function parseTimeMillisStr(text) {
     let textTrim = text.trim()
-    let millis = new Date(textTrim).getTime()
+    let millis = parseTime(textTrim)
+    if (millis > 0) {
+        return String(millis)
+    }
+    millis = new Date(textTrim).getTime()
     if (!isNaN(millis)) {
-        return '' + millis
+        return String(millis)
     }
     return text
+}
+
+/**
+ * 解析时间字符串
+ * @param {string} str
+ */
+export function parseTime(str) {
+    let m = str.match(/\d\d\d\d-\d\d-\d\d \d\d:\d\d:\d\d\.\d\d\d/)
+    if (m) {
+        return dayjs(m[0]).toDate().getTime()
+    }
+    m = str.match(/\d\d-\d\d-\d\d \d\d:\d\d:\d\d\.\d\d\d/)
+    if (m) {
+        return dayjs(`20${m[0]}`).toDate().getTime()
+    }
+    return 0
 }
 
 /**
@@ -1121,6 +1141,93 @@ export function parseChatPrompts(content) {
 }
 
 export const CHAT_PLACEHOLDER_SELECTION = '{SELECTION}'
+
+/**
+ * 按时间分组（带持续时间标记）
+ * @param {string} text
+ * @param {number} duration
+ */
+export async function lineGroupTime(text, duration) {
+    let lines = text.split(/\r?\n/)
+    let arr = []
+    let lastTime = 0
+    for (const line of lines) {
+        let time = parseTime(line)
+        if (time - lastTime > duration) {
+            arr.push(`\n\n    ######## wait duration : ${time - lastTime}`)
+        }
+        if (time > 0) {
+            lastTime = time
+        }
+        arr.push(line)
+    }
+    return arr.join('\n')
+}
+
+/**
+ * 按时间打包统计
+ * @param {string} text
+ * @param {number} duration
+ */
+export async function linePackTime(text, duration) {
+    let lines = text.split(/\r?\n/)
+    let arr = []
+    let lastTime = 0
+    let time = 0
+    let count = 0
+    for (const line of lines) {
+        time = parseTime(line)
+        if (time <= 0) {
+            continue
+        }
+        count++
+        if (time - lastTime > duration) {
+            arr.push(`${dayjs(lastTime).format('YYYY-MM-DD HH:mm:ss.SSS')} ~ ${dayjs(time).format('YYYY-MM-DD HH:mm:ss.SSS')} ·: ${count}`)
+            lastTime = time
+            count = 0
+        }
+    }
+    if (count > 0) {
+        arr.push(`${dayjs(lastTime).format('YYYY-MM-DD HH:mm:ss.SSS')} ~ ${dayjs(time).format('YYYY-MM-DD HH:mm:ss.SSS')} ·: ${count}`)
+    }
+    return arr.join('\n')
+}
+
+/**
+ * 添加行号
+ * @param {number} startNumber
+ * @param {string} text
+ */
+export async function lineAddNumber(startNumber, text) {
+    let lines = text.split('\n')
+    return lines.map((line, index) => `${startNumber + index} ${line}`).join('\n')
+}
+
+/**
+ * 删除行号
+ * @param {string} text
+ */
+export async function lineRemoveNumber(text) {
+    return text.replace(/^\s*\d+\s+/gm, '')
+}
+
+/**
+ * JWT Token 解码
+ * @param {string} text
+ */
+export async function jwtDecode(text) {
+    try {
+        let parts = text.trim().split('.')
+        if (parts.length !== 3) {
+            return 'Invalid JWT format'
+        }
+        let header = JSON.parse(Buffer.from(parts[0], 'base64').toString())
+        let payload = JSON.parse(Buffer.from(parts[1], 'base64').toString())
+        return JSON.stringify({ header, payload }, null, 2)
+    } catch (error) {
+        return `Error: ${error.message}`
+    }
+}
 
 /**
  * @param {any} o

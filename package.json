@@ -127,6 +127,14 @@
                 "title": "Line Repeat"
             },
             {
+                "command": "tools:y-line-group-time",
+                "title": "Line Group Time"
+            },
+            {
+                "command": "tools:y-line-pack-time",
+                "title": "Line Pack Time"
+            },
+            {
                 "command": "tools:y-guid",
                 "title": "guid"
             },
@@ -339,6 +347,10 @@
                 "title": "Decode unescape"
             },
             {
+                "command": "tools:y-jwt-decode",
+                "title": "JWT Decode"
+            },
+            {
                 "command": "tools:y-translate-markdown-to-html",
                 "title": "Translate markdown to html"
             },
@@ -473,6 +485,14 @@
             {
                 "command": "tools:y-fill-space",
                 "title": "fill space"
+            },
+            {
+                "command": "tools:y-line-number-remove",
+                "title": "Line Number Remove"
+            },
+            {
+                "command": "tools:y-line-number-add",
+                "title": "Line Number Add"
             },
             {
                 "command": "tools:y-cursors-drop",

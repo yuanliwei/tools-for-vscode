@@ -128,11 +128,12 @@ export async function getRegexpText() {
 export async function getInputStartNumber() {
     let startNum = await window.showInputBox({
         placeHolder: 'start num',
-        prompt: '输入开始数字'
+        prompt: '输入开始数字',
+        value: '1',
     })
     let num = parseInt(startNum)
     if (isNaN(num)) {
-        return 1
+        return null
     }
     return num
 }
@@ -167,10 +168,26 @@ export async function getInputSeparator() {
     return separator
 }
 
+export async function getInputDuration() {
+    let durationStr = await window.showInputBox({
+        placeHolder: 'duration',
+        prompt: '输入持续时间（毫秒）',
+        value: '300',
+    })
+    if (!durationStr) {
+        return null
+    }
+    let duration = parseInt(durationStr)
+    if (isNaN(duration)) {
+        return 300
+    }
+    return duration
+}
+
 /**
- * 
- * @param {string} title 
- * @param {Function} func 
+ *
+ * @param {string} title
+ * @param {Function} func
  */
 export async function runWithLoading(title, func) {
     return window.withProgress({ location: ProgressLocation.Notification, title }, async () => {

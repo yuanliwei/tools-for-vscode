@@ -1,6 +1,6 @@
 import { commands, ProgressLocation, window } from 'vscode'
-import { setupTranslateHoverProvider, getAllText, getInputSeparator, getInputStartNumber, getRegexpText, getSelectText, registerDocumentFormattingEditProviderCSS, setupTimeFormatHoverProvider, getInputRepeatCount, previewHTML, editText, animationEditInVSCode, runCommandInTerminal, getChatPrompt, runWithLoading, previewMarkdownText, registerMarkdownPreviewTextDocumentContentProvider, getInputParseJsonDepth } from './lib.view.js'
-import { addLineNumber, addLineNumberFromInput, addLineNumberWithSeparator, asciitable, CHAT_PLACEHOLDER_SELECTION, chatgpt, cleanAnsiEscapeCodes, cleanDiffChange, commentAlign, currentTime, currentTimeShort, cursorAlign, decodeBase64, decodeHex, decodeHtml, decodeNative, decodeUnescape, decodeUnicode, decodeUri, encodeBase64, encodeEscape, encodeHex, encodeHtml, encodeNative, encodeUnicode, encodeUri, escapeSimple, escapeWithcrlf, evalPrint, extractTypesFromString, firstLetterLowercase, firstLetterUppercase, formatBytes, formatCSS, formatJS, formatJSON, formatMultiLineComment, formatSQL, formatTime, formatXML, guid, jsonDeepParse, lineGroupDuplicate, lineRemoveDuplicate, lineRemoveEmpty, lineRemoveExcludeSelect, lineRemoveIncludeSelect, lineRemoveMatchRegexp, lineRemoveNotMatchRegexp, lineReverse, lineSortAsc, lineSortDesc, lineSortNumber, lineSortRandom, lineTrim, lineTrimLeft, lineTrimRight, markdownToHtml, md5, minCSS, minJSON, minSQL, minXML, nameGenerateGet, nzhCnEncodeB, nzhCnEncodeS, parseJSON, parseJSONInfo, parseTime, randomHex, randomNumber, rearrangeJsonKey, separatorHumpToUnderline, separatorUnderlineToHump, sha1, sha256, sha512, sleep, stringify, stringifyWithDepth, todo, translate } from './lib.js'
+import { setupTranslateHoverProvider, getAllText, getInputSeparator, getInputStartNumber, getRegexpText, getSelectText, registerDocumentFormattingEditProviderCSS, setupTimeFormatHoverProvider, getInputRepeatCount, getInputDuration, previewHTML, editText, animationEditInVSCode, runCommandInTerminal, getChatPrompt, runWithLoading, previewMarkdownText, registerMarkdownPreviewTextDocumentContentProvider, getInputParseJsonDepth } from './lib.view.js'
+import { addLineNumber, addLineNumberFromInput, addLineNumberWithSeparator, asciitable, CHAT_PLACEHOLDER_SELECTION, chatgpt, cleanAnsiEscapeCodes, cleanDiffChange, commentAlign, currentTime, currentTimeShort, cursorAlign, decodeBase64, decodeHex, decodeHtml, decodeNative, decodeUnescape, decodeUnicode, decodeUri, encodeBase64, encodeEscape, encodeHex, encodeHtml, encodeNative, encodeUnicode, encodeUri, escapeSimple, escapeWithcrlf, evalPrint, extractTypesFromString, firstLetterLowercase, firstLetterUppercase, formatBytes, formatCSS, formatJS, formatJSON, formatMultiLineComment, formatSQL, formatTime, formatXML, guid, jwtDecode, jsonDeepParse, lineGroupDuplicate, lineGroupTime, linePackTime, lineRemoveDuplicate, lineRemoveEmpty, lineRemoveExcludeSelect, lineRemoveIncludeSelect, lineRemoveMatchRegexp, lineRemoveNotMatchRegexp, lineRemoveNumber, lineReverse, lineSortAsc, lineSortDesc, lineSortNumber, lineSortRandom, lineTrim, lineTrimLeft, lineTrimRight, markdownToHtml, md5, minCSS, minJSON, minSQL, minXML, nameGenerateGet, nzhCnEncodeB, nzhCnEncodeS, parseJSON, parseJSONInfo, parseTime, randomHex, randomNumber, rearrangeJsonKey, separatorHumpToUnderline, separatorUnderlineToHump, sha1, sha256, sha512, sleep, stringify, stringifyWithDepth, todo, translate, parseTimeMillisStr, lineAddNumber } from './lib.js'
 import { appConfigChatUrl, appConfigTranslateUrl, extensionContext } from './config.js'
 import { evalParser, extractJsonFromString } from 'extract-json-from-string-y'
 
@@ -257,6 +257,28 @@ export const tool_commands = [
         }
     },
     {
+        id: "y-line-group-time",
+        label: "Line Group Time",
+        async action(ed) {
+            let duration = await getInputDuration()
+            if (!duration) return
+            editText(ed, {}, async (text) => {
+                return await lineGroupTime(text, duration)
+            })
+        }
+    },
+    {
+        id: "y-line-pack-time",
+        label: "Line Pack Time",
+        async action(ed) {
+            let duration = await getInputDuration()
+            if (!duration) return
+            editText(ed, {}, async (text) => {
+                return await linePackTime(text, duration)
+            })
+        }
+    },
+    {
         id: 'y-guid',
         label: 'guid',
         async action(ed) {
@@ -316,7 +338,7 @@ export const tool_commands = [
         label: 'Parse Time',
         async action(ed) {
             editText(ed, {}, async (text) => {
-                return await parseTime(text)
+                return await parseTimeMillisStr(text)
             })
         }
     },
@@ -757,6 +779,15 @@ export const tool_commands = [
         }
     },
     {
+        id: "y-jwt-decode",
+        label: "JWT Decode",
+        async action(ed) {
+            editText(ed, {}, async (text) => {
+                return await jwtDecode(text)
+            })
+        }
+    },
+    {
         id: "y-translate-markdown-to-html",
         label: "Translate markdown to html",
         async action(ed) {
@@ -907,6 +938,26 @@ export const tool_commands = [
                 return ' '.repeat(text.length)
             })
         },
+    },
+    {
+        id: "y-line-number-remove",
+        label: "Line Number Remove",
+        async action(ed) {
+            editText(ed, {}, async (text) => {
+                return await lineRemoveNumber(text)
+            })
+        }
+    },
+    {
+        id: "y-line-number-add",
+        label: "Line Number Add",
+        async action(ed) {
+            let startNumber = await getInputStartNumber()
+            if (startNumber === null) return
+            editText(ed, {}, async (text) => {
+                return await lineAddNumber(startNumber, text)
+            })
+        }
     },
     {
         id: "y-cursors-drop",
