@@ -1297,14 +1297,5 @@ export function stringifyWithDepth(o, maxDepth = 3) {
  * @param {string} text
  */
 export async function fillSpace(text) {
-    let result = ''
-    for (let char of text) {
-        // 宽字符（中文、全角等）补两个空格，窄字符补一个空格
-        if (stringWidth(char) > 1) {
-            result += '  '
-        } else {
-            result += ' '
-        }
-    }
-    return result
+    return ' '.repeat(stringWidth(text))
 }
