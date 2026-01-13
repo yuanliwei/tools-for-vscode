@@ -1238,36 +1238,16 @@ export function stringifyWithDepth(o, maxDepth = 3) {
     let i = 0
     let deep = 0
     let format = ''
+    let inString = false  // Track if we're inside a JSON string
+
     while (i < s.length) {
         let c = s[i]
 
-        if (['{', '['].includes(c)) {
-            deep++
+        // Handle escape sequences first
+        if ('\\' === c) {
             format += c
             i++
-
-            // 只在深度限制内进行格式化
-            if (deep < maxDepth) {
-                format += '\n' + ' '.repeat(deep * 4)
-            }
-            continue
-        }
-
-        if (['}', ']'].includes(c)) {
-            // 只在深度限制内添加换行和缩进
-            if (deep < maxDepth && deep > 0) {
-                format += '\n' + ' '.repeat((deep - 1) * 4)
-            }
-            deep = Math.max(0, deep - 1) // 防止负数
-            format += c
-            i++
-            continue
-        }
-
-        if ('\\' == c) {
-            format += c
-            i++
-            if (i < s.length) { // 边界检查
+            if (i < s.length) {
                 c = s[i]
                 format += c
                 i++
@@ -1275,18 +1255,54 @@ export function stringifyWithDepth(o, maxDepth = 3) {
             continue
         }
 
-        // 处理逗号
-        if (',' === c) {
+        // Track string boundaries
+        if ('"' === c) {
+            inString = !inString
             format += c
             i++
-            // 只在深度限制内添加换行和缩进
-            if (deep < maxDepth) {
-                format += '\n' + ' '.repeat(deep * 4)
-            }
             continue
         }
 
-        // 普通字符
+        // Only process structural characters when not inside strings
+        if (!inString) {
+            if (['{', '['].includes(c)) {
+                deep++
+                format += c
+                i++
+
+                if (deep < maxDepth) {
+                    format += '\n' + ' '.repeat(deep * 4)
+                }
+                continue
+            }
+
+            if (['}', ']'].includes(c)) {
+                if (deep < maxDepth && deep > 0) {
+                    format += '\n' + ' '.repeat((deep - 1) * 4)
+                }
+                deep = Math.max(0, deep - 1)
+                format += c
+                i++
+                continue
+            }
+
+            if (':' === c) {
+                format += ':'  // Add space after colon
+                i++
+                continue
+            }
+
+            if (',' === c) {
+                format += c
+                i++
+                if (deep < maxDepth) {
+                    format += '\n' + ' '.repeat(deep * 4)
+                }
+                continue
+            }
+        }
+
+        // Regular characters (including commas inside strings)
         format += c
         i++
     }
