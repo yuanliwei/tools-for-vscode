@@ -538,25 +538,47 @@
                 "command": "tools:y-todo",
                 "title": "y-todo",
                 "icon": "$(checklist)"
+            },
+            {
+                "command": "tools:y-generate-commit-message",
+                "title": "%commands.yGenerateCommitMessage.title%",
+                "icon": "$(sparkle)"
             }
         ],
         "configuration": {
             "type": "object",
             "title": "Tools",
             "properties": {
-                "tools.translate_url": {
+                "tools.url_translate": {
                     "type": "string",
                     "default": "",
                     "description": "翻译 url"
                 },
-                "tools.chat_url": {
+                "tools.url_chat": {
                     "type": "string",
                     "default": "",
-                    "description": "chat url"
+                    "description": "url chat"
+                },
+                "tools.url_generate_commit_message": {
+                    "type": "string",
+                    "default": "",
+                    "description": "url generate commit message"
                 }
             }
+        },
+        "menus": {
+            "scm/title": [
+                {
+                    "command": "tools:y-generate-commit-message",
+                    "group": "navigation@-3000",
+                    "when": "scmProvider == git"
+                }
+            ]
         }
     },
+    "extensionDependencies": [
+        "vscode.git"
+    ],
     "scripts": {
         "dev": "node --watch-path=src src/dev.js",
         "test": "node ./test/runTest.js"

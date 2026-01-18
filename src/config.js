@@ -8,23 +8,34 @@ export function appConfig() {
     return workspace.getConfiguration('tools')
 }
 
-export async function appConfigTranslateUrl() {
-    let url = appConfig().get('translate_url')
+export async function appConfigUrlTranslate() {
+    let url = appConfig().get('url_translate')
     if (!url) {
-        let button = await window.showInformationMessage("没有配置 translate_url", "打开设置")
+        let button = await window.showInformationMessage("没有配置 url_translate", "打开设置")
         if (button == "打开设置") {
-            commands.executeCommand('workbench.action.openSettings', 'tools.translate_url')
+            commands.executeCommand('workbench.action.openSettings', 'tools.url_translate')
         }
     }
     return url
 }
 
-export async function appConfigChatUrl() {
-    let url = appConfig().get('chat_url')
+export async function appConfigUrlChat() {
+    let url = appConfig().get('url_chat')
     if (!url) {
-        let button = await window.showInformationMessage("没有配置 chat_url", "打开设置")
+        let button = await window.showInformationMessage("没有配置 url_chat", "打开设置")
         if (button == "打开设置") {
-            commands.executeCommand('workbench.action.openSettings', 'tools.chat_url')
+            commands.executeCommand('workbench.action.openSettings', 'tools.url_chat')
+        }
+    }
+    return url
+}
+
+export async function appConfigUrlGenerateCommitMessage() {
+    let url = appConfig().get('url_generate_commit_message')
+    if (!url) {
+        let button = await window.showInformationMessage("没有配置 url_generate_commit_message", "打开设置")
+        if (button == "打开设置") {
+            commands.executeCommand('workbench.action.openSettings', 'tools.url_generate_commit_message')
         }
     }
     return url
@@ -33,5 +44,5 @@ export async function appConfigChatUrl() {
 /** @type{{context:ExtensionContext,translateDisposable:Disposable}} */
 export const extensionContext = {
     context: null,
-    translateDisposable: null,
+    translateDisposable: null
 }

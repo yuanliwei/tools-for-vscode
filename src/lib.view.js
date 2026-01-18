@@ -1,10 +1,11 @@
-import { appConfigTranslateUrl, extensionContext } from './config.js'
+import {  appConfigUrlGenerateCommitMessage, appConfigUrlTranslate, extensionContext } from './config.js'
 import { formatCSS, formatTime, getWebviewContent, parseChatPrompts, translate } from './lib.js'
-import { languages, Position, TextEdit, Range, window, Hover, ProgressLocation, ViewColumn, Selection, workspace, commands, Uri, WorkspaceEdit, env } from 'vscode'
+import { languages, Position, TextEdit, Range, window, Hover, ProgressLocation, ViewColumn, Selection, workspace, commands, Uri, WorkspaceEdit, env, extensions } from 'vscode'
 
 /**
  * @import { DocumentSelector, ExtensionContext,  TextDocument, TextEditor, QuickPickItem } from 'vscode'
  * @import {CHAT_PROMPT, EditCallback, EditOptions} from './types.js'
+ * @import {GitApi} from './types-git-api.js'
  */
 
 
@@ -43,7 +44,7 @@ export function setupTranslateHoverProvider(context) {
             if (!extensionContext.translateDisposable) { return }
             let editor = window.activeTextEditor
             if (!editor) { return }
-            let url = await appConfigTranslateUrl()
+            let url = await appConfigUrlTranslate()
             if (!url) { return }
             let selection = editor.selection
             if (selection.isEmpty) {
@@ -523,4 +524,58 @@ export async function showTextInNewEditor(text, language = 'plaintext') {
 export async function copyTextToClipboard(text) {
     await env.clipboard.writeText(text)
     window.showInformationMessage("诊断信息已复制到剪贴板",)
+}
+
+export async function generateCommitMessage() {
+    const gitExtension = extensions.getExtension('vscode.git')
+    if (!gitExtension) {
+        window.showErrorMessage('Git 扩展未安装')
+        return
+    }
+    await gitExtension.activate()
+    /** @type{GitApi} */
+    const git = gitExtension.exports.getAPI(1)
+    const repository = git.repositories.at(0)
+    if (!repository) {
+        window.showErrorMessage('未找到 Git 仓库')
+        return
+    }
+
+    let diffText = ''
+    if (repository.state.indexChanges.length > 0) {
+        const uris = repository.state.indexChanges.map(change => change.uri)
+        for (const uri of uris) {
+            const diff = await repository.diff(uri, 'HEAD')
+            if (diff) {
+                diffText += diff + '\n'
+            }
+        }
+    }
+
+    if (!diffText.trim()) {
+        window.showInformationMessage('没有更改，无法生成提交消息')
+        return
+    }
+
+    try {
+        let urlGenerateCommitMessage = await appConfigUrlGenerateCommitMessage()
+        if (!urlGenerateCommitMessage) {
+            return
+        }
+        const message = await fetch(urlGenerateCommitMessage, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                diff: diffText
+            })
+        }).then(res => res.text())
+
+        repository.inputBox.value = message
+        window.showInformationMessage('提交消息已生成')
+    } catch (error) {
+        console.error('生成提交消息失败:', error)
+        window.showErrorMessage(`生成提交消息失败: ${error.message}`)
+    }
 }

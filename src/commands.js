@@ -1,7 +1,7 @@
 import { commands, ProgressLocation, window } from 'vscode'
-import { setupTranslateHoverProvider, getAllText, getInputSeparator, getInputStartNumber, getRegexpText, getSelectText, registerDocumentFormattingEditProviderCSS, setupTimeFormatHoverProvider, getInputRepeatCount, getInputDuration, previewHTML, editText, animationEditInVSCode, runCommandInTerminal, getChatPrompt, runWithLoading, previewMarkdownText, registerMarkdownPreviewTextDocumentContentProvider, getInputParseJsonDepth, getAllDiagnostics, getActiveEditorDiagnostics, copyTextToClipboard } from './lib.view.js'
+import { setupTranslateHoverProvider, getAllText, getInputSeparator, getInputStartNumber, getRegexpText, getSelectText, registerDocumentFormattingEditProviderCSS, setupTimeFormatHoverProvider, getInputRepeatCount, getInputDuration, previewHTML, editText, animationEditInVSCode, runCommandInTerminal, getChatPrompt, runWithLoading, previewMarkdownText, registerMarkdownPreviewTextDocumentContentProvider, getInputParseJsonDepth, getAllDiagnostics, getActiveEditorDiagnostics, copyTextToClipboard, generateCommitMessage } from './lib.view.js'
 import { addLineNumber, addLineNumberFromInput, addLineNumberWithSeparator, asciitable, CHAT_PLACEHOLDER_SELECTION, chatgpt, cleanAnsiEscapeCodes, cleanDiffChange, commentAlign, currentTime, currentTimeShort, cursorAlign, decodeBase64, decodeHex, decodeHtml, decodeNative, decodeUnescape, decodeUnicode, decodeUri, encodeBase64, encodeEscape, encodeHex, encodeHtml, encodeNative, encodeUnicode, encodeUri, escapeSimple, escapeWithcrlf, evalPrint, extractTypesFromString, firstLetterLowercase, firstLetterUppercase, formatBytes, formatCSS, formatJS, formatJSON, formatMultiLineComment, formatSQL, formatTime, formatXML, guid, jwtDecode, jsonDeepParse, lineGroupDuplicate, lineGroupTime, linePackTime, lineRemoveDuplicate, lineRemoveEmpty, lineRemoveExcludeSelect, lineRemoveIncludeSelect, lineRemoveMatchRegexp, lineRemoveNotMatchRegexp, lineRemoveNumber, lineReverse, lineSortAsc, lineSortDesc, lineSortNumber, lineSortRandom, lineTrim, lineTrimLeft, lineTrimRight, markdownToHtml, md5, minCSS, minJSON, minSQL, minXML, nameGenerateGet, nzhCnEncodeB, nzhCnEncodeS, parseJSON, parseJSONInfo, randomHex, randomNumber, rearrangeJsonKey, separatorHumpToUnderline, separatorUnderlineToHump, sha1, sha256, sha512, sleep, stringify, stringifyWithDepth, todo, translate, parseTimeMillisStr, lineAddNumber, fillSpace } from './lib.js'
-import { appConfigChatUrl, appConfigTranslateUrl, extensionContext } from './config.js'
+import { appConfigUrlChat, appConfigUrlTranslate, extensionContext } from './config.js'
 import { evalParser, extractJsonFromString } from 'extract-json-from-string-y'
 
 /**
@@ -800,7 +800,7 @@ export const tool_commands = [
         id: "y-translate-translate-to-zh",
         label: "Translate translate to zh",
         async action(ed) {
-            let url = await appConfigTranslateUrl()
+            let url = await appConfigUrlTranslate()
             if (!url) return
             editText(ed, {}, async (text) => {
                 return await translate(url, 'zh', text)
@@ -811,7 +811,7 @@ export const tool_commands = [
         id: "y-translate-translate-to-en",
         label: "Translate translate to en",
         async action(ed) {
-            let url = await appConfigTranslateUrl()
+            let url = await appConfigUrlTranslate()
             if (!url) return
             editText(ed, {}, async (text) => {
                 return await translate(url, 'en', text)
@@ -1017,7 +1017,7 @@ export const tool_commands = [
         id: "y-chat-edit-prompts",
         label: "Chat Edit Prompts",
         async action(ed, args) {
-            let url = await appConfigChatUrl()
+            let url = await appConfigUrlChat()
             if (!url) return
             let prompt = await getChatPrompt()
             if (!prompt) return
@@ -1087,6 +1087,14 @@ export const tool_commands = [
             editText(ed, { append: true }, async (text) => {
                 return todo(text, args)
             })
+        },
+    },
+    {
+        id: "y-generate-commit-message",
+        label: "%commands.yGenerateCommitMessage.title%",
+        icon: '$(sparkle)',
+        async action(ed, args) {
+            generateCommitMessage()
         },
     },
 ]
