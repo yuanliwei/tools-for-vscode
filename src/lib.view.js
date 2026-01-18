@@ -464,7 +464,7 @@ export async function getAllDiagnostics() {
     let messages = []
     for (const [uri, diagnostic] of diagnostics) {
         messages.push(`文件: ${uri.toString()}`)
-        for (const diag of diagnostic) {
+        for (const diag of diagnostic.filter(d => d.severity < 2)) {
             messages.push(`  - ${diag.severity}: ${diag.message}`)
             messages.push(`    行: ${diag.range.start.line + 1}, 列: ${diag.range.start.character + 1}`)
             messages.push(`    来源: ${diag.source}`)
@@ -481,15 +481,16 @@ export async function getActiveEditorDiagnostics() {
     }
 
     const diagnostics = languages.getDiagnostics(activeEditor.document.uri)
+        .filter(d => d.severity < 2)
     let messages = []
 
     const errors = diagnostics.filter(d => d.severity === 0)
     const warnings = diagnostics.filter(d => d.severity === 1)
-    const infos = diagnostics.filter(d => d.severity === 2)
-    const hints = diagnostics.filter(d => d.severity === 3)
+    // const infos = diagnostics.filter(d => d.severity === 2)
+    // const hints = diagnostics.filter(d => d.severity === 3)
 
     messages.push(`文件: ${activeEditor.document.uri.toString()}`)
-    messages.push(`错误: ${errors.length}, 警告: ${warnings.length}, 信息: ${infos.length}, 提示: ${hints.length}`)
+    messages.push(`错误: ${errors.length}, 警告: ${warnings.length},`)
     messages.push('')
 
     for (const diag of diagnostics) {
