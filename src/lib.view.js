@@ -457,3 +457,62 @@ export async function previewMarkdownText(text) {
     // await commands.executeCommand('markdown.showPreview', markdownPreviewUri)
     await commands.executeCommand('markdown.showPreviewToSide', markdownPreviewUri)
 }
+
+export async function getAllDiagnostics() {
+    const diagnostics = languages.getDiagnostics()
+    let messages = []
+    for (const [uri, diagnostic] of diagnostics) {
+        messages.push(`文件: ${uri.toString()}`)
+        for (const diag of diagnostic) {
+            messages.push(`  - ${diag.severity}: ${diag.message}`)
+            messages.push(`    行: ${diag.range.start.line + 1}, 列: ${diag.range.start.character + 1}`)
+            messages.push(`    来源: ${diag.source}`)
+            messages.push(``)
+        }
+    }
+    return messages.join('\n')
+}
+
+export async function getActiveEditorDiagnostics() {
+    const activeEditor = window.activeTextEditor
+    if (!activeEditor) {
+        return '没有打开的活动编辑器'
+    }
+
+    const diagnostics = languages.getDiagnostics(activeEditor.document.uri)
+    let messages = []
+
+    const errors = diagnostics.filter(d => d.severity === 0)
+    const warnings = diagnostics.filter(d => d.severity === 1)
+    const infos = diagnostics.filter(d => d.severity === 2)
+    const hints = diagnostics.filter(d => d.severity === 3)
+
+    messages.push(`文件: ${activeEditor.document.uri.toString()}`)
+    messages.push(`错误: ${errors.length}, 警告: ${warnings.length}, 信息: ${infos.length}, 提示: ${hints.length}`)
+    messages.push('')
+
+    for (const diag of diagnostics) {
+        const severity = ['Error', 'Warning', 'Info', 'Hint'][diag.severity] || 'Unknown'
+        messages.push(`  - ${severity}: ${diag.message}`)
+        messages.push(`    行: ${diag.range.start.line + 1}, 列: ${diag.range.start.character + 1}`)
+        if (diag.source) {
+            messages.push(`    来源: ${diag.source}`)
+        }
+        messages.push('')
+    }
+
+    if (diagnostics.length === 0) {
+        messages.push('没有诊断信息')
+    }
+
+    return messages.join('\n')
+}
+
+/**
+ * @param {string} text
+ * @param {string} [language='plaintext']
+ */
+export async function showTextInNewEditor(text, language = 'plaintext') {
+    const doc = await workspace.openTextDocument({ language, content: text })
+    await window.showTextDocument(doc, ViewColumn.Beside)
+}

@@ -527,6 +527,14 @@
                 "title": "LaTeX → Markdown Math"
             },
             {
+                "command": "tools:y-diagnostics-all",
+                "title": "Diagnostics: All Files"
+            },
+            {
+                "command": "tools:y-diagnostics-active",
+                "title": "Diagnostics: Active Editor"
+            },
+            {
                 "command": "tools:y-todo",
                 "title": "y-todo",
                 "icon": "$(checklist)"
