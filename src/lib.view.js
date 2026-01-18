@@ -581,7 +581,6 @@ export async function generateCommitMessage() {
             content += decoder.decode(text)
             repository.inputBox.value = content
         }
-        window.showInformationMessage('提交消息已生成')
     } catch (error) {
         console.error('生成提交消息失败:', error)
         window.showErrorMessage(`生成提交消息失败: ${error.message}`)
