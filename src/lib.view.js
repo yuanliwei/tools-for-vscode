@@ -1,4 +1,4 @@
-import {  appConfigUrlGenerateCommitMessage, appConfigUrlTranslate, extensionContext } from './config.js'
+import { appConfigUrlGenerateCommitMessage, appConfigUrlTranslate, extensionContext } from './config.js'
 import { formatCSS, formatTime, getWebviewContent, parseChatPrompts, translate } from './lib.js'
 import { languages, Position, TextEdit, Range, window, Hover, ProgressLocation, ViewColumn, Selection, workspace, commands, Uri, WorkspaceEdit, env, extensions } from 'vscode'
 
@@ -562,7 +562,7 @@ export async function generateCommitMessage() {
         if (!urlGenerateCommitMessage) {
             return
         }
-        const message = await fetch(urlGenerateCommitMessage, {
+        const res = await fetch(urlGenerateCommitMessage, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -570,9 +570,17 @@ export async function generateCommitMessage() {
             body: JSON.stringify({
                 diff: diffText
             })
-        }).then(res => res.text())
-
-        repository.inputBox.value = message
+        })
+        if (res.status !== 200) {
+            throw new Error(`请求失败，状态码: ${res.status}: ${res.statusText}`)
+        }
+        let content = ''
+        repository.inputBox.value = '...生成中...'
+        let decoder = new TextDecoder()
+        for await (const text of res.body) {
+            content += decoder.decode(text)
+            repository.inputBox.value = content
+        }
         window.showInformationMessage('提交消息已生成')
     } catch (error) {
         console.error('生成提交消息失败:', error)
