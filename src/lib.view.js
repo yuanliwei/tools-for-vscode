@@ -521,9 +521,6 @@ export async function showTextInNewEditor(text, language = 'plaintext') {
  * @param {string} text
  */
 export async function copyTextToClipboard(text) {
-    const choice = await window.showInformationMessage(`诊断信息\n\n${text}`, "复制")
-    if (choice === "复制") {
-        await env.clipboard.writeText(text)
-        window.showInformationMessage("已复制到剪贴板", ).then(undefined, () => { })
-    }
+    await env.clipboard.writeText(text)
+    window.showInformationMessage("诊断信息已复制到剪贴板",)
 }
