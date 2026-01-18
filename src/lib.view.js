@@ -562,6 +562,7 @@ export async function generateCommitMessage() {
         if (!urlGenerateCommitMessage) {
             return
         }
+        repository.inputBox.value = '...生成中...'
         const res = await fetch(urlGenerateCommitMessage, {
             method: 'POST',
             headers: {
@@ -575,7 +576,6 @@ export async function generateCommitMessage() {
             throw new Error(`请求失败，状态码: ${res.status}: ${res.statusText}`)
         }
         let content = ''
-        repository.inputBox.value = '...生成中...'
         let decoder = new TextDecoder()
         for await (const text of res.body) {
             content += decoder.decode(text)
