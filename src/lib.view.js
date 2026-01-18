@@ -553,7 +553,7 @@ export async function generateCommitMessage() {
     }
 
     if (!diffText.trim()) {
-        window.showInformationMessage('没有更改，无法生成提交消息')
+        repository.inputBox.value = '没有更改，无法生成提交消息'
         return
     }
 
@@ -583,6 +583,7 @@ export async function generateCommitMessage() {
         }
     } catch (error) {
         console.error('生成提交消息失败:', error)
+        repository.inputBox.value = `生成提交消息失败: ${error.message}`
         window.showErrorMessage(`生成提交消息失败: ${error.message}`)
     }
 }
