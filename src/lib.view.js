@@ -1,6 +1,6 @@
 import { appConfigTranslateUrl, extensionContext } from './config.js'
 import { formatCSS, formatTime, getWebviewContent, parseChatPrompts, translate } from './lib.js'
-import { languages, Position, TextEdit, Range, window, Hover, ProgressLocation, ViewColumn, Selection, workspace, commands, Uri, WorkspaceEdit, } from 'vscode'
+import { languages, Position, TextEdit, Range, window, Hover, ProgressLocation, ViewColumn, Selection, workspace, commands, Uri, WorkspaceEdit, env } from 'vscode'
 
 /**
  * @import { DocumentSelector, ExtensionContext,  TextDocument, TextEditor, QuickPickItem } from 'vscode'
@@ -515,4 +515,15 @@ export async function getActiveEditorDiagnostics() {
 export async function showTextInNewEditor(text, language = 'plaintext') {
     const doc = await workspace.openTextDocument({ language, content: text })
     await window.showTextDocument(doc, ViewColumn.Beside)
+}
+
+/**
+ * @param {string} text
+ */
+export async function copyTextToClipboard(text) {
+    const choice = await window.showInformationMessage(`诊断信息\n\n${text}`, "复制")
+    if (choice === "复制") {
+        await env.clipboard.writeText(text)
+        window.showInformationMessage("已复制到剪贴板", ).then(undefined, () => { })
+    }
 }

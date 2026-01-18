@@ -34,3 +34,4 @@ export const Uri = {
     parse() { }
 }
 export const WorkspaceEdit = {}
+export const env = {}
