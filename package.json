@@ -576,9 +576,7 @@
             ]
         }
     },
-    "extensionDependencies": [
-        "vscode.git"
-    ],
+    "extensionDependencies": [],
     "scripts": {
         "dev": "node --watch-path=src src/dev.js",
         "test": "node ./test/runTest.js"
