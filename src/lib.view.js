@@ -463,8 +463,12 @@ export async function getAllDiagnostics() {
     const diagnostics = languages.getDiagnostics()
     let messages = []
     for (const [uri, diagnostic] of diagnostics) {
+        let diagnostics = diagnostic.filter(d => d.severity < 2)
+        if (diagnostics.length == 0) {
+            continue
+        }
         messages.push(`文件: ${uri.toString()}`)
-        for (const diag of diagnostic.filter(d => d.severity < 2)) {
+        for (const diag of diagnostics) {
             messages.push(`  - ${diag.severity}: ${diag.message}`)
             messages.push(`    行: ${diag.range.start.line + 1}, 列: ${diag.range.start.character + 1}`)
             messages.push(`    来源: ${diag.source}`)
