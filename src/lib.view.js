@@ -550,9 +550,20 @@ export async function generateCommitMessage() {
     if (repository.state.indexChanges.length > 0) {
         const uris = repository.state.indexChanges.map(change => change.uri)
         for (const uri of uris) {
-            const diff = await repository.diff(uri, 'HEAD')
-            if (diff) {
-                diffText += diff + '\n'
+            try {
+                let diff = await repository.diff(uri, 'HEAD')
+                if (diff) {
+                    const lines = diff.split('\n')
+                    if (lines.length > 500) {
+                        const head = lines.slice(0, 200).join('\n')
+                        const tail = lines.slice(-200).join('\n')
+                        diff = `${head}\n... (省略部分内容，差异过大)\n${tail}`
+                    }
+                    diffText += diff + '\n\n'
+                }
+            } catch (error) {
+                console.error(`Failed to generate diff for ${uri}:`, error)
+                diffText += `\n[Error generating diff for ${uri}]\n\n`
             }
         }
     }
