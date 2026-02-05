@@ -1,5 +1,5 @@
 import { commands, ProgressLocation, window } from 'vscode'
-import { setupTranslateHoverProvider, getAllText, getInputSeparator, getInputStartNumber, getRegexpText, getSelectText, registerDocumentFormattingEditProviderCSS, setupTimeFormatHoverProvider, getInputRepeatCount, getInputDuration, previewHTML, editText, animationEditInVSCode, runCommandInTerminal, getChatPrompt, runWithLoading, previewMarkdownText, registerMarkdownPreviewTextDocumentContentProvider, getInputParseJsonDepth, getAllDiagnostics, getActiveEditorDiagnostics, copyTextToClipboard, generateCommitMessage } from './lib.view.js'
+import { setupTranslateHoverProvider, getAllText, getInputSeparator, getInputStartNumber, getRegexpText, getSelectText, registerDocumentFormattingEditProviderCSS, setupTimeFormatHoverProvider, getInputRepeatCount, getInputDuration, previewHTML, editText, animationEditInVSCode, runCommandInTerminal, getChatPrompt, runWithLoading, previewMarkdownText, registerMarkdownPreviewTextDocumentContentProvider, getInputParseJsonDepth, getAllDiagnostics, getActiveEditorDiagnostics, copyTextToClipboard, generateCommitMessage, getActiveEditorContextText } from './lib.view.js'
 import { addLineNumber, addLineNumberFromInput, addLineNumberWithSeparator, asciitable, CHAT_PLACEHOLDER_SELECTION, chatgpt, cleanAnsiEscapeCodes, cleanDiffChange, commentAlign, currentTime, currentTimeShort, cursorAlign, decodeBase64, decodeHex, decodeHtml, decodeNative, decodeUnescape, decodeUnicode, decodeUri, encodeBase64, encodeEscape, encodeHex, encodeHtml, encodeNative, encodeUnicode, encodeUri, escapeSimple, escapeWithcrlf, evalPrint, extractTypesFromString, firstLetterLowercase, firstLetterUppercase, formatBytes, formatCSS, formatJS, formatJSON, formatMultiLineComment, formatSQL, formatTime, formatXML, guid, jwtDecode, jsonDeepParse, lineGroupDuplicate, lineGroupTime, linePackTime, lineRemoveDuplicate, lineRemoveEmpty, lineRemoveExcludeSelect, lineRemoveIncludeSelect, lineRemoveMatchRegexp, lineRemoveNotMatchRegexp, lineRemoveNumber, lineReverse, lineSortAsc, lineSortDesc, lineSortNumber, lineSortRandom, lineTrim, lineTrimLeft, lineTrimRight, markdownToHtml, md5, minCSS, minJSON, minSQL, minXML, nameGenerateGet, nzhCnEncodeB, nzhCnEncodeS, parseJSON, parseJSONInfo, randomHex, randomNumber, rearrangeJsonKey, separatorHumpToUnderline, separatorUnderlineToHump, sha1, sha256, sha512, sleep, stringify, stringifyWithDepth, todo, translate, parseTimeMillisStr, lineAddNumber, fillSpace } from './lib.js'
 import { appConfigUrlChat, appConfigUrlTranslate, extensionContext } from './config.js'
 import { evalParser, extractJsonFromString } from 'extract-json-from-string-y'
@@ -1071,6 +1071,14 @@ export const tool_commands = [
         label: "Diagnostics: Active Editor",
         async action(ed, args) {
             const result = await getActiveEditorDiagnostics()
+            await copyTextToClipboard(result)
+        },
+    },
+    {
+        id: "y-copy-ide-context",
+        label: "Copy IDE Context",
+        async action(ed, args) {
+            const result = await getActiveEditorContextText()
             await copyTextToClipboard(result)
         },
     },

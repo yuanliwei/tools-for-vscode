@@ -1,9 +1,9 @@
 import { appConfigUrlGenerateCommitMessage, appConfigUrlTranslate, extensionContext } from './config.js'
-import { formatCSS, formatTime, getWebviewContent, parseChatPrompts, translate } from './lib.js'
-import { languages, Position, TextEdit, Range, window, Hover, ProgressLocation, ViewColumn, Selection, workspace, commands, Uri, WorkspaceEdit, env, extensions } from 'vscode'
+import { anyType, formatCSS, formatTime, getWebviewContent, parseChatPrompts, translate } from './lib.js'
+import { languages, Position, TextEdit, Range, window, Hover, ProgressLocation, ViewColumn, Selection, workspace, commands, Uri, WorkspaceEdit, env, extensions, DiagnosticSeverity } from 'vscode'
 
 /**
- * @import { DocumentSelector, ExtensionContext,  TextDocument, TextEditor, QuickPickItem } from 'vscode'
+ * @import { DocumentSelector, ExtensionContext,  TextDocument, TextEditor, QuickPickItem, DocumentSymbol } from 'vscode'
  * @import {CHAT_PROMPT, EditCallback, EditOptions} from './types.js'
  * @import {GitApi} from './types-git-api.js'
  */
@@ -467,7 +467,7 @@ export async function getAllDiagnostics() {
         if (diagnostics.length == 0) {
             continue
         }
-        messages.push(`文件: ${uri.toString()}`)
+        messages.push(`文件: ${decodeURIComponent(uri.toString())}`)
         for (const diag of diagnostics) {
             messages.push(`  - ${diag.severity}: ${diag.message}`)
             messages.push(`    行: ${diag.range.start.line + 1}, 列: ${diag.range.start.character + 1}`)
@@ -493,7 +493,7 @@ export async function getActiveEditorDiagnostics() {
     // const infos = diagnostics.filter(d => d.severity === 2)
     // const hints = diagnostics.filter(d => d.severity === 3)
 
-    messages.push(`文件: ${activeEditor.document.uri.toString()}`)
+    messages.push(`文件: ${decodeURIComponent(activeEditor.document.uri.toString())}`)
     messages.push(`错误: ${errors.length}, 警告: ${warnings.length},`)
     messages.push('')
 
@@ -514,6 +514,145 @@ export async function getActiveEditorDiagnostics() {
     return messages.join('\n')
 }
 
+
+/**
+ * @typedef {Object} ContextOptions
+ * @property {number} [snippetLines] - 获取光标周围代码的行数，默认为上下各15行
+ */
+
+/**
+ * 获取vscode当前光标位置的详细上下文信息文本
+ * 用于给大模型提供任务背景说明
+ *
+ * @param {ContextOptions} [options={}]
+ * @returns {Promise<string>}
+ */
+export async function getActiveEditorContextText(options = {}) {
+    const activeEditor = window.activeTextEditor
+    if (!activeEditor) {
+        return '当前没有打开的活动编辑器。'
+    }
+
+    const document = activeEditor.document
+    const cursorPos = activeEditor.selection.active
+    const lineCount = document.lineCount
+
+    // 1. 基础元数据
+    const contextParts = []
+    contextParts.push(`### 文件信息`)
+    contextParts.push(`- **路径**: ${decodeURIComponent(document.uri.toString())}`)
+    contextParts.push(`- **语言**: ${document.languageId}`)
+    contextParts.push(`- **光标位置**: 第 ${cursorPos.line + 1} 行, 第 ${cursorPos.character + 1} 列`)
+    contextParts.push('')
+
+    // 2. 诊断信息 (Errors 和 Warnings)
+    const diagnostics = languages.getDiagnostics(document.uri)
+        .filter(d => d.severity === DiagnosticSeverity.Error || d.severity === DiagnosticSeverity.Warning)
+
+    // 优先显示当前行的错误
+    const relevantDiagnostics = diagnostics.filter(d => d.range.contains(cursorPos))
+    const otherDiagnostics = diagnostics.filter(d => !d.range.contains(cursorPos))
+
+    if (relevantDiagnostics.length > 0 || otherDiagnostics.length > 0) {
+        contextParts.push(`### 问题与诊断`)
+
+        if (relevantDiagnostics.length > 0) {
+            contextParts.push(`**当前行相关错误/警告:**`)
+            relevantDiagnostics.forEach(d => {
+                contextParts.push(`- [${d.severity === DiagnosticSeverity.Error ? 'Error' : 'Warning'}] ${d.message}`)
+            })
+        }
+
+        if (otherDiagnostics.length > 0) {
+            contextParts.push(`**文件内其他错误/警告 (前5条):**`)
+            otherDiagnostics.slice(0, 5).forEach(d => {
+                const line = d.range.start.line + 1
+                contextParts.push(`- [Line ${line}] [${d.severity === DiagnosticSeverity.Error ? 'Error' : 'Warning'}] ${d.message}`)
+            })
+        }
+        contextParts.push('')
+    }
+
+    // 3. 选中内容 (如果有)
+    const selection = activeEditor.selection
+    if (!selection.isEmpty) {
+        const selectedText = document.getText(selection)
+        contextParts.push(`### 用户选中的代码`)
+        contextParts.push('```' + document.languageId)
+        contextParts.push(selectedText)
+        contextParts.push('```')
+        contextParts.push('')
+    }
+
+    // 4. 代码片段 (上下文)
+    const rangeLines = options.snippetLines || 15
+    const startLine = Math.max(0, cursorPos.line - rangeLines)
+    const endLine = Math.min(lineCount - 1, cursorPos.line + rangeLines)
+
+    // 只有当行数有效或该行不为空时才获取代码
+    if (startLine !== endLine || document.lineAt(cursorPos.line).text.trim() !== '') {
+        const textRange = new Range(startLine, 0, endLine, document.lineAt(endLine).text.length)
+        const codeSnippet = document.getText(textRange)
+
+        contextParts.push(`### 光标附近代码 (第 ${startLine + 1}-${endLine + 1} 行)`)
+        // 添加行号，方便 LLM 定位
+        const snippetWithLineNumbers = codeSnippet.split('\n').map((line, i) => {
+            const lineNum = startLine + i + 1
+            let marker = ''
+            if (lineNum === cursorPos.line + 1) {
+                if (line.endsWith('\r')) {
+                    line = line.slice(0, -1)
+                    marker = ' 👈 (光标)\r'
+                } else {
+                    marker = ' 👈 (光标)'
+                }
+            }
+            return `${lineNum}: ${line}${marker}`
+        }).join('\n')
+
+        contextParts.push('```' + document.languageId)
+        contextParts.push(snippetWithLineNumbers)
+        contextParts.push('```')
+        contextParts.push('')
+    }
+
+    // 5. 符号信息 (所在函数/类)
+    try {
+        const symbols = await commands.executeCommand('vscode.executeDocumentSymbolProvider', document.uri)
+        // const symbols = await languages.getDocumentSymbols(document);
+        if (symbols) {
+            const enclosingSymbol = findEnclosingSymbol(anyType(symbols), cursorPos)
+            if (enclosingSymbol) {
+                contextParts.push(`### 当前所属作用域`)
+                contextParts.push(`- **名称**: ${enclosingSymbol.name}`)
+                contextParts.push(`- **类型**: ${enclosingSymbol.kind}`)
+            }
+        }
+    } catch (error) {
+        // 符号解析失败不影响主流程，静默忽略
+    }
+
+    return contextParts.join('\n')
+}
+
+/**
+ * 递归查找包含光标位置的最深层符号
+ *
+ * @param {DocumentSymbol[]} symbols
+ * @param {Position} position
+ * @returns {DocumentSymbol | undefined}
+ */
+function findEnclosingSymbol(symbols, position) {
+    for (const symbol of symbols) {
+        // 检查符号范围是否包含光标
+        if (symbol.range.contains(position)) {
+            // 如果包含，先递归查找子节点，找到最内层的符号（如：在 Class 的 Method 内）
+            const childSymbol = findEnclosingSymbol(symbol.children, position)
+            return childSymbol ? childSymbol : symbol
+        }
+    }
+    return undefined
+}
 /**
  * @param {string} text
  * @param {string} [language='plaintext']
@@ -528,7 +667,7 @@ export async function showTextInNewEditor(text, language = 'plaintext') {
  */
 export async function copyTextToClipboard(text) {
     await env.clipboard.writeText(text)
-    window.showInformationMessage("诊断信息已复制到剪贴板",)
+    window.showInformationMessage('已复制到剪贴板')
 }
 
 export async function generateCommitMessage() {

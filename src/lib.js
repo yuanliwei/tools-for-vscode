@@ -1315,3 +1315,22 @@ export function stringifyWithDepth(o, maxDepth = 3) {
 export async function fillSpace(text) {
     return ' '.repeat(stringWidth(text))
 }
+
+/**
+ * @param {object} o 
+ */
+export function anyType(o) {
+    return o
+}
+
+/**
+ * let num = asType(123, /** @​type{number}*​/({}))
+ * 
+ * @template T
+ * @param {any} o
+ * @param {T} _type
+ * @returns {T}
+ */
+export function asType(o, _type) {
+    return o
+}

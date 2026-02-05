@@ -535,6 +535,10 @@
                 "title": "Diagnostics: Active Editor"
             },
             {
+                "command": "tools:y-copy-ide-context",
+                "title": "Copy IDE Context"
+            },
+            {
                 "command": "tools:y-todo",
                 "title": "y-todo",
                 "icon": "$(checklist)"

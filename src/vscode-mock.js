@@ -35,3 +35,5 @@ export const Uri = {
 }
 export const WorkspaceEdit = {}
 export const env = {}
+export const extensions = {}
+export const DiagnosticSeverity = {}
