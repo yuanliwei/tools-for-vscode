@@ -735,6 +735,9 @@ export async function generateCommitMessage() {
         for await (const text of res.body) {
             content += decoder.decode(text)
             repository.inputBox.value = content
+            if (content.length > 3333) {
+                break
+            }
         }
     } catch (error) {
         console.error('生成提交消息失败:', error)
