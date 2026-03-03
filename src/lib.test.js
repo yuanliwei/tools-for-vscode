@@ -10,9 +10,7 @@ test('extract-types', async () => {
     let types = extractTypesFromString(`{a:'string',b:12345,c:[{a:1,b:2}]}`)
     console.log(types)
     strictEqual(types.trim(), `
-/** [data].d.ts */
-
-export function data(): {
+export type DATA_D_TS = {
     a: string;
     b: number;
     c: {

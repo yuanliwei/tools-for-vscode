@@ -974,11 +974,16 @@ export function extractTypesFromString(text) {
     if (text.trim().startsWith('[') || text.trim().startsWith('{')) {
         isJson = true
     }
-    return extractTypesFromSource(text, isJson, {
+    let source = extractTypesFromSource(text, isJson, {
         allowJs: true,
         declaration: true,
         emitDeclarationOnly: true,
     })
+
+    source = source.replace(`/** [data].d.ts */`,'')
+    source = source.replace(`\n\nexport function data():`,'export type DATA_D_TS =')
+
+    return source
 }
 
 /**
