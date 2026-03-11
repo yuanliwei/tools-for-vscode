@@ -735,7 +735,7 @@ export async function generateCommitMessage() {
         for await (const text of res.body) {
             content += decoder.decode(text)
             repository.inputBox.value = content
-            await sleep(300)
+            await sleep(100)
             if (content.length > 3333) {
                 break
             }
