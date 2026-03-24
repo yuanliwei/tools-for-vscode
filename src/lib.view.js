@@ -152,11 +152,11 @@ export async function getInputRepeatCount() {
     return num
 }
 
-export async function getInputParseJsonDepth() {
+export async function getInputParseJsonDepth(defaultValue = '2') {
     let depth = await window.showInputBox({
         placeHolder: 'depth number',
         prompt: '输入JSON解析深度',
-        value: '2',
+        value: defaultValue,
     })
     return depth
 }

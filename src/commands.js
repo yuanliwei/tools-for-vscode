@@ -540,13 +540,14 @@ export const tool_commands = [
         id: 'y-json-limit-depth',
         label: 'JSON Limit Depth',
         async action(ed) {
+            let value = await getInputParseJsonDepth(String(defaultJsonLimitDepth))
+            if (!value) {
+                return
+            }
+            let deep = parseInt(value)
+            defaultJsonLimitDepth = deep
             editText(ed, {}, async (text) => {
                 let list = await evalParser(text)
-                let value = await getInputParseJsonDepth()
-                if (!value) {
-                    return
-                }
-                let deep = parseInt(value)
                 return stringifyWithDepth(list, deep)
             })
         }
@@ -1152,3 +1153,5 @@ export function setupCommands(context) {
     setupTranslateHoverProvider(context)
     setupTimeFormatHoverProvider(context)
 }
+
+let defaultJsonLimitDepth = 2
