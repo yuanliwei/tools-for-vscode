@@ -22,3 +22,21 @@ export type DATA_D_TS = {
     console.log(types)
 
 })
+
+test('transform-type-imports', async () => {
+    // node --test --test-name-pattern="^transform-type-imports$" src/lib.test.js
+    const { transformTypeImports } = await import('./lib.js')
+
+    let { imports, typeText } = transformTypeImports(`import("@koa/router").RouterContext | import("http").IncomingMessage`)
+
+    console.log(imports)
+    console.log(typeText)
+
+    strictEqual(imports.trim(), `
+@import {RouterContext} from '@koa/router'
+@import {IncomingMessage} from 'http'
+`.trim())
+
+    strictEqual(typeText.trim(), `RouterContext | IncomingMessage`)
+
+})

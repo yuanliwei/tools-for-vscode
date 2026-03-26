@@ -980,8 +980,8 @@ export function extractTypesFromString(text) {
         emitDeclarationOnly: true,
     })
 
-    source = source.replace(`/** [data].d.ts */`,'')
-    source = source.replace(`\n\nexport function data():`,'export type DATA_D_TS =')
+    source = source.replace(`/** [data].d.ts */`, '')
+    source = source.replace(`\n\nexport function data():`, 'export type DATA_D_TS =')
 
     return source
 }
@@ -1338,4 +1338,113 @@ export function anyType(o) {
  */
 export function asType(o, _type) {
     return o
+}
+
+/**
+ * 把 TS 类型中的 import("mod").Type 转成 @​import 语句，并返回替换后的类型文本
+ *
+ * @param {string} input 例如：`import("@koa/router").RouterContext | import("http").IncomingMessage`
+ * @param {object} [opt]
+ * @param {string} [opt.tag='@import'] 输出的 tag
+ * @param {string} [opt.defaultName='DefaultExport'] default 导入的名称
+ * @param {(mod:string)=>string} [opt.namespaceName] namespace 导入名生成器
+ * @returns {Promise<{ imports: string, typeText: string, items: Array }>}
+ */
+export async function transformTypeImports(input, opt = {}) {
+    const tag = opt.tag ?? '@import'
+    const defaultName = opt.defaultName ?? 'DefaultExport'
+    const namespaceName =
+        opt.namespaceName ??
+        ((mod) =>
+            ('ns_' + mod.replace(/^@/, '').replace(/[^a-zA-Z0-9_$]+/g, '_')).replace(/^(\d)/, '_$1'))
+
+    // 记录：module -> { named: Map<exportName, localName>, default: localName?, namespace: localName? }
+    const byModule = new Map()
+    // 记录 localName 是否已使用，用于处理冲突
+    const usedLocalNames = new Map() // name -> count
+
+    const allocLocalName = (base) => {
+        const n = usedLocalNames.get(base) ?? 0
+        usedLocalNames.set(base, n + 1)
+        return n === 0 ? base : `${base}${n + 1}`
+    }
+
+    const ensureModule = (mod) => {
+        if (!byModule.has(mod)) byModule.set(mod, { named: new Map(), default: null, namespace: null })
+        return byModule.get(mod)
+    }
+
+    // 1) 处理：typeof import("x") 或 import("x")（namespace 模式）
+    //   - typeof import("x")  => typeof ns_x
+    //   - import("x")         => ns_x
+    const typeOfNsRe = /\btypeof\s+import\(\s*(['"])([^'"]+)\1\s*\)/g
+    input = input.replace(typeOfNsRe, (_m, _q, mod) => {
+        const m = ensureModule(mod)
+        if (!m.namespace) m.namespace = allocLocalName(namespaceName(mod))
+        return `typeof ${m.namespace}`
+    })
+
+    const nsRe = /\bimport\(\s*(['"])([^'"]+)\1\s*\)(?!\s*\.)/g
+    input = input.replace(nsRe, (_m, _q, mod) => {
+        const m = ensureModule(mod)
+        if (!m.namespace) m.namespace = allocLocalName(namespaceName(mod))
+        return `${m.namespace}`
+    })
+
+    // 2) 处理：import("x").A.B.C / import("x").default
+    // 捕获：module + path(default 或 点路径)
+    const dotRe = /\bimport\(\s*(['"])([^'"]+)\1\s*\)\.([A-Za-z_$][\w$]*(?:\.[A-Za-z_$][\w$]*)*|default)\b/g
+
+    input = input.replace(dotRe, (_m, _q, mod, path) => {
+        const m = ensureModule(mod)
+
+        if (path === 'default') {
+            if (!m.default) m.default = allocLocalName(defaultName)
+            return m.default
+        }
+
+        // path 可能是 Foo 或 Foo.Bar.Baz
+        // 为保证正确性：只导入第一段 Foo，其余保持 .Bar.Baz
+        const [first, ...rest] = path.split('.')
+        if (!m.named.has(first)) {
+            const local = allocLocalName(first)
+            m.named.set(first, local)
+        }
+        const localFirst = m.named.get(first)
+        return rest.length ? `${localFirst}.${rest.join('.')}` : `${localFirst}`
+    })
+
+    // 生成 imports 文本
+    const lines = []
+    const items = []
+
+    for (const [mod, info] of byModule.entries()) {
+        // namespace
+        if (info.namespace) {
+            lines.push(`${tag} * as ${info.namespace} from '${mod}'`)
+            items.push({ mod, kind: 'namespace', local: info.namespace })
+        }
+
+        // default
+        if (info.default) {
+            lines.push(`${tag} ${info.default} from '${mod}'`)
+            items.push({ mod, kind: 'default', local: info.default })
+        }
+
+        // named
+        if (info.named.size) {
+            // 为稳定输出排序
+            const parts = [...info.named.entries()]
+                .sort(([a], [b]) => a.localeCompare(b))
+                .map(([exported, local]) => (exported === local ? exported : `${exported} as ${local}`))
+            lines.push(`${tag} {${parts.join(', ')}} from '${mod}'`)
+            items.push({ mod, kind: 'named', specifiers: parts })
+        }
+    }
+
+    return {
+        imports: lines.join('\n'),
+        typeText: input,
+        items,
+    }
 }
