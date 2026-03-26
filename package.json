@@ -351,6 +351,10 @@
                 "title": "JWT Decode"
             },
             {
+                "command": "tools:y-transform-type-imports",
+                "title": "Transform type imports"
+            },
+            {
                 "command": "tools:y-translate-markdown-to-html",
                 "title": "Translate markdown to html"
             },

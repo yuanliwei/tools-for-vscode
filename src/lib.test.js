@@ -40,3 +40,11 @@ test('transform-type-imports', async () => {
     strictEqual(typeText.trim(), `RouterContext | IncomingMessage`)
 
 })
+
+test('transform-type-imports-text', async () => {
+    // node --test --test-name-pattern="^transform-type-imports-text$" src/lib.test.js
+    const { transformTypeImportsText } = await import('./lib.js')
+    let result = await transformTypeImportsText(`import("@koa/router").RouterContext | import("http").IncomingMessage`)
+    console.log(result)
+    strictEqual(result, `@import {RouterContext} from '@koa/router' | @import {IncomingMessage} from 'http'`.trim())
+})

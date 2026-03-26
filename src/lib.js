@@ -1348,9 +1348,9 @@ export function asType(o, _type) {
  * @param {string} [opt.tag='@import'] 输出的 tag
  * @param {string} [opt.defaultName='DefaultExport'] default 导入的名称
  * @param {(mod:string)=>string} [opt.namespaceName] namespace 导入名生成器
- * @returns {Promise<{ imports: string, typeText: string, items: Array }>}
+ * @returns {{ imports: string, typeText: string, items: Array }}
  */
-export async function transformTypeImports(input, opt = {}) {
+export function transformTypeImports(input, opt = {}) {
     const tag = opt.tag ?? '@import'
     const defaultName = opt.defaultName ?? 'DefaultExport'
     const namespaceName =
@@ -1447,4 +1447,15 @@ export async function transformTypeImports(input, opt = {}) {
         typeText: input,
         items,
     }
+}
+
+/**
+ * @param {string} input
+ */
+export async function transformTypeImportsText(input) {
+    let result = input.replace(/(^|\s)(import\(.*?)(\s|$)/g, (a, b, c) => {
+        const { imports } = transformTypeImports(a)
+        return a.replace(c, imports)
+    })
+    return result
 }
