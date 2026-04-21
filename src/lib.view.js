@@ -690,6 +690,9 @@ export async function generateCommitMessage() {
         const uris = repository.state.indexChanges.map(change => change.uri)
         for (const uri of uris) {
             try {
+                if (uri.path.endsWith('/package-lock.json')) {
+                    continue
+                }
                 let diff = await repository.diff(uri, 'HEAD')
                 if (diff) {
                     const lines = diff.split('\n')
