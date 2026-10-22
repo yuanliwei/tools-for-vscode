@@ -653,7 +653,7 @@ export async function cleanDiffChange(text) {
 export const sleep = (/** @type {number} */ timeout) => new Promise((resolve) => setTimeout(resolve, timeout))
 
 /**
- * @param {import("crypto").BinaryLike} text
+ * @param {string | NodeJS.ArrayBufferView} text
  */
 export async function md5(text) {
     const hash = createHash('md5')
@@ -661,7 +661,7 @@ export async function md5(text) {
     return hash.digest('hex')
 }
 /**
- * @param {import("crypto").BinaryLike} text
+ * @param {string | NodeJS.ArrayBufferView} text
  */
 export async function sha1(text) {
     const hash = createHash('sha1')
@@ -669,7 +669,7 @@ export async function sha1(text) {
     return hash.digest('hex')
 }
 /**
- * @param {import("crypto").BinaryLike} text
+ * @param {string | NodeJS.ArrayBufferView} text
  */
 export async function sha256(text) {
     const hash = createHash('sha256')
@@ -677,7 +677,7 @@ export async function sha256(text) {
     return hash.digest('hex')
 }
 /**
- * @param {import("crypto").BinaryLike} text
+ * @param {string | NodeJS.ArrayBufferView} text
  */
 export async function sha512(text) {
     const hash = createHash('sha512')
