@@ -596,7 +596,7 @@
     "dependencies": {
         "dayjs": "^1.11.23",
         "extract-json-from-string-y": "^1.0.3",
-        "extract-types": "^1.1.0",
+        "extract-types": "^2.0.0",
         "flat": "^6.0.1",
         "he": "^2.0.0",
         "js-beautify": "^2.0.3",

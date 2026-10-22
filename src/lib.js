@@ -978,6 +978,11 @@ export function extractTypesFromString(text) {
         allowJs: true,
         declaration: true,
         emitDeclarationOnly: true,
+        checkJs: true,
+        strict: true,
+        strictNullChecks: false,
+        noImplicitAny: false,
+        useUnknownInCatchVariables: false,
     })
 
     source = source.replace(`/** [data].d.ts */`, '')
