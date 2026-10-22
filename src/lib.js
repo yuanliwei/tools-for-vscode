@@ -53,7 +53,7 @@ export async function encodeHex(text) {
  * @param {string} text
  */
 export async function encodeHtml(text) {
-    return he.encode(text)
+    return he.encode(text, { useNamedReferences: true })
 }
 /**
  * @param {string} text
